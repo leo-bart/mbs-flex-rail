@@ -6,7 +6,7 @@ Created on Thu Nov 11 07:24:43 2021
 @author: leonardo
 """
 from nachbagauer3Dc import node, beamANCF3Dquadratic, railANCF3Dquadratic
-from materials import linearElasticMaterial
+from materialsc import linearElasticMaterial
 from flexibleBodyc import flexibleBody3D
 import numpy as np
 from scipy.optimize import fsolve
