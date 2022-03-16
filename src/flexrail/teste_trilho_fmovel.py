@@ -13,7 +13,7 @@ Created on Wed Dec  1 06:45:14 2021
 @author: leonardo
 """
 from nachbagauer3Dc import node, railANCF3Dquadratic
-from materials import linearElasticMaterial
+from materialsc import linearElasticMaterial
 from flexibleBodyc import flexibleBody3D
 import numpy as np
 from assimulo.solvers import IDA, ODASSL
@@ -27,7 +27,7 @@ body = flexibleBody3D('Bar',steel)
 
 nq = []
 nel = 5
-totalLength = 2.
+totalLength = 11.
 for i in range(nel+1):
     nq.append(node([totalLength * i/nel,0.0,0.0
                    ,0.0,1.0,0.0,
@@ -48,6 +48,8 @@ for j in range(nel):
                                   8652.e-6))
 
 body.addElement(eq)
+K =  body.assembleTangentStiffnessMatrix()
+C = 0.002*K
 
 
 ''' ASSEMBLE SYSTEM '''
@@ -65,7 +67,7 @@ def viga_biengastada():
     movForce = np.array([0,1000,0])
     
     
-    def forces(t,p,v):
+    def forcesFullCalc(t,p,v):
         '''
         Calculates the forces for the dynamical system
 
@@ -109,6 +111,50 @@ def viga_biengastada():
         
         return - fel
     
+    def forcesStiffMat(t,p,v):
+        '''
+        Calculates the forces for the dynamical system
+
+        Parameters
+        ----------
+        p : array
+            positions.
+        v : array
+            velocities.
+
+        Returns
+        -------
+        forcas : array
+            forces.
+
+        '''
+              
+        body.updateDisplacements(p)
+        
+        fel = np.squeeze(np.asarray(K.dot(p)))#body.assembleElasticForceVector().squeeze()
+        
+        #body.updateDisplacements(v)
+        
+        fel += np.squeeze(np.asarray(C.dot(v)))#0.001 * body.assembleElasticForceVector().squeeze()
+        
+        # effect of moving force
+        if t <= 1.:
+            pos = 5.5#2.*t
+            
+            point = np.array([pos,0.,0.])
+                
+            isit = body.findElement(point)
+            
+            localXi = eq[isit].mapToLocalCoords(point)
+            
+            extForce = np.dot(movForce, eq[isit].shapeFunctionMatrix(localXi[0],localXi[1],localXi[2]))
+            
+            fel[eq[isit].globalDof] += extForce
+        
+        
+        
+        return - fel
+    
     def posConst(t,y):
         gC = np.zeros(n_la)
         posi = y[:n_p]
@@ -120,6 +166,7 @@ def viga_biengastada():
     
     def velConst(t,y):
         gC = np.zeros(n_la)
+        vel = y[n_p:2*n_p]
         # engaste
         gC[0:9] = y[0:9]
         gC[9:] = y[-9:]
@@ -138,7 +185,9 @@ def viga_biengastada():
         
         return Phi.T
     
-    return ms(n_p=n_p, forces=forces, n_la=n_la, pos0=q0, vel0=u0,
+    return ms(n_p=n_p, 
+              forces=forcesStiffMat, 
+              n_la=n_la, pos0=q0, vel0=u0,
               lam0=np.zeros(n_la),
               posd0=u0,veld0=0*u0,GT=constJacobian,t0=0.0,
               mass_matrix = M,

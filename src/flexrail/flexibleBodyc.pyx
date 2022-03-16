@@ -9,6 +9,7 @@ Created on Fri Nov 26 07:35:58 2021
 """
 
 import numpy as np
+import MultibodySystem as MBS
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -38,7 +39,8 @@ cdef class flexibleBody(object):
 
         '''
         
-        self.name = name
+        self.type = 'Flexible body'
+        super().__init__(name)
         self.material = material
         self.elementList = []
         self.totalDof = 0   # total number of degrees of freedom
@@ -252,6 +254,9 @@ com
             the number of the element. -1 if no element found
 
         '''
+        if len(point) != self.dimensionality:
+            print('Error in findElement: the point has {} coordinates, but the element is {}-dimensional'.format(len(point),self.dimensionality))
+        
         cdef Py_ssize_t ele = -1
         cdef Py_ssize_t i
         

@@ -13,7 +13,7 @@ Created on Wed Dec  1 06:45:14 2021
 @author: leonardo
 """
 from nachbagauer3Dc import node, beamANCF3Dquadratic
-from materials import linearElasticMaterial
+from materialsc import linearElasticMaterial
 from flexibleBodyc import flexibleBody3D
 import numpy as np
 from assimulo.solvers import IDA, ODASSL
