@@ -14,7 +14,7 @@ Created on Wed Dec  1 06:45:14 2021
 """
 from nachbagauer3Dc import node, railANCF3Dquadratic
 from materialsc import linearElasticMaterial
-from flexibleBodyc import flexibleBody3D
+from bodiesc import flexibleBody3D
 import numpy as np
 from assimulo.solvers import IDA, ODASSL
 from assimulo.special_systems import Mechanical_System as ms

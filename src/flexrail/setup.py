@@ -16,6 +16,7 @@ setup(
                              "materialsc.pyx",
                              "profilesc.pyx",
                              "bodiesc.pyx",
+                             "helper_funcs.pyx",
                              "teste_estatico_3D_cython.pyx"],
                             language_level=3,
                             language='c++')

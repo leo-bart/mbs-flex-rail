@@ -9,23 +9,27 @@ Classes to use with Multibody System as bodies
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
+import MultibodySystem as mbs
 
 cdef class body(object):
     
     cdef str name, type
     cdef int totalDof
-    cdef double[:,:] inertiaTensor
+    cdef double mass
+    cdef double[:,:] massMatrix
     cdef double[:] q0, u0
     cdef public list globalDof
+    cdef list markers
     
     def __init__(self,name_,numberOfDof=0):
         self.name = name_
         self.type = 'Generic body descriptor'
         self.totalDof = numberOfDof
-        self.inertiaTensor = np.eye(numberOfDof)
         self.q0 = np.zeros(self.totalDof, dtype=np.float64)
-        self.u0 = self.q0.copy()
+        self.u0 = np.zeros(self.totalDof, dtype=np.float64)
         self.globalDof = []
+        self.markers = []
     
     @property
     def name(self):
@@ -34,6 +38,14 @@ cdef class body(object):
     @property
     def type(self):
         return self.type
+    
+    @property
+    def markers(self):
+        return self.markers
+    
+    @property 
+    def mass(self):
+        return self.mass
     
     @property
     def totalDof(self):
@@ -47,13 +59,20 @@ cdef class body(object):
     def u0(self):
         return np.array(self.u0)    
     
-    @property
-    def inertiaTensor(self):
-        return np.array(self.inertiaTensor)
+    
     
     
     
     ####### METHODS ##################################
+    def addMarker(self, mrk):
+        if type(mrk) is list:
+            print('{}.addMarker error: expected single marker as input, not list')
+        
+        self.markers.append(mrk)
+        mrk.setParentBody(self)
+        
+        return mrk
+    
     def setPositionInitialConditions(self,*args):
         '''
         Set the initial conditions on position level
@@ -115,22 +134,358 @@ cdef class body(object):
             self.u0[args[0]] = args[1]
         else:
             print('{} setInitialConditions: expected 1 or 2 elements.'.format(self.name))
+            
+            
+###############################################################################
+############## GROUND #########################################################
+############################################################################### 
+cdef class ground(body): 
+    def __init__(self):        
+        super().__init__('Ground',0)
+        self.type = 'Ground'
+        self.massMatrix = np.array([[]])
+        self.addMarker(mbs.marker('O'))
+    
+    @property
+    def massMatrix(self):
+        return np.array(self.massMatrix)
 
-cdef class rigidBody(body):
-    def __init__(self,name_,numberOfDof=6):        
-        super().__init__(name_,numberOfDof)
+###############################################################################
+############## RIGID BODIES ###################################################
+###############################################################################  
+cdef class rigidBody(body):  
+    
+    cdef double[:,:] inertiaTensor
+    
+    def __init__(self,name_):        
+        super().__init__(name_,6)
         self.type = 'Rigid body'
         
-    def setDof(self,freeDof):
-        self.totalDof = freeDof
-        self.inertiaTensor = np.eye(freeDof)
-        self.q0.resize(self.totalDof)
-        self.u0.resize(self.totalDof)
+        self.addMarker(mbs.marker('cog'))
+        self.markers[0].setParentBody(self)
+        
+        self.massMatrix = np.zeros((6,6))
+        
+    def setMass(self,new_mass):
+        cdef Py_ssize_t i
+        self.mass = new_mass
+        for i in range(3):
+            self.massMatrix[i,i] = new_mass
+        
+    @property
+    def massMatrix(self):
+        return np.array(self.massMatrix)
+        
+    @property
+    def inertiaTensor(self):
+        return np.array(self.inertiaTensor)
+        
         
     def setInertiaTensor(self, tensor):
-        if tensor.shape == (self.totalDof, self.totalDof):
+        mMatrix = np.zeros((6,6))
+        if tensor.shape == (3,3):
             self.inertiaTensor = tensor
+            mMatrix[:3,:3] = np.diag([self.mass]*3)
+            mMatrix[3:,3:] = self.inertiaTensor
+            self.massMatrix = mMatrix
         else:
-            print('Error in inertia attribution. Need a {0}x{0} tensor.'.format([self.totalDof]))
+            print('Error in inertia attribution. Need a 3x3 tensor.')
+            
+            
+    def info(self):
+        print('INFO:')
+        print('Printing information on {} ""{}""'.format(self.type,self.name));
+        print('Number of dof: {}'.format(self.totalDof))
+        print('Inertia tensor: \n{}'.format(np.array(self.inertiaTensor)))
+        print('Contains markers:')
+        for m in self.markers:
+            print('\t{} at {}'.format(m.name,m.position))
+        print('-'*80)
+            
+###############################################################################
+############## FLEXIBLE BODIES ################################################
+###############################################################################           
+cdef class flexibleBody(body):
+    '''
+    Flexible body class
+    '''
+    
+    cdef int dimensionality
+    cdef list elementList
+    cdef object material
+    cdef double[:] nodalElasticForces
+    
+    def __init__(self,name,material):
+        '''
+        Flex body initialization method
+
+        Parameters
+        ----------
+        name : STRING
+            NAME OF THE BODY.
+        material : MATERIAL
+            BODY'S MATERIAL.
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+        self.type = 'Flexible body'
+        super().__init__(name)
+        self.material = material
+        self.elementList = []
+        self.totalDof = 0   # total number of degrees of freedom       
+        
+    @property 
+    def mass(self):
+        mass = 0.0
+        for e in self.elementList:
+            mass += e.mass
+            
+        return mass
+    
+    @property
+    def material(self):
+        return self.material
+    
+    @property
+    def q(self):
+        cdef double [:] q, qel
+        cdef Py_ssize_t [:] eleDof_view     #memory view of element's global dof
+        cdef Py_ssize_t i
+        q = np.zeros(self.totalDof, dtype=np.float64)
+        
+        for ele in self.elementList:
+            qel = ele.q
+            eleDof_view = ele.globalDof
+            for i in range(qel.shape[0]):
+                q[eleDof_view[i]] = qel[i]
+        
+        return np.array(q)
+                
+    def assembleMassMatrix(self):
+        print('Assemblying mass matrix')
+         
+        M = np.matlib.zeros([self.totalDof, self.totalDof])
+        cdef double[:,:] M_view = M
+        cdef double[:,:] m
+        
+        cdef Py_ssize_t i, j, dofi, dofj
+        
+        for elem in self.elementList:
+            m = elem.getMassMatrix()
+            for i,dofi in enumerate(elem.globalDof):
+                for j,dofj in enumerate(elem.globalDof):
+                    M_view[dofi,dofj] += m[i,j]
+            
+        print('Mass matrix assembly done!')
+        return M
+    
+    
+    def assembleElasticForceVector(self,int targetDof = -1):
+        
+        Qe = np.zeros(self.totalDof)
+        cdef double[:] Qe_view = Qe 
+        cdef double[:] Qelem
+        
+        cdef Py_ssize_t i, dof
+        
+        for elem in self.elementList:
+            if elem.changedStates:
+                Qelem = elem.getNodalElasticForces()
+            else:
+                #Qelem = elem.nodalElasticForces
+                Qelem = elem.getNodalElasticForces()
+            for i,dof in enumerate(elem.globalDof):
+                Qe_view[dof] += Qelem[i]
+            
+        return Qe.reshape(-1,1)
+    
+    def assembleWeightVector(self, g=np.array([0,1])):
+        Qg = np.matlib.zeros(self.totalDof)
+        
+        for elem in self.elementList:
+            Qelem = elem.getWeightNodalForces(g).reshape(1,-1)
+            for i,dof in enumerate(elem.globalDof):
+                Qg[0,dof] += Qelem[0,i]
+            
+        return Qg.reshape(1,-1)
+    
+    
+
+    def assembleTangentStiffnessMatrix(self):
+                         
+        print('Assemblying tangent stiffness matrix')
+         
+        Kt = np.matlib.zeros([self.totalDof, self.totalDof])
+        
+        for elem in self.elementList:
+            ke = elem.getTangentStiffnessMatrix()
+            for i,dofi in enumerate(elem.globalDof):
+                for j,dofj in enumerate(elem.globalDof):
+                    Kt[dofi,dofj] += ke[i,j]
+            
+        print('Tangent stiffness matrix assembly done!')
+        return Kt
+        
+    
+    def addElement(self, element):
+        '''
+        
+
+        Parameters
+        ----------
+        element : ELEMENT
+            Element object to be added to elementList.
+
+        Returns
+        -------
+        None.
+
+        '''
+        # TODO adapt to 3D
+        curGdl = 0
+        for el in element:
+            el.parentBody = self
+            for nd in el.nodes:
+                nodalDof = len(nd.q)
+                nd.globalDof = list(range(curGdl,curGdl+nodalDof))
+                curGdl += nodalDof
+            curGdl = el.globalDof[-1]-nodalDof + 1
+        self.elementList.extend(element)
+        self.totalDof = el.globalDof[-1] + 1
+        self.nodalElasticForces = np.zeros(self.totalDof)
+        
+        print('Added {0} elements to body ''{1:s}'''.format(len(element),self.name))
+        
+        
+    def plotPositions(self, int pointsPerElement = 5, bint show=False):
+        points = np.linspace(-1.,1.,pointsPerElement)
+        
+        xy = np.empty([0,self.dimensionality])
+        
+        for ele in self.elementList:
+            for i in range(pointsPerElement-1):
+                xy = np.vstack([xy,ele.interpolatePosition(points[i],0,0)])
+        #add last point
+        xy = np.vstack([xy,ele.interpolatePosition(points[-1],0,0)])
+                
+        if show:
+            if self.dimensionality == 2:
+                plt.figure()
+                plt.plot(xy[:,0],xy[:,1])
+                plt.xlabel('x')
+                plt.ylabel('y')
+                plt.show()
+                
+            elif self.dimensionality == 3:
+                plt.figure()
+                ax = plt.axes(projection='3d',proj_type='ortho')
+                ax.plot(xy[:,0],xy[:,1],xy[:,2])
+                ax.set_xlabel('x')
+                ax.set_ylabel('y')
+                ax.set_zlabel('z')
+                plt.show()
+        return xy
+    
+    def updateDisplacements(self, double [:] z):
+        '''
+        Updates the positions of the body nodes
+
+        Parameters
+        ----------
+        z : array like
+            New displacements of the nodes.
+
+        Returns
+        -------
+        None.
+com
+        '''
+        
+        cdef Py_ssize_t i
+        cdef Py_ssize_t [:] globDof_view
+        cdef double[:] newq
+        
+        for ele in self.elementList:
+            # cycle through nodes
+            for nd in ele.nodes:
+                newq = nd.q
+                globDof_view = nd.globalDof
+                for i in range(newq.shape[0]):
+                    newq[i] = z[globDof_view[i]]
+                nd.q = newq
+            # finished cycling through nodes
+            
+
+               
+            
+    
+    def totalStrainEnergy(self):
+        
+        U = 0
+        
+        for ele in self.elementList:
+            U += ele.strainEnergyNorm()
+            
+        return U
+    
+    def findElement(self, double[:] point):
+        '''
+        Finds to which element a point belongs
+
+        Parameters
+        ----------
+        double[ : ] point
+            global coordinates of a point.
+
+        Returns
+        -------
+        ele : integer
+            the number of the element. -1 if no element found
+
+        '''
+        if int(len(point)) != self.dimensionality:
+            print('Error in findElement: the point has {} coordinates, but the element is {}-dimensional'.format(len(point),self.dimensionality))
+        
+        cdef Py_ssize_t ele = -1
+        cdef Py_ssize_t i
+        
+        for i in range(len(self.elementList)):
+            if self.elementList[i].isPointOnMe(point):
+                ele = i
+            
+        
+        return ele
+
+
+##############################################################################
+cdef class flexibleBody3D(flexibleBody):
+    '''
+    Tri-dimensional flexible body
+    '''
+    
+    
+    def __init__(self, name, material):
+        super().__init__(name, material)
+        
+        self.dimensionality = np.int8(3)
+        
+        print('Created 3D body \'{}\' with material \'{}\''.format(name,material.name))
+
+cdef class flexibleBody2D(flexibleBody):
+    '''
+    Bi-dimensional flexible body
+    '''
+    
+    
+    def __init__(self, name, material):
+        super().__init__(name, material)
+        
+        self.dimensionality = np.int8(2)
+        
+        print('Created 2D body \'{}\' with material \'{}\''.format(name,material.name))
     
     

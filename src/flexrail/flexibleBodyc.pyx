@@ -9,12 +9,13 @@ Created on Fri Nov 26 07:35:58 2021
 """
 
 import numpy as np
-import MultibodySystem as MBS
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from warnings import warn
 
 ########################################
 cdef class flexibleBody(object):
+    warn('This method is deprecated.', DeprecationWarning, stacklevel=2)
     '''
     Flexible body class
     '''
