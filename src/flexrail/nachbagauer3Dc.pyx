@@ -18,7 +18,7 @@ Created on Mon Nov 22 07:21:00 2021
 """
 
 import numpy as np
-
+from MultibodySystem import marker
 from numpy.matlib import matrix, eye
 from numpy import dot
 from numpy.linalg import norm, inv
@@ -35,6 +35,8 @@ cdef public class node[object c_PyObj, type c_PyObj_t]:
     cdef double [9] q
     cdef long [9] globalDof
     cdef double [9] qdot
+    cdef public str name
+    cdef object marker
     """
     finite element node with nine dof
     
@@ -49,9 +51,12 @@ cdef public class node[object c_PyObj, type c_PyObj_t]:
        
     def __init__(self, listOfDof=[0.]*9):
                 
+        self.name = 'Node'
         self.q0 = np.array(listOfDof, dtype=np.float64)
         self.q = 0 * np.array(listOfDof, dtype=np.float64)
         self.globalDof = np.arange(9, dtype=np.int64)
+        self.marker = marker('_node', self.qtotal[:3], self.orientation)
+        self.marker.setParent(self)
         
             
     '''Class properties'''
@@ -100,6 +105,22 @@ cdef public class node[object c_PyObj, type c_PyObj_t]:
     def qtotal(self):
         '''Total nodal position'''
         return np.array(self.q) + np.array(self.q0)
+    
+    @property
+    def orientation(self):
+        cdef double [:] e2, e3
+        cdef Py_ssize_t i
+        
+        e2 = self.qtotal[3:6]
+        e3 = self.qtotal[6:9]
+        
+        e1 = np.cross(e2,e3)
+            
+        return np.vstack([e1,e2,e3]).transpose()
+    
+    @property 
+    def marker(self):
+        return self.marker
 
 
     
@@ -981,11 +1002,11 @@ cdef class beamANCF3Dquadratic(beamANCFelement3D):
                 dS_view[i,i+24] = s3*zeta
                 
                 # derivative wrt eta
-                dS_view[i+3,i+3] = xi_*(-1+xi_)/2
-                dS_view[i+3,i+12] = (1-xi_*xi_)
-                dS_view[i+3,i+21] = xi_*(1+xi_)/2
+                dS_view[i+3,i+3] = - xi_*(-1+xi_)/2
+                dS_view[i+3,i+12] = -(1-xi_*xi_)
+                dS_view[i+3,i+21] = - xi_*(1+xi_)/2
                 
-                # derivative wrt xeta
+                # derivative wrt zeta
                 dS_view[i+6,i+6] = dS_view[i+3,i+3]
                 dS_view[i+6,i+15] = dS_view[i+3,i+12]
                 dS_view[i+6,i+24] = dS_view[i+3,i+21]
@@ -1158,7 +1179,7 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
         
         # Gauss integration points
         cdef long nGaussL = 2
-        cdef long nGaussH = 2
+        cdef long nGaussH = 3
         cdef long nGaussW = 2
         
         cdef list gaussL = self.gaussIntegrationPoints[nGaussL]
@@ -1363,9 +1384,9 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
                 dS_view[i,i+24] = s3*zeta
                 
                 # derivative wrt eta
-                dS_view[i+3,i+3] = xi_*(-1+xi_)/2
-                dS_view[i+3,i+12] = (1-xi_*xi_)
-                dS_view[i+3,i+21] = xi_*(1+xi_)/2
+                dS_view[i+3,i+3] = -xi_*(-1+xi_)/2
+                dS_view[i+3,i+12] = -(1-xi_*xi_)
+                dS_view[i+3,i+21] = -xi_*(1+xi_)/2
                 
                 # derivative wrt xeta
                 dS_view[i+6,i+6] = dS_view[i+3,i+3]

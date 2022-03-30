@@ -5,7 +5,7 @@ Created on Sun Mar 20 22:41:18 2022
 
 @author: leonardo
 """
-from sympy import symbols, Matrix, cos, sin
+from sympy import symbols, Matrix, cos, sin, diff
 
 a,b,c = symbols(['a','b','c'])
 
@@ -24,3 +24,8 @@ Ryz = Rc*Rb
 
 # rotation in all axes
 Rxyz = Rc*Rb*Ra
+
+
+
+# derivatives
+dRda = diff(Rxyz,a)

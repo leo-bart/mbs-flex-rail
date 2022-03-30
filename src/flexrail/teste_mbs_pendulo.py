@@ -26,6 +26,8 @@ Iz = 0.05
 Pêndulo
 '''
 pend = rigidBody('Pêndulo A')
+
+
 pend.setMass(massa)
 pend.setInertiaTensor(np.diag([1.,1.,Iz]))
 pend.setPositionInitialConditions(0,compr/2)
@@ -37,7 +39,7 @@ pend.addMarker(MBS.marker('PtB',
 
 
 pend2 = rigidBody('Pêndulo B')
-pend2.setMass(massa)
+pend2.setMass(2*massa)
 pend2.setInertiaTensor(np.diag([1.,1.,Iz]))
 pend2.setPositionInitialConditions(0,3*compr/2)
 
@@ -52,12 +54,10 @@ mbs.addBody(pend2)
 '''
 Pino
 '''
-pino = MBS.primitivePtPConstraint('Pino',
-                           marker2 = mbs.ground.markers[0], dofB2 = [0,1],
-                           marker1 = pend.markers[1], dofB1 = [0,1])
+pino = MBS.hingeJoint('Pino', pend.markers[1], mbs.ground.markers[0])
 mbs.addConstraint(pino)
 
-solda = MBS.fixedJoint('Solda', pend.markers[2], pend2.markers[1])
+solda = MBS.hingeJoint('Solda', pend.markers[2], pend2.markers[1])
 mbs.addConstraint(solda)
 
 '''
@@ -74,7 +74,7 @@ DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 10e3 # Hz
-finalTime = 4
+finalTime = 1.8
 
 t,p,v=DAE.simulate(finalTime, finalTime * outFreq)
 

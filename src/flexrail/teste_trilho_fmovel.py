@@ -48,7 +48,7 @@ for j in range(nel):
                                   8652.e-6))
 
 body.addElement(eq)
-K =  body.assembleTangentStiffnessMatrix()
+K = body.assembleTangentStiffnessMatrix()
 C = 0.002*K
 
 

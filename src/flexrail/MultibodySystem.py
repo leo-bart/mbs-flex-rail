@@ -88,7 +88,18 @@ class MultibodySystem(Mechanical_System):
             f += fc.evaluateForceFunction(t,p,v,fc.marker1,fc.marker2)
             
         for bdy in self.bodies[1:]:  # first body is ground
-            f[bdy.globalDof[:3]] += bdy.mass * self.gravity 
+            # rigid body weight
+            if bdy.type == 'Rigid body':
+                f[bdy.globalDof[:3]] += bdy.mass * self.gravity 
+            
+            # flexible body nodal forces
+            if bdy.type == 'Flexible body':
+                bdy.updateDisplacements(p[bdy.globalDof])
+                f[bdy.globalDof] -= bdy.assembleElasticForceVector().squeeze()
+                bdy.updateDisplacements(v[bdy.globalDof])
+                f[bdy.globalDof] -= 0.002 * bdy.assembleElasticForceVector().squeeze()
+                f[bdy.globalDof] += bdy.assembleWeightVector(g = self.gravity).squeeze()
+                
         
         return f
     
@@ -120,8 +131,9 @@ class MultibodySystem(Mechanical_System):
         self.mass_matrix = np.eye(self.totalDof)
         
         curDof = 0
-        # first element in self.bodies is always ground, which doe
-        for b in self.bodies:
+        # first element in self.bodies is always ground, which does not add
+        # dofs to the system
+        for b in self.bodies[1:]:
             bdof = b.totalDof
             self.pos0[curDof:curDof+bdof] = b.q0
             self.vel0[curDof:curDof+bdof] = b.u0
@@ -140,6 +152,24 @@ class MultibodySystem(Mechanical_System):
         if printSys: 
             self.printSystem()
             
+    def postProcess(self, tvec, pvec, vvec):
+        posi = pvec[:,:self.n_p]
+        velo = pvec[:,self.n_p:2*self.n_p]
+        lamb = pvec[:,2*self.n_p:]
+        
+        for b in self.bodies[1:]:
+            b.simQ = posi[:,b.globalDof]
+            b.simU = velo[:,b.globalDof]
+        
+        forces = []
+        for i in range(len(tvec)):
+            GT = self.GT(posi[i])
+            forces.append(GT.dot(lamb[i]))
+            
+        forces = np.array(forces)
+        for cst  in self.constraintList:
+            cst.simLam = forces[:,cst.body1.globalDof]
+            
 class marker(object):
     '''
     Marker class. Is created aligned to the parent body coordinate system.
@@ -152,21 +182,24 @@ class marker(object):
         Specifies the position of the array in the parent body
     orientation : array, optional
         Specifies the orientation of the marker with respect to parent body's
-        coordinate system. In Cardan angles.
+        coordinate system. Is a rotation matrix.
     '''
     
-    def __init__(self,name_,position=np.zeros(3),orientation=np.zeros(3)):
+    def __init__(self,name_,position=np.zeros(3),orientation=np.eye(3)):
         self.name = name_
         self.position = position
         self.orientation = orientation
             
-    def setParentBody(self, parent):
+    def setParent(self, parent):
         if parent is not None:
-            self.parentBody = parent
+            self.parent = parent
             self.name = parent.name + '/' + self.name
             
     def setPosition(self,posi):
         self.position = posi
+        
+    def setOrientation(self,orient):
+        self.orientation = orient
             
 class bodyConnection(object):
     def __init__(self,name_):
@@ -174,6 +207,13 @@ class bodyConnection(object):
         self.body1 = None
         self.body2 = None
         self.type = "Generic body connection"
+        
+        @property
+        def simLam(self):
+            return self.simLam
+        @simLam.setter 
+        def simLam(self, simArray):
+            self.simLam = simArray
         
     def connect(self, body1, body2=None, pt1=np.zeros(3),pt2=np.zeros(3)):
         '''
@@ -303,6 +343,8 @@ class constraint(bodyConnection):
     def __init__(self,name_='Connection'):
         super().__init__(name_)
         self.type = "Generic constraint"
+        self.dofB1 = []
+        self.dofB2 = []
         self.positionConstraintFunction = None
         self.velocityConstraintFunction = None
         self.constraintJacobianFunction = None
@@ -337,7 +379,7 @@ class primitivePtPConstraint(constraint):
         if name_ == None:
             name_ = "Primitive PtP Constraint"
         super().__init__(name_)
-        super().connect(marker1.parentBody, marker2.parentBody,
+        super().connect(marker1.parent, marker2.parent,
                         marker1.position, marker2.position)
         self.type = "Primitive PtP Constraint"
         self.dofB1 = dofB1
@@ -417,16 +459,18 @@ class fixedJoint(constraint):
         '''
         super().__init__(name_)
         self.type = 'Fixed joint'
-        self.connect(body1 = firstMarker.parentBody,
-                     body2 = secondMarker.parentBody,
+        self.connect(body1 = firstMarker.parent,
+                     body2 = secondMarker.parent,
                      pt1 = firstMarker.position,
                      pt2 = secondMarker.position)
+        self.dofB1 = self.body1.globalDof
+        self.dofB2 = self.body2.globalDof
         self.n_la = 6
         
     def evaluatePositionConstraintFunction(self, t, y, tDof):
         qGlobal = y[:tDof]
-        b1dof = self.body1.globalDof
-        b2dof = self.body2.globalDof
+        b1dof = self.dofB1
+        b2dof = self.dofB2
         
         R1 = hf.cardanRotationMatrix(qGlobal[b1dof[3:]])
         R2 = hf.cardanRotationMatrix(qGlobal[b2dof[3:]])
@@ -454,8 +498,8 @@ class fixedJoint(constraint):
     def evaluateJacobian(self, y):
         n_la = self.n_la
         jaco = np.zeros((n_la,len(y)))
-        b1dof = self.body1.globalDof
-        b2dof = self.body2.globalDof
+        b1dof = self.dofB1
+        b2dof = self.dofB2
         
         I = np.diag([1.,1.,1.,1.,1.,1.])
         
@@ -464,10 +508,220 @@ class fixedJoint(constraint):
             jaco[:,b2dof] = -I
             
         return jaco
+    
+class hingeJoint(constraint):
+    def __init__(self, name_, firstMarker, secondMarker):
+        '''
+        Hinge joint class
         
+        A hinge joint connects two marker such that they have the same position
+        and their Z axes are aligned
+
+        Parameters
+        ----------
+        name_ : str
+            Joint name.
+        firstMarker : marker
+            Marker on first body.
+        secondMarker : marker
+            Marker on second body. If ground is involved, it must be the second body
+
+        Returns
+        -------
+        None.
+
+        '''
+        super().__init__(name_)
+        self.type = 'Fixed joint'
+        self.connect(body1 = firstMarker.parent,
+                     body2 = secondMarker.parent,
+                     pt1 = firstMarker.position,
+                     pt2 = secondMarker.position)
+        self.dofB1 = self.body1.globalDof[[0,1,2,5]]
+        self.dofB2 = self.body2.globalDof[[0,1,2,5]]
+        self.n_la = 5
         
+    def evaluatePositionConstraintFunction(self, t, y, tDof):
+        qGlobal = y[:tDof]
+        b1dof = np.array(self.body1.globalDof)
+        b2dof = np.array(self.body2.globalDof)
         
+        R1 = hf.cardanRotationMatrix(qGlobal[b1dof[3:]])
+        R2 = hf.cardanRotationMatrix(qGlobal[b2dof[3:]]) if len(b2dof) > 0 else None
+        
+        rm1 = self.marker1.position
+        rm2 = self.marker2.position
+        
+        # fix translations
+        m1Pos = qGlobal[b1dof[:3]] + R1.dot(rm1)
+        if len(b2dof) != 0:
+            # comes here only if body2 is not ground
+            m2Pos = qGlobal[b2dof[:3]] + R2.dot(rm2)
+        else:
+            m2Pos = rm2
             
+        # fix z axis
+        m1Rot = qGlobal[b1dof[[3,4]]]
+        if len(b2dof) != 0:
+            m2Rot = qGlobal[b2dof[[3,4]]]
+        else:
+            m2Rot = [0.,0.]
+            
+        return np.hstack((m1Pos - m2Pos, m1Rot - m2Rot))
+    
+    def evaluateJacobian(self, y):
+        n_la = self.n_la
+        jaco = np.zeros((n_la,len(y)))
+        b1dof = self.body1.globalDof
+        b2dof = self.body2.globalDof
+        
+        a = y[b1dof[3]]
+        b = y[b1dof[4]]
+        c = y[b1dof[5]]
+        
+        rm1 = self.marker1.position
+              
+        drhoda = hf.cardanRotationMatrixDerivative(y[b1dof[3:]],0).dot(rm1)
+        drhodb = hf.cardanRotationMatrixDerivative(y[b1dof[3:]],1).dot(rm1)
+        drhodc = hf.cardanRotationMatrixDerivative(y[b1dof[3:]],2).dot(rm1)     
+        
+        DRHO = np.vstack((drhoda,drhodb,drhodc)).transpose()
+        
+        I = np.diag([1.0]*n_la)
+        
+        jaco[:,b1dof[:-1]] = I
+        jaco[0:3,3:6] += DRHO
+        if len(b2dof) != 0:
+            rm2 = self.marker2.position
+                  
+            drhoda = hf.cardanRotationMatrixDerivative(y[self.body2.globalDof[3:]],0).dot(rm2)
+            drhodb = hf.cardanRotationMatrixDerivative(y[self.body2.globalDof[3:]],1).dot(rm2)
+            drhodc = hf.cardanRotationMatrixDerivative(y[self.body2.globalDof[3:]],2).dot(rm2)
+            
+            DRHO = np.vstack((drhoda,drhodb,drhodc)).transpose()
+            
+            
+            jaco[0:3,b2dof[3:6]] -= DRHO
+            jaco[:,b2dof[:-1]] = -I
+            
+        return jaco
+
+class nodeEncastreToRigidBody(constraint):
+    def __init__(self,name_,flexBody, rigidBody, nodeMarker, rigidMarker):
+        super().__init__(name_)
+        self.type = 'Node encastre'
+        self.connect(flexBody,
+                     rigidBody,
+                     nodeMarker,
+                     rigidMarker)
+        self.dofB1 = self.marker1.parent.globalDof
+        self.dofB2 = self.body2.globalDof
+        self.n_la = 9
+        
+    def evaluatePositionConstraintFunction(self, t, y, tDof):
+        qGlobal = y[:tDof]
+        b1dof = np.array(self.body1.globalDof)
+        b2dof = self.body2.globalDof
+        myNode = self.marker1.parent
+        
+        # translation constraint
+        if len(b2dof) > 0:
+            R2 = hf.cardanRotationMatrix(qGlobal[b2dof[3:]])
+            p2 = qGlobal[b2dof[:3]] + R2.dot(self.marker2.position)
+        else:
+            p2 = np.zeros(3)
+            R2 = np.eye(3)
+        
+        qTotal1 = qGlobal[b1dof[myNode.globalDof]] + myNode.q0
+        p1 = qTotal1[:3]
+        
+        
+        # rotation constraint
+        # e12 = hf.unitaryVector(qTotal1[3:6])[0]
+        # e13 = hf.unitaryVector(qTotal1[6:9])[0]
+        e12 = qTotal1[3:6]
+        e13 = qTotal1[6:9]
+                
+        g = np.hstack((p1 - p2,   # difference in position
+                        e12 - R2.transpose()[1], # difference in orientation vector 1
+                        e13 - R2.transpose()[2]))# difference in orientation vector 2
+        
+        return g
+    
+    def evaluateJacobian(self, y):
+        n_la = self.n_la
+        jaco = np.zeros((n_la,len(y)))
+        
+        b1dof = np.array(self.body1.globalDof)
+        b2dof = np.array(self.body2.globalDof)
+        myNode = self.marker1.parent
+        
+        I = np.eye(n_la)
+        
+        jaco[:,b1dof[myNode.globalDof]] = I
+        if len(b2dof) > 0:
+            y2 = y[b2dof[3:]]
+            
+            dR2da = hf.cardanRotationMatrixDerivative(y2,0)
+            dR2db = hf.cardanRotationMatrixDerivative(y2,1)
+            dR2dc = hf.cardanRotationMatrixDerivative(y2,2)
+            
+            jaco[:3,b2dof[:3]] = - np.eye(3)
+            jaco[3:,b2dof[3]] = - dR2da.transpose().flatten()[3:]
+            jaco[3:,b2dof[4]] = - dR2db.transpose().flatten()[3:]
+            jaco[3:,b2dof[5]] = - dR2dc.transpose().flatten()[3:]
+        
+        return jaco
+    
+class nodeBallJointToRigidBody(constraint):
+    def __init__(self,name_,flexBody, rigidBody, nodeMarker, rigidMarker):
+        super().__init__(name_)
+        self.type = 'Node ball joint'
+        self.connect(flexBody,
+                     rigidBody,
+                     nodeMarker,
+                     rigidMarker)
+        self.dofB1 = self.marker1.parent.globalDof[:3]
+        self.dofB2 = self.body2.globalDof[:3]
+        self.n_la = 3
+        
+    def evaluatePositionConstraintFunction(self, t, y, tDof):
+        qGlobal = y[:tDof]
+        b1dof = np.array(self.body1.globalDof)
+        b2dof = self.body2.globalDof
+        myNode = self.marker1.parent
+        
+        # translation constraint
+        if len(b2dof) > 0:
+            R2 = hf.cardanRotationMatrix(qGlobal[b2dof[3:]])
+            p2 = qGlobal[b2dof[:3]] + R2.dot(self.marker2.position)
+        else:
+            p2 = np.zeros(3)
+            R2 = np.eye(3)
+        
+        qTotal1 = qGlobal[b1dof[myNode.globalDof]] + myNode.q0
+        p1 = qTotal1[:3]
+        
+        g = p1 - p2
+        
+        return g
+    
+    def evaluateJacobian(self, y):
+        n_la = self.n_la
+        jaco = np.zeros((n_la,len(y)))
+        
+        b1dof = np.array(self.body1.globalDof)
+        b2dof = np.array(self.body2.globalDof)
+        myNode = self.marker1.parent
+        
+        I = np.eye(n_la)
+        
+        jaco[:,b1dof[myNode.globalDof[:3]]] = I
+        if len(b2dof) > 0:            
+            jaco[:3,b2dof[:3]] = - np.eye(3)
+        
+        return jaco
+        
         
             
             
