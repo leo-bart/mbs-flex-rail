@@ -83,9 +83,6 @@ class MultibodySystem(Mechanical_System):
         
     def forces(self,t,p,v):
         f = np.zeros(self.totalDof)
-        
-        for fc in self.forceList:
-            f += fc.evaluateForceFunction(t,p,v,fc.marker1,fc.marker2)
             
         for bdy in self.bodies[1:]:  # first body is ground
             # rigid body weight
@@ -94,11 +91,15 @@ class MultibodySystem(Mechanical_System):
             
             # flexible body nodal forces
             if bdy.type == 'Flexible body':
-                bdy.updateDisplacements(p[bdy.globalDof])
-                f[bdy.globalDof] -= bdy.assembleElasticForceVector().squeeze()
                 bdy.updateDisplacements(v[bdy.globalDof])
                 f[bdy.globalDof] -= 0.002 * bdy.assembleElasticForceVector().squeeze()
+                bdy.updateDisplacements(p[bdy.globalDof])
+                f[bdy.globalDof] -= bdy.assembleElasticForceVector().squeeze()
+                
                 f[bdy.globalDof] += bdy.assembleWeightVector(g = self.gravity).squeeze()
+            
+            for fc in self.forceList:
+                f += fc.evaluateForceFunction(t,p,v,fc.marker1,fc.marker2)
                 
         
         return f

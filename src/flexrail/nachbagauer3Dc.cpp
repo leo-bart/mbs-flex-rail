@@ -23862,9 +23862,9 @@ static PyObject *__pyx_pf_14nachbagauer3Dc_19railANCF3Dquadratic_10shapeFunction
     /* "nachbagauer3Dc.pyx":1387
  * 
  *                 # derivative wrt eta
- *                 dS_view[i+3,i+3] = -xi_*(-1+xi_)/2             # <<<<<<<<<<<<<<
- *                 dS_view[i+3,i+12] = -(1-xi_*xi_)
- *                 dS_view[i+3,i+21] = -xi_*(1+xi_)/2
+ *                 dS_view[i+3,i+3] = xi_*(-1+xi_)/2             # <<<<<<<<<<<<<<
+ *                 dS_view[i+3,i+12] = (1-xi_*xi_)
+ *                 dS_view[i+3,i+21] = xi_*(1+xi_)/2
  */
     __pyx_t_10 = (__pyx_v_i + 3);
     __pyx_t_9 = (__pyx_v_i + 3);
@@ -23881,13 +23881,13 @@ static PyObject *__pyx_pf_14nachbagauer3Dc_19railANCF3Dquadratic_10shapeFunction
       __Pyx_RaiseBufferIndexError(__pyx_t_11);
       __PYX_ERR(0, 1387, __pyx_L1_error)
     }
-    *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_dS_view.data + __pyx_t_10 * __pyx_v_dS_view.strides[0]) ) + __pyx_t_9 * __pyx_v_dS_view.strides[1]) )) = (((-__pyx_v_xi_) * (-1.0 + __pyx_v_xi_)) / 2.0);
+    *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_dS_view.data + __pyx_t_10 * __pyx_v_dS_view.strides[0]) ) + __pyx_t_9 * __pyx_v_dS_view.strides[1]) )) = ((__pyx_v_xi_ * (-1.0 + __pyx_v_xi_)) / 2.0);
 
     /* "nachbagauer3Dc.pyx":1388
  *                 # derivative wrt eta
- *                 dS_view[i+3,i+3] = -xi_*(-1+xi_)/2
- *                 dS_view[i+3,i+12] = -(1-xi_*xi_)             # <<<<<<<<<<<<<<
- *                 dS_view[i+3,i+21] = -xi_*(1+xi_)/2
+ *                 dS_view[i+3,i+3] = xi_*(-1+xi_)/2
+ *                 dS_view[i+3,i+12] = (1-xi_*xi_)             # <<<<<<<<<<<<<<
+ *                 dS_view[i+3,i+21] = xi_*(1+xi_)/2
  * 
  */
     __pyx_t_9 = (__pyx_v_i + 3);
@@ -23905,12 +23905,12 @@ static PyObject *__pyx_pf_14nachbagauer3Dc_19railANCF3Dquadratic_10shapeFunction
       __Pyx_RaiseBufferIndexError(__pyx_t_11);
       __PYX_ERR(0, 1388, __pyx_L1_error)
     }
-    *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_dS_view.data + __pyx_t_9 * __pyx_v_dS_view.strides[0]) ) + __pyx_t_10 * __pyx_v_dS_view.strides[1]) )) = (-(1.0 - (__pyx_v_xi_ * __pyx_v_xi_)));
+    *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_dS_view.data + __pyx_t_9 * __pyx_v_dS_view.strides[0]) ) + __pyx_t_10 * __pyx_v_dS_view.strides[1]) )) = (1.0 - (__pyx_v_xi_ * __pyx_v_xi_));
 
     /* "nachbagauer3Dc.pyx":1389
- *                 dS_view[i+3,i+3] = -xi_*(-1+xi_)/2
- *                 dS_view[i+3,i+12] = -(1-xi_*xi_)
- *                 dS_view[i+3,i+21] = -xi_*(1+xi_)/2             # <<<<<<<<<<<<<<
+ *                 dS_view[i+3,i+3] = xi_*(-1+xi_)/2
+ *                 dS_view[i+3,i+12] = (1-xi_*xi_)
+ *                 dS_view[i+3,i+21] = xi_*(1+xi_)/2             # <<<<<<<<<<<<<<
  * 
  *                 # derivative wrt xeta
  */
@@ -23929,7 +23929,7 @@ static PyObject *__pyx_pf_14nachbagauer3Dc_19railANCF3Dquadratic_10shapeFunction
       __Pyx_RaiseBufferIndexError(__pyx_t_11);
       __PYX_ERR(0, 1389, __pyx_L1_error)
     }
-    *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_dS_view.data + __pyx_t_10 * __pyx_v_dS_view.strides[0]) ) + __pyx_t_9 * __pyx_v_dS_view.strides[1]) )) = (((-__pyx_v_xi_) * (1.0 + __pyx_v_xi_)) / 2.0);
+    *((double *) ( /* dim=1 */ (( /* dim=0 */ (__pyx_v_dS_view.data + __pyx_t_10 * __pyx_v_dS_view.strides[0]) ) + __pyx_t_9 * __pyx_v_dS_view.strides[1]) )) = ((__pyx_v_xi_ * (1.0 + __pyx_v_xi_)) / 2.0);
 
     /* "nachbagauer3Dc.pyx":1392
  * 

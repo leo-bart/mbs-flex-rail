@@ -68,7 +68,8 @@ wheel = rigidBody('Wheel',)
 I = (2/5 * 16 * 0.1 ** 3) * np.eye(3)
 wheel.setMass(16.0)
 wheel.setInertiaTensor(0.1*I)
-wheel.setPositionInitialConditions(0,totalLength)
+wheel.setPositionInitialConditions(0,totalLength - 0.25)
+wheel.setPositionInitialConditions(1,0.09287)
 
 '''
 Sleepers
@@ -85,6 +86,94 @@ def slpForce(t,p,v,m1,m2):
     return -f
 
 sleeper1.setForceFunction(slpForce)
+
+'''
+Contact
+'''
+
+contact = MBS.force('Contact wheel to rail')
+contact.connect(rail,wheel)
+
+def cForce(t,p,v,m1,m2):
+    pWheel = p[wheel.globalDof[:3]]
+    railDof = np.array(rail.globalDof)
+    
+    def mapToLocalCoords(ele, point, tol = 1e-5):
+        '''
+        Maps a global point P into local coordinates
+
+        Parameters
+        ----------
+        double[ : ] point
+            global coordinates of a point that is to be mapped locally.
+
+        Returns
+        -------
+        localP : array
+            local coordinates of the point.
+
+        '''
+        
+        if not ele.isPointOnMe(point):
+            print('Error: specified point is not inside the bounding box of this element')
+            return 0
+        
+        
+        # initialize local variables
+        maxiter = 20
+        
+        L = totalLength/nel
+        H = 0.18575
+        W = 6*0.0254
+        
+        xi_view = np.zeros(3)
+        dxi = xi_view
+        p = np.array(point)
+        
+        for i in range(maxiter):
+            xi_view += dxi
+                       
+            rn = ele.interpolatePosition(xi_view[0],xi_view[1],xi_view[2])
+            res = p - rn
+            if np.all(np.abs(res)<tol):
+                break
+
+            J_view = ele.getJacobian(xi_view[0],xi_view[1],xi_view[2]).reshape(3,-1)
+            # scaling factors:
+            J_view[0] *= L/2
+            J_view[1] *= H/2
+            J_view[2] *= W/2
+            
+            dxi = np.linalg.solve(J_view,res)
+        
+        
+        return xi_view
+    
+    isit = rail.findElement(pWheel)
+    
+    f = np.zeros_like(p)
+    if isit >= 0:
+        contactElement = rail.elementList[isit]
+        #localXi = contactElement.mapToLocalCoords(pWheel)
+        localXi = mapToLocalCoords(contactElement,pWheel)
+        
+        pRail = contactElement.interpolatePosition(localXi[0],1,localXi[2])
+        
+        gap = pWheel-pRail
+        
+        if gap[1] < 0:
+        
+            contactForce = np.array([0,1.0,0.0]) * gap[1] * 1200e6
+            #print(contactForce)
+            
+            f[railDof[contactElement.globalDof]] +=  np.dot(contactForce, contactElement.shapeFunctionMatrix(localXi[0],1,localXi[2]))
+        
+            f[wheel.globalDof[:3]] -= contactForce
+    return f
+
+contact.setForceFunction(cForce)
+    
+    
     
 
 
@@ -96,10 +185,11 @@ mbs.addBody([rail,wheel])
 fix = MBS.nodeEncastreToRigidBody('Encastre', rail, mbs.ground, rail.elementList[0].nodes[0].marker, mbs.ground.markers[0])
 fix2 = MBS.nodeBallJointToRigidBody('Fix ball', rail, wheel, rail.elementList[-1].nodes[-1].marker, wheel.markers[0])
 
-#mbs.addConstraint(fix)
-mbs.addConstraint(fix2)
+mbs.addConstraint(fix)
+#mbs.addConstraint(fix2)
 
 mbs.addForce(sleeper1)
+mbs.addForce(contact)
 
 mbs.setupSystem()
 mbs.GT(np.zeros(2*mbs.n_p + mbs.n_la))
@@ -159,22 +249,22 @@ from matplotlib.animation import FuncAnimation
 fig, ax = plt.subplots()
 xdata, ydata = [], []
 ln, = plt.plot([], [], 'r')
+ln2, = plt.plot([], [], 'o')
 plt.title('')
 
 def init():
-    ax.set_xlim(0, totalLength)
-    ax.set_ylim(-1e-3, 2.5e-4)
-    return ln,
+    ax.set_xlim(0, 1.1*totalLength)
+    ax.set_ylim(0.05, 0.15)
 
 def update(frame):
     
     rail.updateDisplacements(rail.simQ[frame])
-    a = rail.plotPositions(5)
+    a = rail.plotPositions(8)
     xdata = a[:,0]
-    ydata = a[:,1]
+    ydata = a[:,1] + 0.092875
     ln.set_data(xdata, ydata)
+    ln2.set_data(wheel.simQ[frame,0],wheel.simQ[frame,1])
     ax.set_title('t = {:.4f} s'.format(t[frame]))
-    return ln,
 
-ani = FuncAnimation(fig, update, frames=[x for x in range(0,len(t),500)],
+ani = FuncAnimation(fig, update, frames=[x for x in range(0,len(t),250)],
                     init_func=init, blit=False, save_count=1)

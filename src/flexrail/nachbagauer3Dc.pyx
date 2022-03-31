@@ -1384,9 +1384,9 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
                 dS_view[i,i+24] = s3*zeta
                 
                 # derivative wrt eta
-                dS_view[i+3,i+3] = -xi_*(-1+xi_)/2
-                dS_view[i+3,i+12] = -(1-xi_*xi_)
-                dS_view[i+3,i+21] = -xi_*(1+xi_)/2
+                dS_view[i+3,i+3] = xi_*(-1+xi_)/2
+                dS_view[i+3,i+12] = (1-xi_*xi_)
+                dS_view[i+3,i+21] = xi_*(1+xi_)/2
                 
                 # derivative wrt xeta
                 dS_view[i+6,i+6] = dS_view[i+3,i+3]
