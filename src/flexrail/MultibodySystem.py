@@ -85,9 +85,12 @@ class MultibodySystem(Mechanical_System):
         f = np.zeros(self.totalDof)
             
         for bdy in self.bodies[1:]:  # first body is ground
-            # rigid body weight
+            # rigid body weight and inertia forces
             if bdy.type == 'Rigid body':
+                # weight
                 f[bdy.globalDof[:3]] += bdy.mass * self.gravity 
+                # inertia force (minus sign because belongs to lhs)
+                f[bdy.globalDof[3:]] -= bdy.hVector(v[bdy.globalDof[3:]])
             
             # flexible body nodal forces
             if bdy.type == 'Flexible body':
@@ -98,9 +101,8 @@ class MultibodySystem(Mechanical_System):
                 
                 f[bdy.globalDof] += bdy.assembleWeightVector(g = self.gravity).squeeze()
             
-            for fc in self.forceList:
-                f += fc.evaluateForceFunction(t,p,v,fc.marker1,fc.marker2)
-                
+        for fc in self.forceList:
+            f += fc.evaluateForceFunction(t,p,v,fc.marker1,fc.marker2)
         
         return f
     
@@ -158,18 +160,23 @@ class MultibodySystem(Mechanical_System):
         velo = pvec[:,self.n_p:2*self.n_p]
         lamb = pvec[:,2*self.n_p:]
         
-        for b in self.bodies[1:]:
-            b.simQ = posi[:,b.globalDof]
-            b.simU = velo[:,b.globalDof]
-        
+        constForces = []
         forces = []
         for i in range(len(tvec)):
             GT = self.GT(posi[i])
-            forces.append(GT.dot(lamb[i]))
+            constForces.append(GT.dot(lamb[i]))
+            #forces.append(self.forces(tvec[i],posi[i],velo[i]))
             
-        forces = np.array(forces)
+        constForces = np.array(constForces)
         for cst  in self.constraintList:
-            cst.simLam = forces[:,cst.body1.globalDof]
+            cst.simLam = constForces[:,cst.body1.globalDof]
+        
+        forces = np.array(forces)    
+        for b in self.bodies[1:]:
+            myGlobalDofs = b.globalDof
+            b.simQ = posi[:,myGlobalDofs]
+            b.simU = velo[:,myGlobalDofs]
+            #b.simF = forces[:,myGlobalDofs]
             
 class marker(object):
     '''
@@ -630,7 +637,7 @@ class nodeEncastreToRigidBody(constraint):
             R2 = hf.cardanRotationMatrix(qGlobal[b2dof[3:]])
             p2 = qGlobal[b2dof[:3]] + R2.dot(self.marker2.position)
         else:
-            p2 = np.zeros(3)
+            p2 = self.marker2.position
             R2 = np.eye(3)
         
         qTotal1 = qGlobal[b1dof[myNode.globalDof]] + myNode.q0

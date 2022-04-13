@@ -10,7 +10,7 @@ from sympy import symbols, Matrix, cos, sin, diff
 a,b,c = symbols(['a','b','c'])
 
 Ra = Matrix([[1,0,0],[0,cos(a),-sin(a)],[0,sin(a),cos(a)]])
-Rb = Matrix([[cos(b),0,-sin(b)],[0,1,0],[sin(b),0,cos(b)]])
+Rb = Matrix([[cos(b),0,sin(b)],[0,1,0],[-sin(b),0,cos(b)]])
 Rc = Matrix([[cos(c),-sin(c),0],[sin(c),cos(c),0],[0,0,1]])
 
 # rotation in x and y only

@@ -178,7 +178,7 @@ cpdef cardanRotationMatrix(double[:] anglesInRad):
         return np.array(singleRotationMatrix(c,2))
     elif a == c == 0.:
         # rotation around y
-        return np.array(singleRotationMatrix(b,1))
+        return np.array(singleRotationMatrix(-b,1))
     elif a == 0.:
         # rotation around y and z
         cb = np.cos(b)
@@ -186,9 +186,9 @@ cpdef cardanRotationMatrix(double[:] anglesInRad):
         cc = np.cos(c)
         sc = np.sin(c)
         return np.array([
-            [cb*cc, -sc, -sb*cc],
-            [sc*cb,  cc, -sb*sc],
-            [sb,    0.0, cb    ]
+            [cb*cc, -sc, sb*cc],
+            [sc*cb,  cc, sb*sc],
+            [-sb,    0.0, cb   ]
             ])
     elif b == 0.:
         # rotation around x and z
@@ -208,9 +208,9 @@ cpdef cardanRotationMatrix(double[:] anglesInRad):
         cb = np.cos(b)
         sb = np.sin(b)
         return np.array([
-            [cb, -sa*sb, -sb*ca],
+            [cb, sa*sb, sb*ca],
             [0.,     ca,    -sa],
-            [sb,  sa*cb,  ca*cb]
+            [-sb, sa*cb,  ca*cb]
             ])
     else:
         # all rotations
@@ -218,9 +218,9 @@ cpdef cardanRotationMatrix(double[:] anglesInRad):
         cb, sb = np.cos(b), np.sin(b)
         cc, sc = np.cos(c), np.sin(c)
         return np.array([
-            [cb*cc, -sa*sb*cc - sb*ca,  sa*sb - sb*ca*cc],
-            [sb*cb, -sa*sb*sb + ca*cc, -sa*cc - sb*sb*ca],
-            [   sb,             sa*cb,             ca*cb]
+            [cb*cc, sa*sb*cc - sc*ca,  sa*sc + sb*ca*cc],
+            [sc*cb, sa*sb*sc + ca*cc, -sa*cc + sb*sc*ca],
+            [   -sb,             sa*cb,             ca*cb]
             ])
 
 
@@ -260,6 +260,25 @@ cpdef cardanRotationMatrixDerivative(double[:] anglesInRad, long derAxis):
             R.append(np.array(singleRotationMatrix(anglesInRad[i],i)))
             
     return R[2].dot(R[1].dot(R[0]))
+
+
+cpdef skew(double [:] vec):
+    '''
+    Returns the skew symmetric matrix associated to the vector
+    
+    Parameters
+    ----------
+    vec : array of 3 doubles
+        THe input vector
+    
+    Returns
+    -------
+    skew : np.array of size 3x3
+        The skew symmetric matrix associated to the vector
+    '''
+    return np.array([[0.0,-vec[2],vec[1]],
+                     [vec[2],0,-vec[0]],
+                     [-vec[1],vec[0],0.0]])
             
         
 if __name__ == "__main__":

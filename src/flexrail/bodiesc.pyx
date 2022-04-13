@@ -11,6 +11,7 @@ Classes to use with Multibody System as bodies
 import numpy as np
 import matplotlib.pyplot as plt
 import MultibodySystem as mbs
+import helper_funcs as hf
 
 cdef class body(object):
     
@@ -19,9 +20,9 @@ cdef class body(object):
     cdef double mass
     cdef double[:,:] massMatrix
     cdef double[:] q0, u0
-    cdef double[:,:] simQ, simU
+    cdef double[:,:] simQ, simU, simF
     cdef public list globalDof
-    cdef list markers
+    cdef list markers, profiles
     
     def __init__(self,name_,numberOfDof=0):
         self.name = name_
@@ -31,6 +32,7 @@ cdef class body(object):
         self.u0 = np.zeros(self.totalDof, dtype=np.float64)
         self.globalDof = []
         self.markers = []
+        self.profiles = []
     
     @property
     def name(self):
@@ -43,6 +45,10 @@ cdef class body(object):
     @property
     def markers(self):
         return self.markers
+    
+    @property
+    def profiles(self):
+        return self.profiles
     
     @property 
     def mass(self):
@@ -104,6 +110,27 @@ cdef class body(object):
         mrk.setParent(self)
         
         return mrk
+    
+    def addProfile(self, prof):
+        '''
+        Adds a profile to the body
+
+        Parameters
+        ----------
+        prof : profile
+            The profile to be added.
+
+        Returns
+        -------
+        prof : profile
+            The profile that has been added. It is returned to be used in other
+            parts of the code, if needed.
+
+        '''
+        self.profiles.append(prof)
+        prof.setParent(self)
+        
+        return prof
     
     def setPositionInitialConditions(self,*args):
         '''
@@ -223,6 +250,36 @@ cdef class rigidBody(body):
             self.massMatrix = mMatrix
         else:
             print('Error in inertia attribution. Need a 3x3 tensor.')
+    
+    def hVector(self, angDer):
+        '''
+        Gets the nonlinear angular acceleration forces
+
+        Parameters
+        ----------
+        angVelo : array of three doubles
+            caculated derivatie of the Cardan angles
+
+        Returns
+        -------
+        h : array of three doubles
+            inertial forces vector
+
+        '''
+        cdef double cosa = np.cos(angDer[0])
+        cdef double sina = np.sin(angDer[0])
+        cdef double cosb = np.cos(angDer[1])
+        cdef double sinb = np.sin(angDer[1])
+        
+        omega = np.zeros(3)
+        omega[0] = angDer[0] + sinb*angDer[2]
+        omega[1] = cosa*angDer[1] - sina*cosb*angDer[2]
+        omega[2] = sina*angDer[1] + cosa*cosb*angDer[2]
+        
+        omtil = hf.skew(omega)
+        I = np.array(self.inertiaTensor)
+        
+        return omtil.dot(I.dot(omega))
             
             
     def info(self):
