@@ -364,8 +364,8 @@ if __name__=='__main__':
     w.offsetPoints(np.array([-0.138,0.48728]))
     
     ax = plt.gca()
-    w.plotMe(ax)
-    r.plotMe(ax)
+    #w.plotMe(ax)
+    #r.plotMe(ax)
     ax.axis('equal')
     
     wr = wheelRailContact()
@@ -374,8 +374,8 @@ if __name__=='__main__':
     
     pw,pr,iw,ir,n,g = wr.searchContactPoint()
     
-    ax.plot(*pw,'o')
-    ax.plot(*pr,'o')
+    #ax.plot(*pw,'o')
+    #ax.plot(*pr,'o')
     ax.quiver(pr[0],pr[1],*n)
     
     w.createConvexSubsets()

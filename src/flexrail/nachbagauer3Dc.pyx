@@ -420,6 +420,14 @@ cdef class beamANCFelement3D(object):
         return r
     
     
+    def interpolateVelocity(self,double xi_, double eta_, double zeta_):
+        """
+        Returns the interpolated velocity given the non-dimensional parameters
+        xi_, eta_, and zeta_ in [-1,1]
+        """
+        return self.shapeFunctionMatrix(xi_ ,eta_, zeta_).dot(self.u)
+    
+    
     
     def getJacobian(self, double xi_, double eta_, double zeta_, double [:] q = None):
         '''

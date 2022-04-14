@@ -95,11 +95,11 @@ class MultibodySystem(Mechanical_System):
             # flexible body nodal forces
             if bdy.type == 'Flexible body':
                 bdy.updateVelocities(v[bdy.globalDof])
-                f[bdy.globalDof] -= 0.002 * bdy.assembleElasticForceVector(True).squeeze()
                 bdy.updateDisplacements(p[bdy.globalDof])
-                f[bdy.globalDof] -= bdy.assembleElasticForceVector().squeeze()
                 
-                f[bdy.globalDof] += bdy.assembleWeightVector(g = self.gravity).squeeze()
+                f[bdy.globalDof] += bdy.assembleWeightVector(g = self.gravity).squeeze() \
+                    - 0.002 * bdy.assembleElasticForceVector(True).squeeze() \
+                    - bdy.assembleElasticForceVector().squeeze()
             
         for fc in self.forceList:
             f += fc.evaluateForceFunction(t,p,v,fc.marker1,fc.marker2)

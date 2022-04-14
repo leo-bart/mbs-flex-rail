@@ -527,16 +527,16 @@ cdef class flexibleBody(body):
         print('Added {0} elements to body ''{1:s}'''.format(len(element),self.name))
         
         
-    def plotPositions(self, int pointsPerElement = 5, bint show=False):
+    def plotPositions(self, int pointsPerElement = 5, bint show=False, eta = 0, zeta = 0):
         points = np.linspace(-1.,1.,pointsPerElement)
         
         xy = np.empty([0,self.dimensionality])
         
         for ele in self.elementList:
             for i in range(pointsPerElement-1):
-                xy = np.vstack([xy,ele.interpolatePosition(points[i],0,0)])
+                xy = np.vstack([xy,ele.interpolatePosition(points[i],eta,zeta)])
         #add last point
-        xy = np.vstack([xy,ele.interpolatePosition(points[-1],0,0)])
+        xy = np.vstack([xy,ele.interpolatePosition(points[-1],eta,zeta)])
                 
         if show:
             if self.dimensionality == 2:

@@ -1965,6 +1965,7 @@ static const char __pyx_k__42[] = "*";
 static const char __pyx_k_cog[] = "cog";
 static const char __pyx_k_cos[] = "cos";
 static const char __pyx_k_dot[] = "dot";
+static const char __pyx_k_eta[] = "eta";
 static const char __pyx_k_mbs[] = "mbs";
 static const char __pyx_k_new[] = "__new__";
 static const char __pyx_k_obj[] = "obj";
@@ -1992,6 +1993,7 @@ static const char __pyx_k_skew[] = "skew";
 static const char __pyx_k_step[] = "step";
 static const char __pyx_k_stop[] = "stop";
 static const char __pyx_k_test[] = "__test__";
+static const char __pyx_k_zeta[] = "zeta";
 static const char __pyx_k_ASCII[] = "ASCII";
 static const char __pyx_k_array[] = "array";
 static const char __pyx_k_class[] = "__class__";
@@ -2223,6 +2225,7 @@ static PyObject *__pyx_n_s_empty;
 static PyObject *__pyx_n_s_encode;
 static PyObject *__pyx_n_s_enumerate;
 static PyObject *__pyx_n_s_error;
+static PyObject *__pyx_n_s_eta;
 static PyObject *__pyx_n_s_figure;
 static PyObject *__pyx_n_s_flags;
 static PyObject *__pyx_n_s_flexibleBody;
@@ -2341,6 +2344,7 @@ static PyObject *__pyx_n_u_y;
 static PyObject *__pyx_n_s_ylabel;
 static PyObject *__pyx_n_u_z;
 static PyObject *__pyx_n_s_zeros;
+static PyObject *__pyx_n_s_zeta;
 static int __pyx_pf_7bodiesc_4body___init__(struct __pyx_obj_7bodiesc_body *__pyx_v_self, PyObject *__pyx_v_name_, PyObject *__pyx_v_numberOfDof); /* proto */
 static PyObject *__pyx_pf_7bodiesc_4body_4name___get__(struct __pyx_obj_7bodiesc_body *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7bodiesc_4body_4type___get__(struct __pyx_obj_7bodiesc_body *__pyx_v_self); /* proto */
@@ -2391,7 +2395,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_8getq(struct __pyx_obj_7bodies
 static PyObject *__pyx_pf_7bodiesc_12flexibleBody_10assembleWeightVector(struct __pyx_obj_7bodiesc_flexibleBody *__pyx_v_self, PyObject *__pyx_v_g); /* proto */
 static PyObject *__pyx_pf_7bodiesc_12flexibleBody_12assembleTangentStiffnessMatrix(struct __pyx_obj_7bodiesc_flexibleBody *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_7bodiesc_12flexibleBody_14addElement(struct __pyx_obj_7bodiesc_flexibleBody *__pyx_v_self, PyObject *__pyx_v_element); /* proto */
-static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_obj_7bodiesc_flexibleBody *__pyx_v_self, int __pyx_v_pointsPerElement, int __pyx_v_show); /* proto */
+static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_obj_7bodiesc_flexibleBody *__pyx_v_self, int __pyx_v_pointsPerElement, int __pyx_v_show, PyObject *__pyx_v_eta, PyObject *__pyx_v_zeta); /* proto */
 static PyObject *__pyx_pf_7bodiesc_12flexibleBody_18updateDisplacements(struct __pyx_obj_7bodiesc_flexibleBody *__pyx_v_self, __Pyx_memviewslice __pyx_v_z); /* proto */
 static PyObject *__pyx_pf_7bodiesc_12flexibleBody_20updateVelocities(struct __pyx_obj_7bodiesc_flexibleBody *__pyx_v_self, __Pyx_memviewslice __pyx_v_zd); /* proto */
 static PyObject *__pyx_pf_7bodiesc_12flexibleBody_22totalStrainEnergy(struct __pyx_obj_7bodiesc_flexibleBody *__pyx_v_self); /* proto */
@@ -11359,7 +11363,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_14addElement(struct __pyx_obj_
 /* "bodiesc.pyx":530
  * 
  * 
- *     def plotPositions(self, int pointsPerElement = 5, bint show=False):             # <<<<<<<<<<<<<<
+ *     def plotPositions(self, int pointsPerElement = 5, bint show=False, eta = 0, zeta = 0):             # <<<<<<<<<<<<<<
  *         points = np.linspace(-1.,1.,pointsPerElement)
  * 
  */
@@ -11369,6 +11373,8 @@ static PyObject *__pyx_pw_7bodiesc_12flexibleBody_17plotPositions(PyObject *__py
 static PyObject *__pyx_pw_7bodiesc_12flexibleBody_17plotPositions(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   int __pyx_v_pointsPerElement;
   int __pyx_v_show;
+  PyObject *__pyx_v_eta = 0;
+  PyObject *__pyx_v_zeta = 0;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -11376,12 +11382,18 @@ static PyObject *__pyx_pw_7bodiesc_12flexibleBody_17plotPositions(PyObject *__py
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("plotPositions (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_pointsPerElement,&__pyx_n_s_show,0};
-    PyObject* values[2] = {0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_pointsPerElement,&__pyx_n_s_show,&__pyx_n_s_eta,&__pyx_n_s_zeta,0};
+    PyObject* values[4] = {0,0,0,0};
+    values[2] = ((PyObject *)__pyx_int_0);
+    values[3] = ((PyObject *)__pyx_int_0);
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
         CYTHON_FALLTHROUGH;
         case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
@@ -11402,12 +11414,28 @@ static PyObject *__pyx_pw_7bodiesc_12flexibleBody_17plotPositions(PyObject *__py
           PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_show);
           if (value) { values[1] = value; kw_args--; }
         }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (kw_args > 0) {
+          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_eta);
+          if (value) { values[2] = value; kw_args--; }
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (kw_args > 0) {
+          PyObject* value = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_zeta);
+          if (value) { values[3] = value; kw_args--; }
+        }
       }
       if (unlikely(kw_args > 0)) {
         if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "plotPositions") < 0)) __PYX_ERR(0, 530, __pyx_L3_error)
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
         CYTHON_FALLTHROUGH;
         case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
@@ -11426,23 +11454,25 @@ static PyObject *__pyx_pw_7bodiesc_12flexibleBody_17plotPositions(PyObject *__py
     } else {
       __pyx_v_show = ((int)0);
     }
+    __pyx_v_eta = values[2];
+    __pyx_v_zeta = values[3];
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("plotPositions", 0, 0, 2, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 530, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("plotPositions", 0, 0, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 530, __pyx_L3_error)
   __pyx_L3_error:;
   __Pyx_AddTraceback("bodiesc.flexibleBody.plotPositions", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_7bodiesc_12flexibleBody_16plotPositions(((struct __pyx_obj_7bodiesc_flexibleBody *)__pyx_v_self), __pyx_v_pointsPerElement, __pyx_v_show);
+  __pyx_r = __pyx_pf_7bodiesc_12flexibleBody_16plotPositions(((struct __pyx_obj_7bodiesc_flexibleBody *)__pyx_v_self), __pyx_v_pointsPerElement, __pyx_v_show, __pyx_v_eta, __pyx_v_zeta);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_obj_7bodiesc_flexibleBody *__pyx_v_self, int __pyx_v_pointsPerElement, int __pyx_v_show) {
+static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_obj_7bodiesc_flexibleBody *__pyx_v_self, int __pyx_v_pointsPerElement, int __pyx_v_show, PyObject *__pyx_v_eta, PyObject *__pyx_v_zeta) {
   PyObject *__pyx_v_points = NULL;
   PyObject *__pyx_v_xy = NULL;
   PyObject *__pyx_v_ele = NULL;
@@ -11471,7 +11501,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
 
   /* "bodiesc.pyx":531
  * 
- *     def plotPositions(self, int pointsPerElement = 5, bint show=False):
+ *     def plotPositions(self, int pointsPerElement = 5, bint show=False, eta = 0, zeta = 0):
  *         points = np.linspace(-1.,1.,pointsPerElement)             # <<<<<<<<<<<<<<
  * 
  *         xy = np.empty([0,self.dimensionality])
@@ -11582,7 +11612,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
  * 
  *         for ele in self.elementList:             # <<<<<<<<<<<<<<
  *             for i in range(pointsPerElement-1):
- *                 xy = np.vstack([xy,ele.interpolatePosition(points[i],0,0)])
+ *                 xy = np.vstack([xy,ele.interpolatePosition(points[i],eta,zeta)])
  */
   if (unlikely(__pyx_v_self->elementList == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "'NoneType' object is not iterable");
@@ -11604,7 +11634,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
  * 
  *         for ele in self.elementList:
  *             for i in range(pointsPerElement-1):             # <<<<<<<<<<<<<<
- *                 xy = np.vstack([xy,ele.interpolatePosition(points[i],0,0)])
+ *                 xy = np.vstack([xy,ele.interpolatePosition(points[i],eta,zeta)])
  *         #add last point
  */
     __pyx_t_8 = (__pyx_v_pointsPerElement - 1);
@@ -11615,9 +11645,9 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
       /* "bodiesc.pyx":537
  *         for ele in self.elementList:
  *             for i in range(pointsPerElement-1):
- *                 xy = np.vstack([xy,ele.interpolatePosition(points[i],0,0)])             # <<<<<<<<<<<<<<
+ *                 xy = np.vstack([xy,ele.interpolatePosition(points[i],eta,zeta)])             # <<<<<<<<<<<<<<
  *         #add last point
- *         xy = np.vstack([xy,ele.interpolatePosition(points[-1],0,0)])
+ *         xy = np.vstack([xy,ele.interpolatePosition(points[-1],eta,zeta)])
  */
       __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 537, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
@@ -11642,7 +11672,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
       }
       #if CYTHON_FAST_PYCALL
       if (PyFunction_Check(__pyx_t_4)) {
-        PyObject *__pyx_temp[4] = {__pyx_t_12, __pyx_t_11, __pyx_int_0, __pyx_int_0};
+        PyObject *__pyx_temp[4] = {__pyx_t_12, __pyx_t_11, __pyx_v_eta, __pyx_v_zeta};
         __pyx_t_2 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_5, 3+__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 537, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
         __Pyx_GOTREF(__pyx_t_2);
@@ -11651,7 +11681,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
       #endif
       #if CYTHON_FAST_PYCCALL
       if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
-        PyObject *__pyx_temp[4] = {__pyx_t_12, __pyx_t_11, __pyx_int_0, __pyx_int_0};
+        PyObject *__pyx_temp[4] = {__pyx_t_12, __pyx_t_11, __pyx_v_eta, __pyx_v_zeta};
         __pyx_t_2 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_5, 3+__pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 537, __pyx_L1_error)
         __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
         __Pyx_GOTREF(__pyx_t_2);
@@ -11666,12 +11696,12 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
         }
         __Pyx_GIVEREF(__pyx_t_11);
         PyTuple_SET_ITEM(__pyx_t_13, 0+__pyx_t_5, __pyx_t_11);
-        __Pyx_INCREF(__pyx_int_0);
-        __Pyx_GIVEREF(__pyx_int_0);
-        PyTuple_SET_ITEM(__pyx_t_13, 1+__pyx_t_5, __pyx_int_0);
-        __Pyx_INCREF(__pyx_int_0);
-        __Pyx_GIVEREF(__pyx_int_0);
-        PyTuple_SET_ITEM(__pyx_t_13, 2+__pyx_t_5, __pyx_int_0);
+        __Pyx_INCREF(__pyx_v_eta);
+        __Pyx_GIVEREF(__pyx_v_eta);
+        PyTuple_SET_ITEM(__pyx_t_13, 1+__pyx_t_5, __pyx_v_eta);
+        __Pyx_INCREF(__pyx_v_zeta);
+        __Pyx_GIVEREF(__pyx_v_zeta);
+        PyTuple_SET_ITEM(__pyx_t_13, 2+__pyx_t_5, __pyx_v_zeta);
         __pyx_t_11 = 0;
         __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_13, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 537, __pyx_L1_error)
         __Pyx_GOTREF(__pyx_t_2);
@@ -11711,15 +11741,15 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
  * 
  *         for ele in self.elementList:             # <<<<<<<<<<<<<<
  *             for i in range(pointsPerElement-1):
- *                 xy = np.vstack([xy,ele.interpolatePosition(points[i],0,0)])
+ *                 xy = np.vstack([xy,ele.interpolatePosition(points[i],eta,zeta)])
  */
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "bodiesc.pyx":539
- *                 xy = np.vstack([xy,ele.interpolatePosition(points[i],0,0)])
+ *                 xy = np.vstack([xy,ele.interpolatePosition(points[i],eta,zeta)])
  *         #add last point
- *         xy = np.vstack([xy,ele.interpolatePosition(points[-1],0,0)])             # <<<<<<<<<<<<<<
+ *         xy = np.vstack([xy,ele.interpolatePosition(points[-1],eta,zeta)])             # <<<<<<<<<<<<<<
  * 
  *         if show:
  */
@@ -11747,7 +11777,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
   }
   #if CYTHON_FAST_PYCALL
   if (PyFunction_Check(__pyx_t_4)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_13, __pyx_t_2, __pyx_int_0, __pyx_int_0};
+    PyObject *__pyx_temp[4] = {__pyx_t_13, __pyx_t_2, __pyx_v_eta, __pyx_v_zeta};
     __pyx_t_6 = __Pyx_PyFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_5, 3+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 539, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
     __Pyx_GOTREF(__pyx_t_6);
@@ -11756,7 +11786,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
   #endif
   #if CYTHON_FAST_PYCCALL
   if (__Pyx_PyFastCFunction_Check(__pyx_t_4)) {
-    PyObject *__pyx_temp[4] = {__pyx_t_13, __pyx_t_2, __pyx_int_0, __pyx_int_0};
+    PyObject *__pyx_temp[4] = {__pyx_t_13, __pyx_t_2, __pyx_v_eta, __pyx_v_zeta};
     __pyx_t_6 = __Pyx_PyCFunction_FastCall(__pyx_t_4, __pyx_temp+1-__pyx_t_5, 3+__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 539, __pyx_L1_error)
     __Pyx_XDECREF(__pyx_t_13); __pyx_t_13 = 0;
     __Pyx_GOTREF(__pyx_t_6);
@@ -11771,12 +11801,12 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
     }
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_11, 0+__pyx_t_5, __pyx_t_2);
-    __Pyx_INCREF(__pyx_int_0);
-    __Pyx_GIVEREF(__pyx_int_0);
-    PyTuple_SET_ITEM(__pyx_t_11, 1+__pyx_t_5, __pyx_int_0);
-    __Pyx_INCREF(__pyx_int_0);
-    __Pyx_GIVEREF(__pyx_int_0);
-    PyTuple_SET_ITEM(__pyx_t_11, 2+__pyx_t_5, __pyx_int_0);
+    __Pyx_INCREF(__pyx_v_eta);
+    __Pyx_GIVEREF(__pyx_v_eta);
+    PyTuple_SET_ITEM(__pyx_t_11, 1+__pyx_t_5, __pyx_v_eta);
+    __Pyx_INCREF(__pyx_v_zeta);
+    __Pyx_GIVEREF(__pyx_v_zeta);
+    PyTuple_SET_ITEM(__pyx_t_11, 2+__pyx_t_5, __pyx_v_zeta);
     __pyx_t_2 = 0;
     __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_11, NULL); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 539, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_6);
@@ -11811,7 +11841,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
   __pyx_t_1 = 0;
 
   /* "bodiesc.pyx":541
- *         xy = np.vstack([xy,ele.interpolatePosition(points[-1],0,0)])
+ *         xy = np.vstack([xy,ele.interpolatePosition(points[-1],eta,zeta)])
  * 
  *         if show:             # <<<<<<<<<<<<<<
  *             if self.dimensionality == 2:
@@ -12265,7 +12295,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
     }
 
     /* "bodiesc.pyx":541
- *         xy = np.vstack([xy,ele.interpolatePosition(points[-1],0,0)])
+ *         xy = np.vstack([xy,ele.interpolatePosition(points[-1],eta,zeta)])
  * 
  *         if show:             # <<<<<<<<<<<<<<
  *             if self.dimensionality == 2:
@@ -12288,7 +12318,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_16plotPositions(struct __pyx_o
   /* "bodiesc.pyx":530
  * 
  * 
- *     def plotPositions(self, int pointsPerElement = 5, bint show=False):             # <<<<<<<<<<<<<<
+ *     def plotPositions(self, int pointsPerElement = 5, bint show=False, eta = 0, zeta = 0):             # <<<<<<<<<<<<<<
  *         points = np.linspace(-1.,1.,pointsPerElement)
  * 
  */
@@ -33495,6 +33525,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_encode, __pyx_k_encode, sizeof(__pyx_k_encode), 0, 0, 1, 1},
   {&__pyx_n_s_enumerate, __pyx_k_enumerate, sizeof(__pyx_k_enumerate), 0, 0, 1, 1},
   {&__pyx_n_s_error, __pyx_k_error, sizeof(__pyx_k_error), 0, 0, 1, 1},
+  {&__pyx_n_s_eta, __pyx_k_eta, sizeof(__pyx_k_eta), 0, 0, 1, 1},
   {&__pyx_n_s_figure, __pyx_k_figure, sizeof(__pyx_k_figure), 0, 0, 1, 1},
   {&__pyx_n_s_flags, __pyx_k_flags, sizeof(__pyx_k_flags), 0, 0, 1, 1},
   {&__pyx_n_s_flexibleBody, __pyx_k_flexibleBody, sizeof(__pyx_k_flexibleBody), 0, 0, 1, 1},
@@ -33613,6 +33644,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_ylabel, __pyx_k_ylabel, sizeof(__pyx_k_ylabel), 0, 0, 1, 1},
   {&__pyx_n_u_z, __pyx_k_z, sizeof(__pyx_k_z), 0, 1, 0, 1},
   {&__pyx_n_s_zeros, __pyx_k_zeros, sizeof(__pyx_k_zeros), 0, 0, 1, 1},
+  {&__pyx_n_s_zeta, __pyx_k_zeta, sizeof(__pyx_k_zeta), 0, 0, 1, 1},
   {0, 0, 0, 0, 0, 0, 0}
 };
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {

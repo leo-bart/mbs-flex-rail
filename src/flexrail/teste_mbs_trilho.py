@@ -137,8 +137,15 @@ def slpForce(t,p,v,m1,m2):
     ds = leftDist - rightDist
     dv = leftVelo - rightVelo
     
-    f[leftRail.globalDof[2::9]] = stiffness * (ds - leftDist + 0.02*dv)
-    f[rightRail.globalDof[2::9]] = - f[leftRail.globalDof[2::9]] + stiffness * rightDist
+    f[leftRail.globalDof[2::9]] = stiffness * (ds + 0.02*dv) + 1e6 * leftDist
+    f[rightRail.globalDof[2::9]] = stiffness * (- ds - 0.02*dv) + 1e6 * rightDist
+    
+    ## TODO: Rotation stiffness
+    leftY = p[leftRail.globalDof[4::9]]
+    leftZ = p[leftRail.globalDof[5::9]]
+    rightY = p[rightRail.globalDof[4::9]]
+    rightZ = p[rightRail.globalDof[5::9]]
+    
     
     
     return -f
@@ -152,9 +159,12 @@ forceWheel.connect(wheel,MBS.ground())
 def pullWheelset(t,p,v,m1,m2):
     w = m1.parent
     f = np.zeros_like(p)
+    wpos = p[w.globalDof]
     
     if t > 0.1:
         f[w.globalDof[0]] = 10
+    
+    f[w.globalDof[1:3]] = - wpos[1:3] * 1e3
         
     return f
 forceWheel.setForceFunction(pullWheelset)
@@ -229,7 +239,7 @@ mbs.addForce(sleeper1)
 #mbs.addForce(sleeper2)
 mbs.addForce(contactL)
 mbs.addForce(contactR)
-#mbs.addForce(forceWheel)
+mbs.addForce(forceWheel)
 
 mbs.setupSystem()
 
@@ -247,7 +257,7 @@ DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 10e2 # Hz
-finalTime = 6
+finalTime = 4.35
 
 #DAE.make_consistent('IDA_YA_YDP_INIT')
 
@@ -320,55 +330,44 @@ plt.title(mbs.name)
 ''' VPYTHON visuals '''
 import vpython as vp
 import convert_stl as stl
-scene = vp.canvas(width=1600,height=700,background=vp.color.gray(0.7),fov=0.001,
-                  forward = vp.vec(1,0,0))
-
-# w1 = vp.cylinder(axis = vp.vec(0,0,0.5*trackWidth), radius = 0.15)
-# w2 = w1.clone(axis = vp.vec(0,0,-0.5*trackWidth))
-# wheelRep = vp.compound([w1,w2])
-wheelRep = stl.stl_to_triangles('Rodeiro montado.stl')
-wheelRep.pos = vp.vec(*wheel.simQ[0,:3])
-wheelRep.rotate(angle=np.pi/2,axis=vp.vec(1,0,0))
-wheelRep.visible = True
-wheelRep.color = vp.color.cyan
-
-rail.updateDisplacements(rail.simQ[0])
-rail2.updateDisplacements(rail2.simQ[0])
-path = []
-for p in rail2.plotPositions():
-    path.append(vp.vec(*p))
-c2 = vp.curve(path, color=vp.color.blue, radius = 0.08)
-c1 = vp.curve(path, color=vp.color.green, radius = 0.08)
-crails = [c1,c2]    
+def run_animation():
+    scene = vp.canvas(width=1600,height=700,background=vp.color.gray(0.7),fov=0.001,
+                      forward = vp.vec(1,0,0))
     
-axisX = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.5,0,0), shaftwidth=0.01, color=vp.color.red)
-axisY = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.0,0.5,0), shaftwidth=0.01, color=vp.color.green)
-axisz = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.0,0,0.5), shaftwidth=0.01, color=vp.color.blue)
-
-run = False
-def Runbutton(b):
-    global run
-    if b.text == 'Pause':
-        run = False
-        b.text = 'Run'
-    else:
-        run = True
-        b.text = 'Pause'
-
-vp.button(text='Run', bind=Runbutton)
-
-
-vp.rate(500)
-for i in range(len(t)):
-    scene.title =  't = {} s'.format(t[i])
-    for n,r in enumerate([rail,rail2]):
-        r.updateDisplacements(r.simQ[i])
-        for j,p in enumerate(r.plotPositions()):
-            p[1] *= 100
-            crails[n].modify(j,vp.vec(*p))
-    wheelRep.pos.x = wheel.simQ[i,0]
-    wheelRep.pos.y = wheel.simQ[i,1]
-    wheelRep.pos.z = wheel.simQ[i,2]
-    wheelRep.rotate(angle=wheel.simU[i,3]/outFreq, axis=vp.vec(1,0,0))
-    wheelRep.rotate(angle=wheel.simU[i,4]/outFreq, axis=vp.vec(0,1,0))
-    wheelRep.rotate(angle=wheel.simU[i,5]/outFreq, axis=vp.vec(0,0,1))
+    # w1 = vp.cylinder(axis = vp.vec(0,0,0.5*trackWidth), radius = 0.15)
+    # w2 = w1.clone(axis = vp.vec(0,0,-0.5*trackWidth))
+    # wheelRep = vp.compound([w1,w2])
+    wheelRep = stl.stl_to_triangles('Rodeiro montado.stl')
+    wheelRep.pos = vp.vec(*wheel.simQ[0,:3])
+    wheelRep.rotate(angle=np.pi/2,axis=vp.vec(1,0,0))
+    wheelRep.visible = True
+    wheelRep.color = vp.color.cyan
+    
+    rail.updateDisplacements(rail.simQ[0])
+    rail2.updateDisplacements(rail2.simQ[0])
+    path = []
+    for p in rail2.plotPositions():
+        path.append(vp.vec(*p))
+    c2 = vp.curve(path, color=vp.color.blue, radius = 0.01)
+    c1 = vp.curve(path, color=vp.color.green, radius = 0.01)
+    crails = [c1,c2]    
+        
+    axisX = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.5,0,0), shaftwidth=0.01, color=vp.color.red)
+    axisY = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.0,0.5,0), shaftwidth=0.01, color=vp.color.green)
+    axisz = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.0,0,0.5), shaftwidth=0.01, color=vp.color.blue)    
+    
+    vp.rate(500)
+    for i in range(len(t)):
+        scene.title =  't = {} s'.format(t[i])
+        for n,r in enumerate([rail,rail2]):
+            r.updateDisplacements(r.simQ[i])
+            for j,p in enumerate(r.plotPositions(eta=1)):
+                crails[n].modify(j,vp.vec(*p))
+        wheelRep.pos.x = wheel.simQ[i,0]
+        wheelRep.pos.y = wheel.simQ[i,1]
+        wheelRep.pos.z = wheel.simQ[i,2]
+        wheelRep.rotate(angle=wheel.simU[i,3]/outFreq, axis=vp.vec(1,0,0))
+        wheelRep.rotate(angle=wheel.simU[i,4]/outFreq, axis=vp.vec(0,1,0))
+        wheelRep.rotate(angle=wheel.simU[i,5]/outFreq, axis=vp.vec(0,0,1))
+        
+run_animation()
