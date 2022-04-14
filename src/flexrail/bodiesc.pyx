@@ -362,6 +362,21 @@ cdef class flexibleBody(body):
         
         return np.array(q)
     
+    @property
+    def u(self):
+        cdef double [:] u, uel
+        cdef Py_ssize_t [:] eleDof_view     #memory view of element's global dof
+        cdef Py_ssize_t i
+        u = np.zeros(self.totalDof, dtype=np.float64)
+        
+        for ele in self.elementList:
+            uel = ele.u
+            eleDof_view = ele.globalDof
+            for i in range(uel.shape[0]):
+                u[eleDof_view[i]] = uel[i]
+        
+        return np.array(u)
+    
     
     @property
     def nonLinear(self):
@@ -404,7 +419,7 @@ cdef class flexibleBody(body):
         return M
     
     
-    def assembleElasticForceVector(self,int targetDof = -1):
+    def assembleElasticForceVector(self,bint veloc = False):
         
         Qe = np.zeros(self.totalDof)
         cdef double[:] Qe_view = Qe
@@ -417,15 +432,20 @@ cdef class flexibleBody(body):
             
             for elem in self.elementList:
                 if elem.changedStates:
-                    Qelem = elem.getNodalElasticForces()
+                    Qelem = elem.getNodalElasticForces(veloc)
                 else:
                     #Qelem = elem.nodalElasticForces
-                    Qelem = elem.getNodalElasticForces()
+                    Qelem = elem.getNodalElasticForces(veloc)
                 for i,dof in enumerate(elem.globalDof):
                     Qe_view[dof] += Qelem[i]
                     
         else:
-            Qe = np.array(self.stiffnessMatrix).dot(self.q)
+            if veloc:
+                # damping forces (needs to be scaled with damping factor)
+                Qe = np.array(self.stiffnessMatrix).dot(self.u)
+            else:
+                Qe = np.array(self.stiffnessMatrix).dot(self.q)
+                
             
         return Qe.reshape(-1,1)
     
@@ -563,6 +583,34 @@ com
                 for i in range(newq.shape[0]):
                     newq[i] = z[globDof_view[i]]
                 nd.q = newq
+            # finished cycling through nodes
+        
+    def updateVelocities(self, double [:] zd):
+        '''
+        Updates the velocities of the body nodes
+
+        Parameters
+        ----------
+        z : array like
+            New velocities of the nodes.
+
+        Returns
+        -------
+        None.
+        '''
+        
+        cdef Py_ssize_t i
+        cdef Py_ssize_t [:] globDof_view
+        cdef double[:] newu
+        
+        for ele in self.elementList:
+            # cycle through nodes
+            for nd in ele.nodes:
+                newu = nd.u
+                globDof_view = nd.globalDof
+                for i in range(newu.shape[0]):
+                    newu[i] = zd[globDof_view[i]]
+                nd.u = newu
             # finished cycling through nodes
             
 

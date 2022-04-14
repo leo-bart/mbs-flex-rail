@@ -94,8 +94,8 @@ class MultibodySystem(Mechanical_System):
             
             # flexible body nodal forces
             if bdy.type == 'Flexible body':
-                bdy.updateDisplacements(v[bdy.globalDof])
-                f[bdy.globalDof] -= 0.002 * bdy.assembleElasticForceVector().squeeze()
+                bdy.updateVelocities(v[bdy.globalDof])
+                f[bdy.globalDof] -= 0.002 * bdy.assembleElasticForceVector(True).squeeze()
                 bdy.updateDisplacements(p[bdy.globalDof])
                 f[bdy.globalDof] -= bdy.assembleElasticForceVector().squeeze()
                 

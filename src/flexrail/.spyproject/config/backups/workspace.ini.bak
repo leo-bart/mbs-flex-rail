@@ -4,7 +4,7 @@ save_data_on_exit = True
 save_history = True
 save_non_project_files = False
 project_type = 'empty-project-type'
-recent_files = ['setup.py', 'MultibodySystem.py', 'nachbagauer3Dc.pyx', 'teste_mbs_trilho.py', 'profiles.py', 'catmull-rom-spline.py', 'helper_funcs.pyx', 'rotation_matrix_calculations-sympy.py', 'bodiesc.pyx']
+recent_files = ['setup.py', 'MultibodySystem.py', 'nachbagauer3Dc.pyx', 'teste_mbs_trilho.py', 'profiles.py', 'helper_funcs.pyx', 'rotation_matrix_calculations-sympy.py', 'bodiesc.pyx', 'convert_stl.py']
 
 [main]
 version = 0.2.0

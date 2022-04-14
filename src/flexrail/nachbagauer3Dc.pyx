@@ -33,8 +33,9 @@ cdef public class node[object c_PyObj, type c_PyObj_t]:
     
     cdef double [9] q0
     cdef double [9] q
+    cdef double [9] u0
+    cdef double [9] u
     cdef long [9] globalDof
-    cdef double [9] qdot
     cdef public str name
     cdef object marker
     """
@@ -82,14 +83,24 @@ cdef public class node[object c_PyObj, type c_PyObj_t]:
         self.q0 = dofMatrix
         
     @property
-    def qdot(self):
+    def u(self):
         '''
-        nodal initial positions
+        nodal velocities
         '''
-        return np.array(self.qdot, dtype=np.float64)
-    @qdot.setter
-    def qdot(self,uMatrix):
-        self.qdot = uMatrix
+        return np.array(self.u, dtype=np.float64)
+    @u.setter
+    def u(self,uMatrix):
+        self.u = uMatrix
+        
+    @property
+    def u0(self):
+        '''
+        nodal initial velocities
+        '''
+        return np.array(self.u0, dtype=np.float64)
+    @u0.setter
+    def u0(self,uMatrix):
+        self.u0 = uMatrix
         
     @property
     def globalDof(self):
@@ -208,6 +219,15 @@ cdef class beamANCFelement3D(object):
             myq.extend(node.q)
             
         return np.array(myq, dtype=np.float64)
+    
+    @property
+    def u(self):
+        '''nodal velocities relative to global frame'''
+        myu = []
+        for node in self.nodes:
+            myu.extend(node.u)
+            
+        return np.array(myu, dtype=np.float64)
     
     @property
     def globalDof(self):
@@ -685,7 +705,7 @@ cdef class beamANCFelement3D(object):
     
     
    
-    def getNodalElasticForces(self,double [:] q = None):
+    def getNodalElasticForces(self,bint veloc = False):
         
         
         # beam geometry
@@ -695,7 +715,9 @@ cdef class beamANCFelement3D(object):
         
         # TODO correct changedStates calculation
    
-        if q == None:
+        if veloc:
+            q = self.u
+        else:
             q = self.qtotal
         
         # Gauss integration points

@@ -8,6 +8,7 @@ Created on Wed Mar 23 07:01:46 2022
 from nachbagauer3Dc import node, railANCF3Dquadratic, beamANCF3Dquadratic
 from materialsc import linearElasticMaterial
 from bodiesc import flexibleBody3D, rigidBody
+from profiles import planarProfile
 import MultibodySystem as MBS
 import numpy as np
 from assimulo.solvers import IDA, ODASSL
@@ -39,11 +40,11 @@ totalLength = 2 * nel * 0.58
 trackWidth = 1.0
 for i in range(nel+1):
     nq.append(node([totalLength * i/nel,0.0,-0.5*trackWidth,
-                   0.0,1.0,0.0,
-                   0.0,0.0,1.0]))
+                   0.0,0.99968765,0.02499219, #0.0,1.0,0.0,
+                   0.0,-0.02499219,0.9968765]))
     nq2.append(node([totalLength * i/nel,0.0,0.5*trackWidth,
-                     0.0,1.0,0.0,
-                     0.0,0.0,1.0]))
+                     0.0,0.99968765,-0.02499219,
+                     0.0,0.02499219,0.9968765]))
 
 
 eq = []
@@ -96,7 +97,7 @@ I = np.diag([1/12*wsmass*trackWidth**2,1/12*wsmass*trackWidth**2,1/2*wsmass*0.15
 wheel.setMass(wsmass)
 wheel.setInertiaTensor(I)
 wheel.setPositionInitialConditions(0,0.75)
-wheel.setPositionInitialConditions(1,0.092875 + 0.41)
+wheel.setPositionInitialConditions(1,0.092902 + 0.41)
 #wheel.setPositionInitialConditions(2,-0.5*trackWidth)
 
 '''
@@ -136,8 +137,8 @@ def slpForce(t,p,v,m1,m2):
     ds = leftDist - rightDist
     dv = leftVelo - rightVelo
     
-    f[leftRail.globalDof[2::9]] = stiffness * (ds + 0.02*dv)
-    f[rightRail.globalDof[2::9]] = - f[leftRail.globalDof[2::9]]
+    f[leftRail.globalDof[2::9]] = stiffness * (ds - leftDist + 0.02*dv)
+    f[rightRail.globalDof[2::9]] = - f[leftRail.globalDof[2::9]] + stiffness * rightDist
     
     
     return -f
@@ -157,6 +158,16 @@ def pullWheelset(t,p,v,m1,m2):
         
     return f
 forceWheel.setForceFunction(pullWheelset)
+
+'''
+Profiles
+'''
+rProf = planarProfile('rail', convPar=-1)
+rProf.setProfilePointsFromFile('../../tr68.dat')
+rProf.centerProfile()
+
+rail.addProfile(rProf)
+
 '''
 Contact
 '''
@@ -166,16 +177,15 @@ contactL.connect(rail,wheel,pt2=np.array([0.0,-0.41,-0.5*trackWidth]))
 contactR = MBS.force('Contact right wheel to rail')
 contactR.connect(rail2,wheel,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
 
-tempo = 0.
-
-
 
 def cForce(t,p,v,m1,m2):
     railBody = m1.parent
     wheelBody = m2.parent
     
-    Rwheel = hf.cardanRotationMatrix(p[wheelBody.globalDof[3:]])
-    rhoM2 = m2.position# Rwheel.dot(m2.position)
+    cardans = p[wheelBody.globalDof[3:]]
+    cardans[2] = 0
+    Rwheel = hf.cardanRotationMatrix(cardans)
+    rhoM2 = Rwheel.dot(m2.position)
     pWheel = p[wheelBody.globalDof[:3]] + rhoM2
     railDof = np.array(railBody.globalDof)
     
@@ -184,7 +194,6 @@ def cForce(t,p,v,m1,m2):
     
     f = np.zeros_like(p)
     if isit >= 0:
-        global tempo
         contactElement = railBody.elementList[isit]
         localXi = contactElement.mapToLocalCoords(pWheel)
         
@@ -220,7 +229,7 @@ mbs.addForce(sleeper1)
 #mbs.addForce(sleeper2)
 mbs.addForce(contactL)
 mbs.addForce(contactR)
-mbs.addForce(forceWheel)
+#mbs.addForce(forceWheel)
 
 mbs.setupSystem()
 
@@ -238,7 +247,7 @@ DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 10e2 # Hz
-finalTime = 1
+finalTime = 6
 
 #DAE.make_consistent('IDA_YA_YDP_INIT')
 
@@ -311,11 +320,12 @@ plt.title(mbs.name)
 ''' VPYTHON visuals '''
 import vpython as vp
 import convert_stl as stl
-scene = vp.canvas(width=1600,height=700,background=vp.color.gray(0.7),fov=0.001)
+scene = vp.canvas(width=1600,height=700,background=vp.color.gray(0.7),fov=0.001,
+                  forward = vp.vec(1,0,0))
 
-#w1 = vp.cylinder(axis = vp.vec(0,0,0.5*trackWidth), radius = 0.15)
-#w2 = w1.clone(axis = vp.vec(0,0,-0.5*trackWidth))
-#wheelRep = vp.compound([w1,w2])
+# w1 = vp.cylinder(axis = vp.vec(0,0,0.5*trackWidth), radius = 0.15)
+# w2 = w1.clone(axis = vp.vec(0,0,-0.5*trackWidth))
+# wheelRep = vp.compound([w1,w2])
 wheelRep = stl.stl_to_triangles('Rodeiro montado.stl')
 wheelRep.pos = vp.vec(*wheel.simQ[0,:3])
 wheelRep.rotate(angle=np.pi/2,axis=vp.vec(1,0,0))
@@ -347,19 +357,18 @@ def Runbutton(b):
 
 vp.button(text='Run', bind=Runbutton)
 
-while True:
-    vp.rate(1000)
-    if run:
-        for i in range(len(t)):
-            scene.title =  't = {} s'.format(t[i])
-            for n,r in enumerate([rail,rail2]):
-                r.updateDisplacements(r.simQ[i])
-                for j,p in enumerate(r.plotPositions()):
-                    p[1] *= 100
-                    crails[n].modify(j,vp.vec(*p))
-            wheelRep.pos.x = wheel.simQ[i,0]
-            wheelRep.pos.y = wheel.simQ[i,1]
-            wheelRep.pos.z = wheel.simQ[i,2]
-            wheelRep.rotate(angle=wheel.simU[i,3]/outFreq, axis=vp.vec(1,0,0))
-            wheelRep.rotate(angle=wheel.simU[i,4]/outFreq, axis=vp.vec(0,1,0))
-            wheelRep.rotate(angle=wheel.simU[i,5]/outFreq, axis=vp.vec(0,0,1))
+
+vp.rate(500)
+for i in range(len(t)):
+    scene.title =  't = {} s'.format(t[i])
+    for n,r in enumerate([rail,rail2]):
+        r.updateDisplacements(r.simQ[i])
+        for j,p in enumerate(r.plotPositions()):
+            p[1] *= 100
+            crails[n].modify(j,vp.vec(*p))
+    wheelRep.pos.x = wheel.simQ[i,0]
+    wheelRep.pos.y = wheel.simQ[i,1]
+    wheelRep.pos.z = wheel.simQ[i,2]
+    wheelRep.rotate(angle=wheel.simU[i,3]/outFreq, axis=vp.vec(1,0,0))
+    wheelRep.rotate(angle=wheel.simU[i,4]/outFreq, axis=vp.vec(0,1,0))
+    wheelRep.rotate(angle=wheel.simU[i,5]/outFreq, axis=vp.vec(0,0,1))
