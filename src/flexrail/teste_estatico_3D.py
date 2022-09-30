@@ -7,7 +7,7 @@ Created on Thu Nov 11 07:24:43 2021
 """
 from nachbagauer3Dc import node, beamANCF3Dquadratic, railANCF3Dquadratic
 from materialsc import linearElasticMaterial
-from flexibleBodyc import flexibleBody3D
+from bodiesc import flexibleBody3D
 import numpy as np
 from scipy.optimize import fsolve
 from time import time
@@ -23,7 +23,7 @@ rail = flexibleBody3D('Rail',steel)
 
 nq = []
 nr = []
-nel = 4
+nel = 5
 totalLength = 2.
 for i in range(nel+1):
     nq.append(node([totalLength * i/nel,0.0,0.0
@@ -99,9 +99,9 @@ def simulate(simBody):
         
         return goal
     
-    z0 = [0]*(gdl+len(conDof))
+    z0 = [0.]*(gdl+len(conDof))
     z0[-8] =  5.0e5 * 0.5 * 0.5 * 0.5
-    z0[-6] = - z0[-3] * 2000
+    z0[-6] = - z0[-3] * 2
     #z = opt.newton_krylov(f,z0,maxiter=40,f_tol=1e-4,verbose=True)
     
     ts = time()
@@ -113,6 +113,11 @@ def simulate(simBody):
     tipDisp = xy[-1,:]
     gam = np.pi/2-np.arctan2(z[gdl-5]+1,z[gdl-6])
     U = simBody.totalStrainEnergy()
-    print('dx = {0:1.8e} m   | dy = {1:1.8e} m \ntheta = {2:1.8e} rad| Unorm = {3:3.5e} J'.format(-z[-18]/1000,z[-17]/1000,gam,U/1000))
+    print('dx = {0:1.8e} m   | dy = {1:1.8e} m \ntheta = {2:1.8e} rad| Unorm = {3:3.5e} J'.format(-z[-18],z[-17],gam,U/1000))
     
-    return xy
+    return z
+
+if __name__ == "__main__":
+    rail.assembleTangentStiffnessMatrix()
+    rail.nonLinear = 'NL'
+    simulate(rail)

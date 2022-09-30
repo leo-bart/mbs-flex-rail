@@ -9208,7 +9208,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_2assembleMassMatrix(struct __p
 /* "bodiesc.pyx":422
  * 
  * 
- *     def assembleElasticForceVector(self,bint veloc = False):             # <<<<<<<<<<<<<<
+ *     def assembleElasticForceVector(self, bint veloc = False):             # <<<<<<<<<<<<<<
  * 
  *         Qe = np.zeros(self.totalDof)
  */
@@ -9305,7 +9305,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_4assembleElasticForceVector(st
   __Pyx_RefNannySetupContext("assembleElasticForceVector", 0);
 
   /* "bodiesc.pyx":424
- *     def assembleElasticForceVector(self,bint veloc = False):
+ *     def assembleElasticForceVector(self, bint veloc = False):
  * 
  *         Qe = np.zeros(self.totalDof)             # <<<<<<<<<<<<<<
  *         cdef double[:] Qe_view = Qe
@@ -9747,7 +9747,7 @@ static PyObject *__pyx_pf_7bodiesc_12flexibleBody_4assembleElasticForceVector(st
   /* "bodiesc.pyx":422
  * 
  * 
- *     def assembleElasticForceVector(self,bint veloc = False):             # <<<<<<<<<<<<<<
+ *     def assembleElasticForceVector(self, bint veloc = False):             # <<<<<<<<<<<<<<
  * 
  *         Qe = np.zeros(self.totalDof)
  */

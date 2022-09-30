@@ -419,7 +419,7 @@ cdef class flexibleBody(body):
         return M
     
     
-    def assembleElasticForceVector(self,bint veloc = False):
+    def assembleElasticForceVector(self, bint veloc = False):
         
         Qe = np.zeros(self.totalDof)
         cdef double[:] Qe_view = Qe

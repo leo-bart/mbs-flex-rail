@@ -257,7 +257,7 @@ DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 10e2 # Hz
-finalTime = 4.35
+finalTime = 2.4
 
 #DAE.make_consistent('IDA_YA_YDP_INIT')
 

@@ -1170,7 +1170,7 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
             return self.headWidth
         
         
-    def getNodalElasticForces(self,double [:] q = None):
+    def getNodalElasticForces(self,bint veloc = False):
         '''
         Overrides base class method
 
@@ -1204,12 +1204,14 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
         
         # TODO use composite quadrature rules to integrate over different sections
    
-        if q == None:
+        if veloc:
+            q = self.u
+        else:
             q = self.qtotal
         
         # Gauss integration points
         cdef long nGaussL = 2
-        cdef long nGaussH = 3
+        cdef long nGaussH = 2
         cdef long nGaussW = 2
         
         cdef list gaussL = self.gaussIntegrationPoints[nGaussL]
@@ -1427,7 +1429,31 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
         
         return dS
     
+    def getMassMatrix(self):
+        
+        # Gauss integration points
+        cdef list gauss = self.gaussIntegrationPoints[3]
+        cdef Py_ssize_t npoints = len(gauss)
+        
+        # Gauss weights
+        cdef list w = self.gaussWeights[3]
+        
+        cdef Py_ssize_t msize = len(self.q)
+        
+        M = np.zeros((msize,msize),dtype=np.float64)
     
+        cdef Py_ssize_t i,j, k
+        
+        for i in range(npoints):
+            for j in range(npoints):
+                for k in range(npoints):
+                    S = self.shapeFunctionMatrix(gauss[i],gauss[j],gauss[k])
+                    M += S.T.dot(S) * w[i] * w[j] * w[k]
+                
+        """we have to multiply by the dimensions because
+        calculations are carried out on non-dimensional coordinates [-1,1]
+        """        
+        return self.parentBody.material.rho * M * self.length * self.height * self.width / 8
     
     def getWeightNodalForces(self,grav=[0,-1.,0]):
         '''
@@ -1497,9 +1523,4 @@ if __name__ == '__main__':
     elemA[1].nodes[0].q[0] = 0.01e-3 * 0.50
     elemA[0].nodes[1].q[0] = 0.01e-3 * 0.25
 
-    F = rod.assembleElasticForceVector()
-
-
-    
-
-            
+    F = rod.assembleElasticForceVector()     
