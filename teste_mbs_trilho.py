@@ -173,7 +173,7 @@ forceWheel.setForceFunction(pullWheelset)
 Profiles
 '''
 rProf = planarProfile('rail', convPar=-1)
-rProf.setProfilePointsFromFile('../../tr68.dat')
+rProf.setProfilePointsFromFile('./tr68.dat')
 rProf.centerProfile()
 
 rail.addProfile(rProf)
