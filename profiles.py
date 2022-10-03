@@ -61,7 +61,8 @@ class planarProfile(profile):
                       [-np.sin(angleInRad),np.cos(angleInRad)]])
         self.points = self.points.dot(R)
         
-    def plotMe(self, ax = plt.gca()):
+    def plotMe(self, ax):
+        ax = plt.gca()
         self.createConvexSubsets()
         for cs in self.convexSubsets:
             ax.plot(cs[:,0], cs[:,1])
@@ -348,34 +349,34 @@ class wheelRailContact(MBS.force):
         
         
 
-if __name__=='__main__':
-    b = rigidBody('Trilho')
+# if __name__=='__main__':
+#     b = rigidBody('Trilho')
     
-    w = planarProfile('wheel')
-    r = planarProfile('rail', convPar=-1)
+#     w = planarProfile('wheel')
+#     r = planarProfile('rail', convPar=-1)
     
-    b.addProfile(r)
+#     b.addProfile(r)
     
-    w.setProfilePointsFromFile('/home/leonardo/git/mbsim-wagons/roda.dat')
-    r.setProfilePointsFromFile('/home/leonardo/git/mbsim-wagons/tr68.dat')
+#     w.setProfilePointsFromFile('/home/leonardo/git/mbsim-wagons/roda.dat')
+#     r.setProfilePointsFromFile('/home/leonardo/git/mbsim-wagons/tr68.dat')
     
-    r.centerProfile()
-    r.rotatePoints(np.arctan(1/40))
-    w.offsetPoints(np.array([-0.138,0.48728]))
+#     r.centerProfile()
+#     r.rotatePoints(np.arctan(1/40))
+#     w.offsetPoints(np.array([-0.138,0.48728]))
     
-    ax = plt.gca()
-    #w.plotMe(ax)
-    #r.plotMe(ax)
-    ax.axis('equal')
+#     ax = plt.gca()
+#     #w.plotMe(ax)
+#     #r.plotMe(ax)
+#     ax.axis('equal')
     
-    wr = wheelRailContact()
-    wr.setWheel(w)
-    wr.setRail(r)
+#     wr = wheelRailContact()
+#     wr.setWheel(w)
+#     wr.setRail(r)
     
-    pw,pr,iw,ir,n,g = wr.searchContactPoint()
+#     pw,pr,iw,ir,n,g = wr.searchContactPoint()
     
-    #ax.plot(*pw,'o')
-    #ax.plot(*pr,'o')
-    ax.quiver(pr[0],pr[1],*n)
+#     #ax.plot(*pw,'o')
+#     #ax.plot(*pr,'o')
+#     ax.quiver(pr[0],pr[1],*n)
     
-    w.createConvexSubsets()
+#     w.createConvexSubsets()

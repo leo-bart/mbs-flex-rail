@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Wed Mar 23 07:01:46 2022
+Created on Mon Oct  3 06:45:00 2022
 
 @author: leonardo
 """
@@ -88,17 +88,33 @@ rail2.addElement(eq2)
 rail2.nonLinear = 'L'
 rail2.assembleTangentStiffnessMatrix()
 
+class wheelSet(rigidBody):
+    def __init__(self,name):
+        super().__init__(name)
+        wsmass = 100.
+        wsInertiaRadial = 1/12*wsmass*(3*0.15**2+trackWidth**2) 
+        I = np.diag([1/12*wsmass*trackWidth**2,1/12*wsmass*trackWidth**2,1/2*wsmass*0.15*0.15])
+        self.setMass(wsmass)
+        self.setInertiaTensor(I)
+        self.setPositionInitialConditions(1,0.092902 + 0.41)
+        
 
 
-wheel = rigidBody('Wheel',)
-wsmass = 100.
-wsInertiaRadial = 1/12*wsmass*(3*0.15**2+trackWidth**2) 
-I = np.diag([1/12*wsmass*trackWidth**2,1/12*wsmass*trackWidth**2,1/2*wsmass*0.15*0.15])
-wheel.setMass(wsmass)
-wheel.setInertiaTensor(I)
-wheel.setPositionInitialConditions(0,0.75)
-wheel.setPositionInitialConditions(1,0.092902 + 0.41)
+
+# wheel = rigidBody('Wheel',)
+# wsmass = 100.
+# wsInertiaRadial = 1/12*wsmass*(3*0.15**2+trackWidth**2) 
+# I = np.diag([1/12*wsmass*trackWidth**2,1/12*wsmass*trackWidth**2,1/2*wsmass*0.15*0.15])
+# wheel.setMass(wsmass)
+# wheel.setInertiaTensor(I)
+# wheel.setPositionInitialConditions(0,0.75)
+# wheel.setPositionInitialConditions(1,0.092902 + 0.41)
 #wheel.setPositionInitialConditions(2,-0.5*trackWidth)
+
+wheel1 = wheelSet('Wheel')
+wheel1.setPositionInitialConditions(0,0.75+1.6)
+wheel2 = wheelSet('Wheel')
+wheel2.setPositionInitialConditions(0,0.75)
 
 '''
 Sleepers
@@ -155,7 +171,7 @@ sleeper1.setForceFunction(slpForce)
 
 # Force to move the wheel
 forceWheel = MBS.force('Wheel pull force')
-forceWheel.connect(wheel,MBS.ground())
+forceWheel.connect(wheel1,MBS.ground())
 def pullWheelset(t,p,v,m1,m2):
     w = m1.parent
     f = np.zeros_like(p)
@@ -182,10 +198,15 @@ rail.addProfile(rProf)
 Contact
 '''
 
-contactL = MBS.force('Contact left wheel to rail')
-contactL.connect(rail,wheel,pt2=np.array([0.0,-0.41,-0.5*trackWidth]))
-contactR = MBS.force('Contact right wheel to rail')
-contactR.connect(rail2,wheel,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
+contactL1 = MBS.force('Contact left wheel to rail')
+contactL1.connect(rail,wheel1,pt2=np.array([0.0,-0.41,-0.5*trackWidth]))
+contactR1 = MBS.force('Contact right wheel to rail')
+contactR1.connect(rail2,wheel1,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
+
+contactL2 = MBS.force('Contact left wheel to rail')
+contactL2.connect(rail,wheel2,pt2=np.array([0.0,-0.41,-0.5*trackWidth]))
+contactR2 = MBS.force('Contact right wheel to rail')
+contactR2.connect(rail2,wheel2,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
 
 
 def cForce(t,p,v,m1,m2):
@@ -223,8 +244,10 @@ def cForce(t,p,v,m1,m2):
             f[wheelBody.globalDof[3:]] -= hf.skew(rhoM2).dot(contactForce)
     return f
 
-contactL.setForceFunction(cForce)
-contactR.setForceFunction(cForce)
+contactL1.setForceFunction(cForce)
+contactR1.setForceFunction(cForce)
+contactL2.setForceFunction(cForce)
+contactR2.setForceFunction(cForce)
     
     
     
@@ -233,12 +256,14 @@ contactR.setForceFunction(cForce)
 '''
 Multibody system
 '''
-mbs.addBody([rail,rail2,wheel])
+mbs.addBody([rail,rail2,wheel1,wheel2])
 
 mbs.addForce(sleeper1)
 #mbs.addForce(sleeper2)
-mbs.addForce(contactL)
-mbs.addForce(contactR)
+mbs.addForce(contactL1)
+mbs.addForce(contactR1)
+mbs.addForce(contactL2)
+mbs.addForce(contactR2)
 mbs.addForce(forceWheel)
 
 mbs.setupSystem()
@@ -283,47 +308,10 @@ for i in np.arange(0, p.shape[0],int(p.shape[0]/nplots)):
     k += 1
     plt.plot(a[:,0],a[:,1], label='{:.2f} s'.format(t[i]), color='red', alpha = ( k/(nplots+1)))
     plt.plot(b[:,0],b[:,1], label='{:.2f} s'.format(t[i]), color='blue', alpha = ( k/(nplots+1)))
-    # wheel x
-    # wheelCoords = wheel.simQ[i]
-    # plt.quiver(*wheelCoords[:2],np.cos(wheelCoords[5]),np.sin(wheelCoords[5]),color = 'blue', 
-    #             alpha=k/(nplots+1))
-    # plt.quiver(*a[-1,0:2],eq[-1].qtotal[-5],-eq[-1].qtotal[-6],color = 'green', 
-    #             alpha=k/(nplots+1))
-    # dx = uv(a[-1] - a[-2])[0] 
-    # plt.quiver(*a[-2,0:2],dx[0],dx[1],color = 'red',
-    #             alpha=k/(nplots+1))
-#plt.xlim([0,2.2])
 plt.legend()
 plt.xlabel('Comprimento ao longo do trilho / m')
 plt.ylabel('Deslocamento vertical / m')
 plt.title(mbs.name)
-
-
-
-'''animation'''
-# from matplotlib.animation import FuncAnimation
-# fig, ax = plt.subplots()
-# xdata, ydata = [], []
-# ln, = plt.plot([], [], 'r')
-# ln2, = plt.plot([], [], 'o')
-# plt.title('')
-
-# def init():
-#     ax.set_xlim(0, 1.1*totalLength)
-#     ax.set_ylim(0.092, 0.093)
-
-# def update(frame):
-    
-#     rail.updateDisplacements(rail.simQ[frame])
-#     a = rail.plotPositions(8)
-#     xdata = a[:,0]
-#     ydata = a[:,1] + 0.092875
-#     ln.set_data(xdata, ydata)
-#     ln2.set_data(wheel.simQ[frame,0],wheel.simQ[frame,1])
-#     ax.set_title('t = {:.4f} s'.format(t[frame]))
-
-# ani = FuncAnimation(fig, update, frames=[x for x in range(0,len(t),250)],
-#                     init_func=init, blit=False, save_count=1)
 
 
 
@@ -334,11 +322,8 @@ def run_animation():
     scene = vp.canvas(width=1600,height=700,background=vp.color.gray(0.7),fov=0.001,
                       forward = vp.vec(1,0,0))
     
-    # w1 = vp.cylinder(axis = vp.vec(0,0,0.5*trackWidth), radius = 0.15)
-    # w2 = w1.clone(axis = vp.vec(0,0,-0.5*trackWidth))
-    # wheelRep = vp.compound([w1,w2])
     wheelRep = stl.stl_to_triangles('Rodeiro montado.stl')
-    wheelRep.pos = vp.vec(*wheel.simQ[0,:3])
+    wheelRep.pos = vp.vec(*wheel1.simQ[0,:3])
     wheelRep.rotate(angle=np.pi/2,axis=vp.vec(1,0,0))
     wheelRep.visible = True
     wheelRep.color = vp.color.cyan
@@ -363,11 +348,11 @@ def run_animation():
             r.updateDisplacements(r.simQ[i])
             for j,p in enumerate(r.plotPositions(eta=1)):
                 crails[n].modify(j,vp.vec(*p))
-        wheelRep.pos.x = wheel.simQ[i,0]
-        wheelRep.pos.y = wheel.simQ[i,1]
-        wheelRep.pos.z = wheel.simQ[i,2]
-        wheelRep.rotate(angle=wheel.simU[i,3]/outFreq, axis=vp.vec(1,0,0))
-        wheelRep.rotate(angle=wheel.simU[i,4]/outFreq, axis=vp.vec(0,1,0))
-        wheelRep.rotate(angle=wheel.simU[i,5]/outFreq, axis=vp.vec(0,0,1))
+        wheelRep.pos.x = wheel1.simQ[i,0]
+        wheelRep.pos.y = wheel1.simQ[i,1]
+        wheelRep.pos.z = wheel1.simQ[i,2]
+        wheelRep.rotate(angle=wheel1.simU[i,3]/outFreq, axis=vp.vec(1,0,0))
+        wheelRep.rotate(angle=wheel1.simU[i,4]/outFreq, axis=vp.vec(0,1,0))
+        wheelRep.rotate(angle=wheel1.simU[i,5]/outFreq, axis=vp.vec(0,0,1))
         
 run_animation()
