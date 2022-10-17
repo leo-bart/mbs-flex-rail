@@ -111,9 +111,9 @@ class wheelSet(rigidBody):
 # wheel.setPositionInitialConditions(1,0.092902 + 0.41)
 #wheel.setPositionInitialConditions(2,-0.5*trackWidth)
 
-wheel1 = wheelSet('Wheel')
+wheel1 = wheelSet('Wheelset 1')
 wheel1.setPositionInitialConditions(0,0.75+1.6)
-wheel2 = wheelSet('Wheel')
+wheel2 = wheelSet('Wheelset 2')
 wheel2.setPositionInitialConditions(0,0.75)
 
 '''
@@ -184,6 +184,30 @@ def pullWheelset(t,p,v,m1,m2):
         
     return f
 forceWheel.setForceFunction(pullWheelset)
+
+
+# truck connection
+truckConn = MBS.force('Truck')
+truckConn.connect(wheel1,wheel2)
+def truckForce(t,p,v,m1,m2):
+    f = np.zeros_like(p)
+    w1 = m1.parent
+    w2 = m2.parent
+    
+    wpos1 = p[w1.globalDof]
+    wpos1[0] -= 1.6 # remove wheelbase
+    wpos2 = p[w2.globalDof]
+    
+    delta = wpos1-wpos2
+    
+    tforce = - 1e5 * delta
+    
+    f[w1.globalDof] = tforce
+    f[w2.globalDof] = -tforce
+    
+    return f
+truckConn.setForceFunction(truckForce)
+
 
 '''
 Profiles
@@ -265,6 +289,7 @@ mbs.addForce(contactR1)
 mbs.addForce(contactL2)
 mbs.addForce(contactR2)
 mbs.addForce(forceWheel)
+mbs.addForce(truckConn)
 
 mbs.setupSystem()
 
@@ -298,7 +323,7 @@ Post-processing
 mbs.postProcess(t,p,v)
 from helper_funcs import unitaryVector as uv
 plt.figure()
-nplots = 10
+nplots = 6
 k = 0
 for i in np.arange(0, p.shape[0],int(p.shape[0]/nplots)):
     rail.updateDisplacements(rail.simQ[i])
@@ -322,11 +347,15 @@ def run_animation():
     scene = vp.canvas(width=1600,height=700,background=vp.color.gray(0.7),fov=0.001,
                       forward = vp.vec(1,0,0))
     
-    wheelRep = stl.stl_to_triangles('Rodeiro montado.stl')
-    wheelRep.pos = vp.vec(*wheel1.simQ[0,:3])
-    wheelRep.rotate(angle=np.pi/2,axis=vp.vec(1,0,0))
-    wheelRep.visible = True
-    wheelRep.color = vp.color.cyan
+    wheels = [wheel1,wheel2]
+    wheelReps = []
+    
+    for i in range(2):
+        wheelReps.append(stl.stl_to_triangles('Rodeiro montado.stl'))
+        wheelReps[i].pos = vp.vec(*wheels[i].simQ[0,:3])
+        wheelReps[i].rotate(angle=np.pi/2,axis=vp.vec(1,0,0))
+        wheelReps[i].visible = True
+        wheelReps[i].color = vp.color.cyan
     
     rail.updateDisplacements(rail.simQ[0])
     rail2.updateDisplacements(rail2.simQ[0])
@@ -348,11 +377,12 @@ def run_animation():
             r.updateDisplacements(r.simQ[i])
             for j,p in enumerate(r.plotPositions(eta=1)):
                 crails[n].modify(j,vp.vec(*p))
-        wheelRep.pos.x = wheel1.simQ[i,0]
-        wheelRep.pos.y = wheel1.simQ[i,1]
-        wheelRep.pos.z = wheel1.simQ[i,2]
-        wheelRep.rotate(angle=wheel1.simU[i,3]/outFreq, axis=vp.vec(1,0,0))
-        wheelRep.rotate(angle=wheel1.simU[i,4]/outFreq, axis=vp.vec(0,1,0))
-        wheelRep.rotate(angle=wheel1.simU[i,5]/outFreq, axis=vp.vec(0,0,1))
+        for i in range(2):
+            wheelReps[i].pos.x = wheels[i].simQ[i,0]
+            wheelReps[i].pos.y = wheels[i].simQ[i,1]
+            wheelReps[i].pos.z = wheels[i].simQ[i,2]
+            wheelReps[i].rotate(angle=wheels[i].simU[i,3]/outFreq, axis=vp.vec(1,0,0))
+            wheelReps[i].rotate(angle=wheels[i].simU[i,4]/outFreq, axis=vp.vec(0,1,0))
+            wheelReps[i].rotate(angle=wheels[i].simU[i,5]/outFreq, axis=vp.vec(0,0,1))
         
 run_animation()
