@@ -35,7 +35,7 @@ Mesh
 '''
 nq = []
 nq2 = []
-nel = 4
+nel = 8
 totalLength = 2 * nel * 0.58
 trackWidth = 1.0
 for i in range(nel+1):
@@ -97,6 +97,7 @@ I = np.diag([1/12*wsmass*trackWidth**2,1/12*wsmass*trackWidth**2,1/2*wsmass*0.15
 wheel.setMass(wsmass)
 wheel.setInertiaTensor(I)
 wheel.setPositionInitialConditions(0,0.75)
+wheel.setPositionInitialConditions(0,totalLength/2)
 wheel.setPositionInitialConditions(1,0.092902 + 0.41)
 #wheel.setPositionInitialConditions(2,-0.5*trackWidth)
 
@@ -124,6 +125,11 @@ def slpForce(t,p,v,m1,m2):
     f = np.zeros_like(p)
     f[leftRail.globalDof[1::9]] = 3e6 * leftDist + 3e4 * leftVelo
     f[rightRail.globalDof[1::9]] = 3e6 * rightDist + 3e4 * rightVelo
+    # increased stiffness on rail ends
+    f[leftRail.globalDof[1]] += 32 * (3e6 * leftDist[0])
+    f[leftRail.globalDof[-8]] += 32 * (3e6 * leftDist[-1])
+    f[rightRail.globalDof[1]] += 32 * (3e6 * rightDist[0])
+    f[rightRail.globalDof[-8]] += 32 * (3e6 * rightDist[-1])
     
     ## Lateral stiffness
     stiffness = 35e9 * 0.17 * 0.24 / trackWidth
@@ -239,7 +245,7 @@ mbs.addForce(sleeper1)
 #mbs.addForce(sleeper2)
 mbs.addForce(contactL)
 mbs.addForce(contactR)
-mbs.addForce(forceWheel)
+#mbs.addForce(forceWheel)
 
 mbs.setupSystem()
 
@@ -257,7 +263,7 @@ DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 10e2 # Hz
-finalTime = 2.4
+finalTime = 0.08
 
 #DAE.make_consistent('IDA_YA_YDP_INIT')
 
@@ -273,7 +279,7 @@ Post-processing
 mbs.postProcess(t,p,v)
 from helper_funcs import unitaryVector as uv
 plt.figure()
-nplots = 10
+nplots = 4
 k = 0
 for i in np.arange(0, p.shape[0],int(p.shape[0]/nplots)):
     rail.updateDisplacements(rail.simQ[i])

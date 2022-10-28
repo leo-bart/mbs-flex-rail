@@ -77,9 +77,8 @@ class rigidBody(object):
 def viga_biengastada():
     n_p = rail.totalDof
     
-    constrainedDof = [0,2,3,4,5,6,7,8,
-                      n_p-9,n_p-8,n_p-7,n_p-6,n_p-5,n_p-4,
-                      n_p-3,n_p-2,n_p-1]
+    constrainedDof = [0,2,5,6,
+                      n_p-9,n_p-7,n_p-4,n_p-3]
     n_la = len(constrainedDof)
     
     
@@ -157,7 +156,8 @@ def viga_biengastada():
         
         # effect of moving force
         if t <= 1.:
-            pos = totalLength*t
+            # pos = totalLength*t
+            pos = totalLength * 0.5 # single load applied to span center
             
             point = np.array([pos,0.,0.])
                 

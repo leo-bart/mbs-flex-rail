@@ -35,7 +35,7 @@ Mesh
 '''
 nq = []
 nq2 = []
-nel = 4
+nel = 8
 totalLength = 2 * nel * 0.58
 trackWidth = 1.0
 for i in range(nel+1):
@@ -91,25 +91,12 @@ rail2.assembleTangentStiffnessMatrix()
 class wheelSet(rigidBody):
     def __init__(self,name):
         super().__init__(name)
-        wsmass = 100.
+        wsmass = 132.
         wsInertiaRadial = 1/12*wsmass*(3*0.15**2+trackWidth**2) 
         I = np.diag([1/12*wsmass*trackWidth**2,1/12*wsmass*trackWidth**2,1/2*wsmass*0.15*0.15])
         self.setMass(wsmass)
         self.setInertiaTensor(I)
         self.setPositionInitialConditions(1,0.092902 + 0.41)
-        
-
-
-
-# wheel = rigidBody('Wheel',)
-# wsmass = 100.
-# wsInertiaRadial = 1/12*wsmass*(3*0.15**2+trackWidth**2) 
-# I = np.diag([1/12*wsmass*trackWidth**2,1/12*wsmass*trackWidth**2,1/2*wsmass*0.15*0.15])
-# wheel.setMass(wsmass)
-# wheel.setInertiaTensor(I)
-# wheel.setPositionInitialConditions(0,0.75)
-# wheel.setPositionInitialConditions(1,0.092902 + 0.41)
-#wheel.setPositionInitialConditions(2,-0.5*trackWidth)
 
 wheel1 = wheelSet('Wheelset 1')
 wheel1.setPositionInitialConditions(0,0.75+1.6)
@@ -121,8 +108,7 @@ Sleepers
 '''
 sleeper1 = MBS.force('Sleepers')
 sleeper1.connect(rail,rail2)
-#sleeper2 = MBS.force('Sleeper 2')
-#leeper2.connect(rail2,mbs.ground)
+
 
 def slpForce(t,p,v,m1,m2):
     leftRail = m1.parent
@@ -178,7 +164,7 @@ def pullWheelset(t,p,v,m1,m2):
     wpos = p[w.globalDof]
     
     if t > 0.1:
-        f[w.globalDof[0]] = 10
+        f[w.globalDof[0]] = 100
     
     f[w.globalDof[1:3]] = - wpos[1:3] * 1e3
         
@@ -200,7 +186,7 @@ def truckForce(t,p,v,m1,m2):
     
     delta = wpos1-wpos2
     
-    tforce = - 1e5 * delta
+    tforce = - 1e7 * delta
     
     f[w1.globalDof] = tforce
     f[w2.globalDof] = -tforce
@@ -307,7 +293,7 @@ DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 10e2 # Hz
-finalTime = 2.4
+finalTime = 0.10
 
 #DAE.make_consistent('IDA_YA_YDP_INIT')
 
@@ -323,7 +309,7 @@ Post-processing
 mbs.postProcess(t,p,v)
 from helper_funcs import unitaryVector as uv
 plt.figure()
-nplots = 6
+nplots = 3
 k = 0
 for i in np.arange(0, p.shape[0],int(p.shape[0]/nplots)):
     rail.updateDisplacements(rail.simQ[i])
@@ -348,10 +334,10 @@ def run_animation():
                       forward = vp.vec(1,0,0))
     
     wheels = [wheel1,wheel2]
-    wheelReps = []
+    wheelReps = [stl.stl_to_triangles('Rodeiro montado.stl'),
+                 stl.stl_to_triangles('Rodeiro montado.stl')]
     
     for i in range(2):
-        wheelReps.append(stl.stl_to_triangles('Rodeiro montado.stl'))
         wheelReps[i].pos = vp.vec(*wheels[i].simQ[0,:3])
         wheelReps[i].rotate(angle=np.pi/2,axis=vp.vec(1,0,0))
         wheelReps[i].visible = True
@@ -366,9 +352,9 @@ def run_animation():
     c1 = vp.curve(path, color=vp.color.green, radius = 0.01)
     crails = [c1,c2]    
         
-    axisX = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.5,0,0), shaftwidth=0.01, color=vp.color.red)
-    axisY = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.0,0.5,0), shaftwidth=0.01, color=vp.color.green)
-    axisz = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.0,0,0.5), shaftwidth=0.01, color=vp.color.blue)    
+    # axisX = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.5,0,0), shaftwidth=0.01, color=vp.color.red)
+    # axisY = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.0,0.5,0), shaftwidth=0.01, color=vp.color.green)
+    # axisz = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.0,0,0.5), shaftwidth=0.01, color=vp.color.blue)    
     
     vp.rate(500)
     for i in range(len(t)):
