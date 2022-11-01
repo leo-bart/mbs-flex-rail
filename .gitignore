@@ -29,6 +29,7 @@
 *.a
 *.lib
 *.pyc
+*.pyd
 *.cpython*
 
 # Executables
