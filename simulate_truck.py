@@ -98,10 +98,10 @@ class wheelSet(rigidBody):
         self.setInertiaTensor(I)
         self.setPositionInitialConditions(1,0.092902 + 0.41)
 
-wheel1 = wheelSet('Wheelset 1')
-wheel1.setPositionInitialConditions(0,0.75+1.6)
-wheel2 = wheelSet('Wheelset 2')
-wheel2.setPositionInitialConditions(0,0.75)
+wheelset1 = wheelSet('Wheelset 1')
+wheelset1.setPositionInitialConditions(0,0.75+1.6)
+wheelset2 = wheelSet('Wheelset 2')
+wheelset2.setPositionInitialConditions(0,0.75)
 
 '''
 Sleepers
@@ -157,7 +157,7 @@ sleeper1.setForceFunction(slpForce)
 
 # Force to move the wheel
 forceWheel = MBS.force('Wheel pull force')
-forceWheel.connect(wheel1,MBS.ground())
+forceWheel.connect(wheelset1,MBS.ground())
 def pullWheelset(t,p,v,m1,m2):
     w = m1.parent
     f = np.zeros_like(p)
@@ -174,7 +174,7 @@ forceWheel.setForceFunction(pullWheelset)
 
 # truck connection
 truckConn = MBS.force('Truck')
-truckConn.connect(wheel1,wheel2)
+truckConn.connect(wheelset1,wheelset2)
 def truckForce(t,p,v,m1,m2):
     f = np.zeros_like(p)
     w1 = m1.parent
@@ -206,17 +206,18 @@ rail.addProfile(rProf)
 
 '''
 Contact
+pt2 are the positions wheel profile reference frames
 '''
 
 contactL1 = MBS.force('Contact left wheel to rail')
-contactL1.connect(rail,wheel1,pt2=np.array([0.0,-0.41,-0.5*trackWidth]))
+contactL1.connect(rail,wheelset1,pt2=np.array([0.0,-0.41,-0.5*trackWidth]))
 contactR1 = MBS.force('Contact right wheel to rail')
-contactR1.connect(rail2,wheel1,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
+contactR1.connect(rail2,wheelset1,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
 
 contactL2 = MBS.force('Contact left wheel to rail')
-contactL2.connect(rail,wheel2,pt2=np.array([0.0,-0.41,-0.5*trackWidth]))
+contactL2.connect(rail,wheelset2,pt2=np.array([0.0,-0.41,-0.5*trackWidth]))
 contactR2 = MBS.force('Contact right wheel to rail')
-contactR2.connect(rail2,wheel2,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
+contactR2.connect(rail2,wheelset2,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
 
 
 def cForce(t,p,v,m1,m2):
@@ -266,7 +267,7 @@ contactR2.setForceFunction(cForce)
 '''
 Multibody system
 '''
-mbs.addBody([rail,rail2,wheel1,wheel2])
+mbs.addBody([rail,rail2,wheelset1,wheelset2])
 
 mbs.addForce(sleeper1)
 #mbs.addForce(sleeper2)
@@ -289,7 +290,7 @@ problem = mbs.generate_problem('ind3')
 DAE = IDA(problem)
 DAE.report_continuously = True
 DAE.inith = 1e-6
-DAE.num_threads = 12
+DAE.num_threads = 8
 DAE.suppress_alg = True
 
 outFreq = 10e2 # Hz
@@ -333,7 +334,7 @@ def run_animation():
     scene = vp.canvas(width=1600,height=700,background=vp.color.gray(0.7),fov=0.001,
                       forward = vp.vec(1,0,0))
     
-    wheels = [wheel1,wheel2]
+    wheels = [wheelset1,wheelset2]
     wheelReps = [stl.stl_to_triangles('Rodeiro montado.stl'),
                  stl.stl_to_triangles('Rodeiro montado.stl')]
     

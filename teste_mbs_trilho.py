@@ -185,7 +185,10 @@ rProf.centerProfile()
 rail.addProfile(rProf)
 
 '''
-Contact
+CONTACT
+
+poits pt2 below represent the reference contact marker, i.e., the
+reference frame of the wheel profile
 '''
 
 contactL = MBS.force('Contact left wheel to rail')
@@ -193,21 +196,31 @@ contactL.connect(rail,wheel,pt2=np.array([0.0,-0.41,-0.5*trackWidth]))
 contactR = MBS.force('Contact right wheel to rail')
 contactR.connect(rail2,wheel,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
 
+def wrContactForce(t,p,v,m1,m2):
+    pass
 
 def cForce(t,p,v,m1,m2):
+    # gets rail and wheel bodies
     railBody = m1.parent
     wheelBody = m2.parent
     
+    # gets wheel Cardan angles
     cardans = p[wheelBody.globalDof[3:]]
+    # sets Cardan third angle to zero this remove wheel rotation
     cardans[2] = 0
+    # gets wheel rotation angle minus wheel self rotation
     Rwheel = hf.cardanRotationMatrix(cardans)
+    # gets inertial representation of the local CG to contact marker
     rhoM2 = Rwheel.dot(m2.position)
+    # sums inertial wheel CG position to the relative position vector calculated above
+    # pWheel is then the position of the contact marker on the wheel.
     pWheel = p[wheelBody.globalDof[:3]] + rhoM2
+    
+    
     railDof = np.array(railBody.globalDof)
     
     isit = railBody.findElement(pWheel)
         
-    
     f = np.zeros_like(p)
     if isit >= 0:
         contactElement = railBody.elementList[isit]
@@ -232,12 +245,9 @@ def cForce(t,p,v,m1,m2):
 contactL.setForceFunction(cForce)
 contactR.setForceFunction(cForce)
     
-    
-    
-
 
 '''
-Multibody system
+Multibody system setup
 '''
 mbs.addBody([rail,rail2,wheel])
 
