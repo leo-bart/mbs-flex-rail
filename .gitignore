@@ -1,0 +1,63 @@
+# IDE stuff
+*.clang_complete
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+*.pyc
+*.cpython*
+
+# Executables
+*.exe
+*.out
+*.app
+
+# H5 files
+*.h5
+*.ombvh5
+*.mbsh5
+
+# OpenMBV output files
+*.ombvx
+
+# xml
+*.xml
+
+# data files (results)
+*.dat
+
+# Integrator garbage
+*.sum
+*.plt
+*.asc
+.*.lock
+
+# Directories
+/build/*
+/bin/*
+/results/*
+*/__pycache__/*
