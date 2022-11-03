@@ -97,7 +97,7 @@ I = np.diag([1/12*wsmass*trackWidth**2,1/12*wsmass*trackWidth**2,1/2*wsmass*0.15
 wheel.setMass(wsmass)
 wheel.setInertiaTensor(I)
 wheel.setPositionInitialConditions(0,0.75)
-wheel.setPositionInitialConditions(0,totalLength/2)
+#wheel.setPositionInitialConditions(0,totalLength/2)
 wheel.setPositionInitialConditions(1,0.092902 + 0.41)
 #wheel.setPositionInitialConditions(2,-0.5*trackWidth)
 
@@ -183,6 +183,7 @@ rProf.setProfilePointsFromFile('./tr68.dat')
 rProf.centerProfile()
 
 rail.addProfile(rProf)
+rail2.addProfile(rProf)
 
 '''
 CONTACT
@@ -196,7 +197,80 @@ contactL.connect(rail,wheel,pt2=np.array([0.0,-0.41,-0.5*trackWidth]))
 contactR = MBS.force('Contact right wheel to rail')
 contactR.connect(rail2,wheel,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
 
+
 def wrContactForce(t,p,v,m1,m2):
+    # gets rail and wheelset bodies
+    railBody = m1.parent
+    wstBody = m2.parent
+    # wheelset reference marker position
+    wstP = p[wstBody.globalDof[:3]]
+    
+    # gets wheel Cardan angles and removes rotation around shaft axis
+    cardans = p[wstBody.globalDof[3:]]
+    cardans[2] = 0
+    # gets wheelset rotation matrix
+    Rwst = hf.cardanRotationMatrix(cardans)
+    # rhoM2 is the relative position of the wheel profile, represented on
+    # the glogal reference frame
+    rhoM2 = Rwst.dot(m2.position)
+    # pWheel is the position of the wheel profile reference point on
+    # the global reference frame
+    pWheel = wstP + rhoM2
+    
+    # now, I've got to find the contacting element
+    # we will suppose that, for every contacting element, the terminal
+    # nodes must be on different sides of the wheelset midplane, i.e.,
+    # extreme bending on contacting elements is not allowed
+    # Then, we check for each element whether the vector joining its
+    # terminal nodes pierces the wheelset midplane.
+    midplaneNormal = Rwst[:,0]
+    for e in railBody.elementList:
+        n1 = e.nodes[0]
+        n2 = e.nodes[-1]
+        
+        # projects the distance between the front node and end
+        # node of each element e to the wheel reference point
+        d1 = (n1.qtotal[:3] - pWheel).dot(midplaneNormal)
+        d2 = (n2.qtotal[:3] - pWheel).dot(midplaneNormal)
+        
+        # if the signs of d1 and d2 are different, than the element
+        # pierces the midplane and the element e is the contacting element
+        # the loop can be broken
+        if d1*d2 <= 0:
+            break
+        
+    # now e is the contact element
+    # it is necessary to find the longitudinal position of the contact plane
+    # we perform a very naive bissection search to find it
+    
+    # start with findind the node that is closer to the plane
+    # direction tells the direction of the first search bissection
+    dmin = d1
+    step = 2
+    startXi = -1
+    newXi = startXi
+    while dmin*dmin > 1e-7:
+        # in the following loop, the `newXi` variable outputs the approximate
+        # xi coordinate of the contact point
+        newd = -(pWheel - e.interpolatePosition(newXi+step,0,0)).dot(midplaneNormal)
+        while newd*dmin > 0:
+            step *= 1.2
+            newXi = newXi+step
+            newd = -(pWheel - e.interpolatePosition(newXi+step,0,0)).dot(midplaneNormal)
+        dmin = newd
+        newXi +=step
+        step = -step/2
+    
+    railCpointPosi = e.interpolatePosition(newXi,1,0) # note eta = 1
+     # we can now search for the contact point between wheel and rail profiles
+     
+    # plot rail profile
+    x = railBody.profiles[0].points[:,0] + railCpointPosi[2]
+    y = railBody.profiles[0].points[:,1] + railCpointPosi[1]
+    
+        
+        
+    
     pass
 
 def cForce(t,p,v,m1,m2):
@@ -243,7 +317,7 @@ def cForce(t,p,v,m1,m2):
     return f
 
 contactL.setForceFunction(cForce)
-contactR.setForceFunction(cForce)
+contactR.setForceFunction(wrContactForce)
     
 
 '''
