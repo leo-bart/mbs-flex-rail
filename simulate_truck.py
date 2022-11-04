@@ -199,10 +199,14 @@ truckConn.setForceFunction(truckForce)
 Profiles
 '''
 rProf = planarProfile('rail', convPar=-1)
-rProf.setProfilePointsFromFile('./tr68.dat')
+rProf.setProfilePointsFromFile('./tr68.pro')
 rProf.centerProfile()
 
 rail.addProfile(rProf)
+
+
+
+
 
 '''
 Contact

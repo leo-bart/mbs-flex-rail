@@ -14,6 +14,7 @@ import numpy as np
 from assimulo.solvers import IDA, ODASSL
 import matplotlib.pyplot as plt
 import helper_funcs as hf
+from copy import deepcopy
 
 
 '''
@@ -179,11 +180,22 @@ forceWheel.setForceFunction(pullWheelset)
 Profiles
 '''
 rProf = planarProfile('rail', convPar=-1)
-rProf.setProfilePointsFromFile('./tr68.dat')
+rProf.setProfilePointsFromFile('./tr68.pro')
 rProf.centerProfile()
 
 rail.addProfile(rProf)
 rail2.addProfile(rProf)
+
+
+
+wheel.addProfile(planarProfile('wheel','./design2.pro', convPar = 1))
+wheel.addProfile(planarProfile('wheel','./design2.pro', convPar = 1))
+
+wheel.profiles[0].rotatePoints(np.pi)
+wheel.profiles[1].rotatePoints(np.pi)
+wheel.profiles[0].mirrorVert()
+wheel.profiles[0].offsetPoints([0.5,0])
+wheel.profiles[1].offsetPoints([-0.5,0])
 
 '''
 CONTACT
@@ -267,8 +279,8 @@ def wrContactForce(t,p,v,m1,m2):
     # plot rail profile
     x = railBody.profiles[0].points[:,0] + railCpointPosi[2]
     y = railBody.profiles[0].points[:,1] + railCpointPosi[1]
+    plt.plot(x,y)
     
-        
         
     
     pass

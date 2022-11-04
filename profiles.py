@@ -25,10 +25,29 @@ class profile(object):
         
 class planarProfile(profile):
     
-    
+
     def __init__(self,name, fileName='', convPar = 1):
+        '''
+        
+
+        Parameters
+        ----------
+        name : string
+            Name of the profile.
+        fileName : string, optional
+            Path to the profile file.
+        convPar : integer, optional
+            Conexity parameter. Used to make spline interpolations. The default is 1.
+
+        Returns
+        -------
+        None.
+
+        '''
         super().__init__(name)
         self.convPar = convPar
+        if fileName != '':
+            self.setProfilePointsFromFile(fileName)
         
     def setProfilePointsFromFile(self, fileName, colDelimiter=';'):
         self.setProfilePoints(np.genfromtxt(fileName, delimiter=colDelimiter))
@@ -56,18 +75,44 @@ class planarProfile(profile):
     def offsetPoints(self, offset):
         self.points += offset
         
+    def mirror(self, ax = 0):
+        self.points[:,ax] *= -1
+    
+    def mirrorVert(self):
+        '''
+        Mirror points around the vertical axis
+
+        Returns
+        -------
+        None.
+
+        '''
+        self.mirror(0)
+    
+    def mirrorHoriz(self):
+        '''
+        Mirror points around the horizontal axis
+
+        Returns
+        -------
+        None.
+
+        '''
+        self.mirror(1)
+        
     def rotatePoints(self, angleInRad):
         R = np.array([[np.cos(angleInRad),np.sin(angleInRad)],
                       [-np.sin(angleInRad),np.cos(angleInRad)]])
         self.points = self.points.dot(R)
         
-    def plotMe(self, ax):
-        ax = plt.gca()
+    def plotMe(self, ax = plt.gca()):
         self.createConvexSubsets()
         for cs in self.convexSubsets:
             ax.plot(cs[:,0], cs[:,1])
         
     def createConvexSubsets(self):
+        
+        self.convexSubsets = []
         
         rot = self.convPar
         currSet = []
