@@ -40,10 +40,10 @@ nel = 8
 totalLength = 2 * nel * 0.58
 trackWidth = 1.0
 for i in range(nel+1):
-    nq.append(node([totalLength * i/nel,0.0,-0.5*trackWidth,
+    nq.append(node([totalLength * i/nel,0.0,-0.5*trackWidth-0.039,
                    0.0,0.99968765,0.02499219, #0.0,1.0,0.0,
                    0.0,-0.02499219,0.9968765]))
-    nq2.append(node([totalLength * i/nel,0.0,0.5*trackWidth,
+    nq2.append(node([totalLength * i/nel,0.0,0.5*trackWidth+0.039,
                      0.0,0.99968765,-0.02499219,
                      0.0,0.02499219,0.9968765]))
 
@@ -99,7 +99,7 @@ wheel.setMass(wsmass)
 wheel.setInertiaTensor(I)
 wheel.setPositionInitialConditions(0,0.75)
 #wheel.setPositionInitialConditions(0,totalLength/2)
-wheel.setPositionInitialConditions(1,0.092902 + 0.41)
+wheel.setPositionInitialConditions(1,0.8382/2 + 0.18575/2)
 #wheel.setPositionInitialConditions(2,-0.5*trackWidth)
 
 '''
@@ -194,8 +194,8 @@ wheel.addProfile(planarProfile('wheel','./design2.pro', convPar = 1))
 wheel.profiles[0].rotatePoints(np.pi)
 wheel.profiles[1].rotatePoints(np.pi)
 wheel.profiles[0].mirrorVert()
-wheel.profiles[0].offsetPoints([0.5,0])
-wheel.profiles[1].offsetPoints([-0.5,0])
+wheel.profiles[0].offsetPoints([0.459,-0.8382/2])
+wheel.profiles[1].offsetPoints([-0.459,-0.8382/2])
 
 '''
 CONTACT
@@ -281,7 +281,27 @@ def wrContactForce(t,p,v,m1,m2):
     y = railBody.profiles[0].points[:,1] + railCpointPosi[1]
     plt.plot(x,y)
     
+    x = wstBody.profiles[0].points[:,0] + wstP[2]
+    y = wstBody.profiles[0].points[:,1] + wstP[1]
+    plt.plot(x,y)
+    
+    
+    # we get the convex subsets of the wheel and rail profiles and
+    # offset them to the global position
+    wp = wstBody.profiles[0]
+    wp.createConvexSubsets()
+    for cs in wp.convexSubsets:
+        cs[:,0] += wstP[2]
+        cs[:,1] += wstP[1]
+        plt.plot(cs[:,0],cs[:,1])
         
+        
+    rp = railBody.profiles[0]
+    rp.createConvexSubsets()
+    for cs in rp.convexSubsets:
+        cs[:,0] += railCpointPosi[2]
+        cs[:,1] += railCpointPosi[1]
+        plt.plot(cs[:,0],cs[:,1])
     
     pass
 
