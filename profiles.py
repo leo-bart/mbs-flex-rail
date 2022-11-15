@@ -136,7 +136,9 @@ class planarProfile(profile):
         
 
 class wheelRailContact(MBS.force):
-    
+    '''
+    TODO: this class is not ready to be used
+    '''
     
     def __init__(self, name_='Wheel-rail contact'):
         super().__init__(name_)

@@ -279,6 +279,66 @@ cpdef skew(double [:] vec):
     return np.array([[0.0,-vec[2],vec[1]],
                      [vec[2],0,-vec[0]],
                      [-vec[1],vec[0],0.0]])
+
+
+cpdef minkowskiSum(double [:,:] P, double [:,:] Q):
+    '''
+    Returns the Minkowski sum of two polygons P and Q
+    
+    The Minkowski sum is also called Configuration Space Obstacle (CSO) of P 
+    and Q and is defined as
+    
+    CSO = {x_P - x_Q:x_P in P, x_Q in Q}
+    
+    Parameters
+    ----------
+    Two memory views that contain the points of the polygons P and Q as
+    ordered (x,y) pairs
+    
+    Returns
+    -------
+    An array containing the Minkowski sum
+    
+    '''
+    
+    cdef Py_ssize_t numPtsP = P.shape[0]
+    cdef Py_ssize_t numPtsQ = Q.shape[0]
+    cdef Py_ssize_t i,j
+    
+    cdef double[:,:] cso = np.zeros((numPtsP*numPtsQ,2))
+    
+    print(np.array(cso))
+    for i in range(numPtsP):
+        for j in range(numPtsQ):
+            print('{}|{}|{}'.format(i*numPtsQ+j,i,j))
+            cso[i*numPtsQ+j][0] = P[i][0]-Q[j][0]
+            cso[i*numPtsQ+j][1] = P[i][1]-Q[j][1]
+            
+    return cso
+
+cpdef gjk(double [:,:] P, double [:,:] Q, double[:] v0):
+    '''
+    Implementation of the GJK algorithm as of Montanari et alii.
+    
+    Reference:
+    MONTANARI, M.; PETRINIC, N.; BARBIERI, E. Improving the GJK Algorithm 
+    for Faster and More Reliable Distance Queries Between Convex Objects. 
+    ACM Transactions on Graphics, v. 36, n. 3, p. 1–17, 30 jun. 2017. 
+    
+    '''
+    cdef int k = 0
+    cdef double [2] vk = v0
+    cdef list tauk, Wk
+    
+    tauk = []
+    Wk = []
+    
+    while len(Wk) != 4 or (vk[0]*vk[0]+vk[1]*vk[1]) > 1e-6:
+        k += 1
+        
+    
+    
+    
             
         
 if __name__ == "__main__":

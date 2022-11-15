@@ -99,7 +99,7 @@ wheel.setMass(wsmass)
 wheel.setInertiaTensor(I)
 wheel.setPositionInitialConditions(0,0.75)
 #wheel.setPositionInitialConditions(0,totalLength/2)
-wheel.setPositionInitialConditions(1,0.8382/2 + 0.18575/2)
+wheel.setPositionInitialConditions(1,0.8382/2 + 0.1942/2)
 #wheel.setPositionInitialConditions(2,-0.5*trackWidth)
 
 '''
@@ -231,7 +231,7 @@ def wrContactForce(t,p,v,m1,m2):
     
     # now, I've got to find the contacting element
     # we will suppose that, for every contacting element, the terminal
-    # nodes must be on different sides of the wheelset midplane, i.e.,
+    # nodes must be on opposite sides of the wheelset midplane, i.e.,
     # extreme bending on contacting elements is not allowed
     # Then, we check for each element whether the vector joining its
     # terminal nodes pierces the wheelset midplane.
@@ -302,6 +302,15 @@ def wrContactForce(t,p,v,m1,m2):
         cs[:,0] += railCpointPosi[2]
         cs[:,1] += railCpointPosi[1]
         plt.plot(cs[:,0],cs[:,1])
+        
+    numSubsetsRail = len(rp.convexSubsets)
+    numSubsetsWheel = len(wp.convexSubsets)
+    for rSubset in rp.convexSubsets:
+        for wSubset in wp.convexSubsets:
+            # Minkowski sum of the subsets
+            numPtsRail = rSubset.size
+            
+            cso = np.zeros()
     
     pass
 
