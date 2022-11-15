@@ -327,7 +327,7 @@ cpdef gjk(double [:,:] P, double [:,:] Q, double[:] v0):
     
     '''
     cdef int k = 0
-    cdef double [2] vk = v0
+    cdef double [:] vk = v0
     cdef list tauk, Wk
     
     tauk = []
@@ -335,6 +335,8 @@ cpdef gjk(double [:,:] P, double [:,:] Q, double[:] v0):
     
     while len(Wk) != 4 or (vk[0]*vk[0]+vk[1]*vk[1]) > 1e-6:
         k += 1
+        
+    return 0
         
     
     

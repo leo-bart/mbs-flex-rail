@@ -51,6 +51,11 @@
 # data files (results)
 #*.dat
 
+# Cythonized C files
+.cpp
+.c
+.h
+
 # Integrator garbage
 *.sum
 *.plt
