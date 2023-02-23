@@ -105,7 +105,7 @@ class planarProfile(profile):
                       [-np.sin(angleInRad),np.cos(angleInRad)]])
         self.points = self.points.dot(R)
         
-    def plotMe(self, ax = plt.gca()):
+    def plotMe(self, ax):
         self.createConvexSubsets()
         for cs in self.convexSubsets:
             ax.plot(cs[:,0], cs[:,1])

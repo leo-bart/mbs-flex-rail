@@ -156,27 +156,33 @@ class MultibodySystem(Mechanical_System):
             self.printSystem()
             
     def postProcess(self, tvec, pvec, vvec):
+        print('\nPost processing simulation...')
         posi = pvec[:,:self.n_p]
         velo = pvec[:,self.n_p:2*self.n_p]
         lamb = pvec[:,2*self.n_p:]
         
+        # positions and velocities of the bodies  
+        for b in self.bodies[1:]:
+            b.postProcess(posi,velo)
+        
         constForces = []
-        forces = []
+        for f in self.forceList:
+            f.simLam = []
         for i in range(len(tvec)):
             GT = self.GT(posi[i])
             constForces.append(GT.dot(lamb[i]))
             #forces.append(self.forces(tvec[i],posi[i],velo[i]))
+            for b in self.bodies[1:]:
+                if b.type == 'Flexible body':
+                    b.updateDisplacements(b.simQ[i])
+                    b.updateVelocities(b.simU[i])
+            for f in self.forceList:
+                f.simLam.append(f.evaluateForceFunction(tvec[i],posi[i],velo[i],f.marker1,f.marker2))
             
         constForces = np.array(constForces)
         for cst  in self.constraintList:
             cst.simLam = constForces[:,cst.body1.globalDof]
         
-        forces = np.array(forces)    
-        for b in self.bodies[1:]:
-            myGlobalDofs = b.globalDof
-            b.simQ = posi[:,myGlobalDofs]
-            b.simU = velo[:,myGlobalDofs]
-            #b.simF = forces[:,myGlobalDofs]
             
 class marker(object):
     '''
@@ -282,7 +288,7 @@ class force(bodyConnection):
         return self.forceFunction(*args)
 
 class linearSpring_PtP(force):
-    '''
+    """
     Linear spring object connecting two markers
     
     After declaring the spring, you'll need to call connect to join the bodies
@@ -296,7 +302,7 @@ class linearSpring_PtP(force):
     damping_ : double, optional
          Value of the damping constant. Defaults to 0.0.   
     
-    '''
+    """
     
     def __init__(self,name_='Linear Spring', stiffness_ = 0.0, damping_ = 0.0):
         super().__init__(name_)
@@ -344,6 +350,9 @@ class linearSpring_PtP(force):
             f[dof2[:3]] = -valueForce
         
         return f
+    
+class contact(force):
+    pass
         
     
     

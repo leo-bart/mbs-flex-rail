@@ -194,6 +194,26 @@ cdef class body(object):
         else:
             print('{} setInitialConditions: expected 1 or 2 elements.'.format(self.name))
             
+    def postProcess(self,posi,velo):
+        """
+        Post process simulation
+
+        Parameters
+        ----------
+        posi : array
+            array with the simulation results for positions.
+        velo : array
+            array with the simulation results for velocities.
+
+        Returns
+        -------
+        None.
+
+        """
+        self.simQ = posi[:,self.globalDof]
+        self.simU = velo[:,self.globalDof]
+        
+            
             
 ###############################################################################
 ############## GROUND #########################################################

@@ -17,7 +17,8 @@ setup(
                              "profilesc.pyx",
                              "bodiesc.pyx",
                              "helper_funcs.pyx",
-                             "teste_estatico_3D_cython.pyx"],
+                             "teste_estatico_3D_cython.pyx",
+                             "gjkc.pyx"],
                             language_level=3,
                             language='c++')
 )
