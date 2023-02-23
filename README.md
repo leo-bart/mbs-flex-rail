@@ -2,7 +2,7 @@
 
 This is a Python package to perform Multibody Simulations of railway vehicles seating on flexible rails.
 
-## Instalation
+## Installation
 
 The package runs on Python, but uses Cython support to optimze simulation times. Check that all 
 dependencies are met before trying to use it.
