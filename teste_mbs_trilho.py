@@ -102,6 +102,7 @@ wheel.setPositionInitialConditions(0,0.75)
 #wheel.setPositionInitialConditions(0,totalLength/2)
 wheel.setPositionInitialConditions(1,0.8382/2 + 0.19416/2)
 #wheel.setPositionInitialConditions(2,-0.5*trackWidth)
+wheel.setPositionInitialConditions(3,0.25)
 
 '''
 Sleepers
@@ -172,8 +173,8 @@ def pullWheelset(t,p,v,m1,m2):
     if t > 0.8:
         f[w.globalDof[0]] = 10
     
-    f[w.globalDof[1]] = - wpos[1] * 1e2
-    f[w.globalDof[2]] = - wpos[2] * 1e3
+    f[w.globalDof[1]] = - wpos[1] * 1e2 * 0
+    f[w.globalDof[2]] = - wpos[2] * 1e3 * 0
         
     return f
 forceWheel.setForceFunction(pullWheelset)
@@ -222,21 +223,21 @@ def wrContactForce(t,p,v,*args):
 
     Parameters
     ----------
-    t : TYPE
-        DESCRIPTION.
-    p : TYPE
-        DESCRIPTION.
-    v : TYPE
-        DESCRIPTION.
-    m1 : TYPE
-        DESCRIPTION.
-    m2 : TYPE
-        DESCRIPTION.
+    t : array
+        Time t.
+    p : array
+        position at time t.
+    v : array
+        velocity at time t.
+    m1 : marker
+        rail profile reference marker.
+    m2 : marker
+        wheel profile reference marker.
 
     Returns
     -------
-    f : TYPE
-        DESCRIPTION.
+    f : array
+        force.
 
     """
     m1 = args[0]
@@ -325,14 +326,14 @@ def wrContactForce(t,p,v,*args):
     # we can now search for the contact point between wheel and rail profiles
     ##########
     plot = False # set to TRUE to plot wheel and rail profiles
-    # if plot:
-    #     x = rp.points[:,0] + railCpointPosi[2]
-    #     y = rp.points[:,1] + railCpointPosi[1]
-    #     plt.plot(x,y)
+    if plot:
+        x = rp.points[:,0] + railCpointPosi[2]
+        y = rp.points[:,1] + railCpointPosi[1]
+        plt.plot(x,y)
         
-    #     x = wp.points[:,0] + wstP[2]
-    #     y = wp.points[:,1] + wstP[1]
-    #     plt.plot(x,y)
+        x = wp.points[:,0] + wstP[2]
+        y = wp.points[:,1] + wstP[1]
+        plt.plot(x,y)
     
     
     # we get the convex subsets of the wheel and rail profiles and
@@ -345,10 +346,12 @@ def wrContactForce(t,p,v,*args):
     
     wp = wstBody.profiles[0]
     wp.createConvexSubsets()
+    A=wst2prof.dot(Rwst.dot(wst2prof.transpose())) # rotation matrix of the wheelset on the profile css
     for cs in wp.convexSubsets:
         cs[:,0] += wstPp[0]
         cs[:,0] *= wstFactor
         cs[:,1] += wstPp[1]
+        cs = cs.dot(A)
         if plot:
             plt.plot(cs[:,0],cs[:,1])
         
@@ -380,14 +383,14 @@ def wrContactForce(t,p,v,*args):
                     cPoints[wheel] = pWheel
                     cNormal = n
     
-    # plt.fill(cSubsets[rail][:,0],cSubsets[rail][:,1], edgecolor='blue')
-    # plt.fill(cSubsets[wheel][:,0],cSubsets[wheel][:,1], edgecolor='orange')
-    # print(minDist)
+    plt.fill(cSubsets[rail][:,0],cSubsets[rail][:,1], edgecolor='blue')
+    plt.fill(cSubsets[wheel][:,0],cSubsets[wheel][:,1], edgecolor='orange')
+    print(minDist)
         
     f = np.zeros_like(p)
     if minDist < 0.0:
         # 2d contact force on the wheel midplane
-        contactForce = 150e6 * minDist * wst2prof.transpose().dot(cNormal)
+        contactForce = 300e6 * minDist * wst2prof.transpose().dot(cNormal)
         
         # gets the vector from the wheelset CoG to the contact point
         # first on profile local coordinates
@@ -403,52 +406,9 @@ def wrContactForce(t,p,v,*args):
         f[railDof[e.globalDof]] -=  np.dot(contactForce, e.shapeFunctionMatrix(localXi[0],localXi[1],localXi[2]))
         
     
+    if f[-5] < 0:
+        print(f[-5])
     return f
-
-
-# def cForce(t,p,v,m1,m2):
-#     # gets rail and wheel bodies
-#     railBody = m1.parent
-#     wheelBody = m2.parent
-    
-#     # gets wheel Cardan angles
-#     cardans = p[wheelBody.globalDof[3:]]
-#     # sets Cardan third angle to zero this remove wheel rotation
-#     cardans[2] = 0
-#     # gets wheel rotation angle minus wheel self rotation
-#     Rwheel = hf.cardanRotationMatrix(cardans)
-#     # gets inertial representation of the local CG to contact marker
-#     rhoM2 = Rwheel.dot(m2.position)
-#     # sums inertial wheel CG position to the relative position vector calculated above
-#     # pWheel is then the position of the contact marker on the wheel.
-#     pWheel = p[wheelBody.globalDof[:3]] + rhoM2
-    
-    
-#     railDof = np.array(railBody.globalDof)
-    
-#     isit = railBody.findElement(pWheel)
-        
-#     f = np.zeros_like(p)
-#     if isit >= 0:
-#         contactElement = railBody.elementList[isit]
-#         localXi = contactElement.mapToLocalCoords(pWheel)
-        
-#         pRail = contactElement.interpolatePosition(localXi[0],1,localXi[2])
-#         cNormal = contactElement.shapeFunctionDerivative(localXi[0],1,localXi[2])[3:6,:].dot(contactElement.qtotal)
-        
-#         gap = (pWheel-pRail).dot(hf.unitaryVector(cNormal)[0])
-#         if gap < 0:
-            
-#             contactForce = cNormal * gap * 300e6
-#             # print(t)
-#             # print(railBody.name,gap)
-            
-#             f[railDof[contactElement.globalDof]] +=  np.dot(contactForce, 
-#                                                             contactElement.shapeFunctionMatrix(localXi[0],1,localXi[2]))
-        
-#             f[wheelBody.globalDof[:3]] -= contactForce
-#             f[wheelBody.globalDof[3:]] -= hf.skew(rhoM2).dot(contactForce)
-#     return f
 
 contactR.setForceFunction(wrContactForce)
 contactL.setForceFunction(wrContactForce)
@@ -461,8 +421,8 @@ mbs.addBody([rail,rail2,wheel])
 
 mbs.addForce(sleeper1)
 #mbs.addForce(sleeper2)
-mbs.addForce(contactL)
-#mbs.addForce(contactR)
+#mbs.addForce(contactL)
+mbs.addForce(contactR)
 mbs.addForce(forceWheel)
 
 mbs.setupSystem()
@@ -491,13 +451,13 @@ q = p[:,:mbs.n_p]
 v = p[:,mbs.n_p:2*mbs.n_p]
 lam = p[:,2*mbs.n_p:]
 
-np.savez('railOut',t=t,p=p,v=v,lam=lam)
+np.savez('results/railOut',t=t,p=p,v=v,lam=lam)
 
 '''
 Post-processing
 '''
 #%% POST PROCESSING
-oFiles = np.load('./railOut.npz')
+oFiles = np.load('./results/railOut.npz')
 t = oFiles['t']
 p = oFiles['p']
 v = oFiles['v']
@@ -528,8 +488,8 @@ def plotRails():
 import vpython as vp
 import convert_stl as stl
 def run_animation():
-    scene = vp.canvas(width=1600,height=700,background=vp.color.gray(0.7),fov=0.001,
-                      forward = vp.vec(1,0,0))
+    scene = vp.canvas(width=1600,height=700,background=vp.color.gray(0.7),
+                      forward = vp.vec(1,0,0), range=0.5)
     
     # w1 = vp.cylinder(axis = vp.vec(0,0,0.5*trackWidth), radius = 0.15)
     # w2 = w1.clone(axis = vp.vec(0,0,-0.5*trackWidth))

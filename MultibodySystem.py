@@ -163,11 +163,15 @@ class MultibodySystem(Mechanical_System):
         
         # positions and velocities of the bodies  
         for b in self.bodies[1:]:
+            # myGlobalDofs = b.globalDof
+            # b.simQ = posi[:,myGlobalDofs]
+            # b.simU = velo[:,myGlobalDofs]
             b.postProcess(posi,velo)
+            #b.simF = forces[:,myGlobalDofs]
         
         constForces = []
         for f in self.forceList:
-            f.simLam = []
+            f.simLam = np.zeros([len(tvec),self.n_p])
         for i in range(len(tvec)):
             GT = self.GT(posi[i])
             constForces.append(GT.dot(lamb[i]))
@@ -177,7 +181,7 @@ class MultibodySystem(Mechanical_System):
                     b.updateDisplacements(b.simQ[i])
                     b.updateVelocities(b.simU[i])
             for f in self.forceList:
-                f.simLam.append(f.evaluateForceFunction(tvec[i],posi[i],velo[i],f.marker1,f.marker2))
+                f.simLam[i,:] = f.evaluateForceFunction(tvec[i],posi[i],velo[i],f.marker1,f.marker2)
             
         constForces = np.array(constForces)
         for cst  in self.constraintList:
