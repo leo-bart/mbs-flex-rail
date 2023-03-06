@@ -134,6 +134,8 @@ class planarProfile(profile):
                 
         self.convexSubsets.append(np.array(currSet))
         
+        return self.convexSubsets
+        
 
 class wheelRailContact(MBS.force):
     '''

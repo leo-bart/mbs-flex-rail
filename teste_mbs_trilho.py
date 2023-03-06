@@ -102,7 +102,7 @@ wheel.setPositionInitialConditions(0,0.75)
 #wheel.setPositionInitialConditions(0,totalLength/2)
 wheel.setPositionInitialConditions(1,0.8382/2 + 0.19416/2)
 #wheel.setPositionInitialConditions(2,-0.5*trackWidth)
-wheel.setPositionInitialConditions(3,0.25)
+# wheel.setPositionInitialConditions(3,0.25)
 
 '''
 Sleepers
@@ -345,15 +345,15 @@ def wrContactForce(t,p,v,*args):
         wstFactor = 1
     
     wp = wstBody.profiles[0]
-    wp.createConvexSubsets()
+    wpConvSubsets = (wp.createConvexSubsets()).copy() # we make a copy to preserve the original profile
     A=wst2prof.dot(Rwst.dot(wst2prof.transpose())) # rotation matrix of the wheelset on the profile css
-    for cs in wp.convexSubsets:
-        cs[:,0] += wstPp[0]
-        cs[:,0] *= wstFactor
-        cs[:,1] += wstPp[1]
-        cs = cs.dot(A)
+    for i in range(len(wpConvSubsets)):
+        wpConvSubsets[i][:,0] += wstPp[0]
+        wpConvSubsets[i][:,0] *= wstFactor
+        wpConvSubsets[i][:,1] += wstPp[1]
+        wpConvSubsets[i] = wpConvSubsets[i].dot(A)
         if plot:
-            plt.plot(cs[:,0],cs[:,1])
+            plt.plot(wpConvSubsets[i][:,0],wpConvSubsets[i][:,1])
         
     rp = railBody.profiles[0]
     rp.createConvexSubsets()
@@ -371,7 +371,7 @@ def wrContactForce(t,p,v,*args):
     minDist = np.inf
     
     for rSubset in rp.convexSubsets:
-        for wSubset in wp.convexSubsets:
+        for wSubset in wpConvSubsets:
             if rSubset[-1,0] > wSubset[1,0]:
                 pRail,pWheel,n,d = gjk.gjk(rSubset,wSubset,np.array([0.,-1.]))
                 # print(d)
@@ -383,14 +383,14 @@ def wrContactForce(t,p,v,*args):
                     cPoints[wheel] = pWheel
                     cNormal = n
     
-    plt.fill(cSubsets[rail][:,0],cSubsets[rail][:,1], edgecolor='blue')
-    plt.fill(cSubsets[wheel][:,0],cSubsets[wheel][:,1], edgecolor='orange')
-    print(minDist)
+    # plt.fill(cSubsets[rail][:,0],cSubsets[rail][:,1], edgecolor='blue')
+    # plt.fill(cSubsets[wheel][:,0],cSubsets[wheel][:,1], edgecolor='orange')
+    # print(minDist)
         
     f = np.zeros_like(p)
     if minDist < 0.0:
         # 2d contact force on the wheel midplane
-        contactForce = 300e6 * minDist * wst2prof.transpose().dot(cNormal)
+        contactForce = 300e7 * minDist * wst2prof.transpose().dot(cNormal)
         
         # gets the vector from the wheelset CoG to the contact point
         # first on profile local coordinates
@@ -399,15 +399,16 @@ def wrContactForce(t,p,v,*args):
         rhoM2star = Rwst.transpose().dot(wst2prof.transpose().dot(rhoM2star))
         
         f[wstBody.globalDof[:3]] += contactForce
+        if f[-5] < 0:
+            print('Warning: negative contact force {} N'.format(f[-5]))
         f[wstBody.globalDof[3:]] += hf.skew(rhoM2star).dot(contactForce)
         
         cPoints[rail] = Rwst.transpose().dot(wst2prof.transpose().dot(cPoints[rail]))
         localXi = e.mapToLocalCoords(cPoints[rail])
         f[railDof[e.globalDof]] -=  np.dot(contactForce, e.shapeFunctionMatrix(localXi[0],localXi[1],localXi[2]))
         
-    
-    if f[-5] < 0:
-        print(f[-5])
+
+        
     return f
 
 contactR.setForceFunction(wrContactForce)
@@ -421,7 +422,7 @@ mbs.addBody([rail,rail2,wheel])
 
 mbs.addForce(sleeper1)
 #mbs.addForce(sleeper2)
-#mbs.addForce(contactL)
+mbs.addForce(contactL)
 mbs.addForce(contactR)
 mbs.addForce(forceWheel)
 
@@ -442,7 +443,7 @@ DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 10e2 # Hz
-finalTime = 0.10
+finalTime = 0.012
 
 #DAE.make_consistent('IDA_YA_YDP_INIT')
 
