@@ -145,7 +145,7 @@ def gjk(P, Q, v0, graphs=False, verb=False):
         
         # now we use the expanding polytope algorithm (EPA) to track down the
         # penetration depth
-        sTol = 1e-6                    # search tolerance
+        sTol = 1e-6                   # search tolerance
         simplex = Wk.copy()
         idxListP = indexP.copy()
         idxListQ = indexQ.copy()
@@ -173,9 +173,9 @@ def gjk(P, Q, v0, graphs=False, verb=False):
                 indexP = [idxListP[initPointIdx],idxListP[finalPointIdx]]
                 indexQ = [idxListQ[initPointIdx],idxListQ[finalPointIdx]]
                 break
-            simplex.insert(initPointIdx+1,r)
-            idxListP.insert(initPointIdx+1,iP)
-            idxListQ.insert(initPointIdx+1,iQ)
+            simplex.insert(initPointIdx,r)
+            idxListP.insert(initPointIdx,iP)
+            idxListQ.insert(initPointIdx,iQ)
             k += 1
             
         contactNormal = n
@@ -213,6 +213,7 @@ def closestEdge(Wk):
     minDist = np.inf
     initPoint = np.array([0.,0.])
     edge = np.array([0.,0.])
+    normalToEdge = np.array([0.,0.])
     I = 0
     J = 0
     for i in range(npts):
@@ -223,20 +224,23 @@ def closestEdge(Wk):
         else:
             eunit = e
              
-        d = np.linalg.norm(Wk[i]-Wk[i].dot(eunit)*eunit)
+        #d = np.linalg.norm(Wk[i]-Wk[i].dot(eunit)*eunit)
+        d = np.array([eunit[1]*eunit[0]*Wk[i][1]-eunit[1]*eunit[1]*Wk[i][0],
+                                -eunit[0]*eunit[0]*Wk[i][1]+eunit[0]*eunit[1]*Wk[i][0]])
+        normd = np.linalg.norm(d)
         
-        if d < minDist:
-            minDist = d
+        if normd < minDist:
+            minDist = normd
             initPoint = Wk[i]
             edge = e
+            if normd != 0:
+                normalToEdge = d/normd
+            else:
+                normalToEdge *= 0
             I = i
             J = l
         
         l = i
-        
-    normalToEdge = np.array([edge[1]*edge[0]*initPoint[1]-edge[1]*edge[1]*initPoint[0],
-                            -edge[0]*edge[0]*initPoint[1]+edge[0]*edge[1]*initPoint[0]])
-    normalToEdge = normalToEdge/np.linalg.norm(normalToEdge)
         
     return I, J, normalToEdge, minDist
     
@@ -257,7 +261,7 @@ def supportFunction(P,v):
     currSvalue, maxValue = 0.,0.
     
     maxIndex = 0
-    maxValue = -1e32
+    maxValue = -np.Inf
     for i in range(numPoints):
         currSvalue = P[i][0]*v[0] + P[i][1]*v[1]
         if currSvalue > maxValue:
@@ -447,28 +451,21 @@ if __name__ == '__main__':
     Q = np.array([[1,0.5],[2.,1.],[2.,0]],dtype=float)
     v = np.array([0,-1],dtype=float)
     
-    P = np.array([[-0.51458885,  0.0927069 ],
-           [-0.51368885,  0.0926869 ],
-           [-0.51266885,  0.0926169 ],
-           [-0.51139885,  0.0924169 ],
-           [-0.50995885,  0.0920569 ],
-           [-0.50830885,  0.0914469 ],
-           [-0.50679885,  0.0906569 ],
-           [-0.50573885,  0.0899469 ],
-           [-0.50473885,  0.0891469 ],
-           [-0.50400885,  0.0884669 ],
-           [-0.50302885,  0.0873769 ],
-           [-0.50242885,  0.0865669 ],
-           [-0.50168885,  0.0853869 ],
-           [-0.50110885,  0.0842369 ],
-           [-0.50078885,  0.0834669 ],
-           [-0.50037885,  0.0822169 ],
-           [-0.50012885,  0.0811569 ],
-           [-0.49995885,  0.0800369 ]])
-    Q = np.array([[-0.510394,  0.092522],
-           [-0.516217,  0.092813],
-           [-0.528234,  0.093414],
-           [-0.543406,  0.094173]])
+    P = np.array([[0.49969318, 0.07843996],
+           [0.50002318, 0.08117996],
+           [0.50096318, 0.08398996],
+           [0.50232318, 0.08634996],
+           [0.50383318, 0.08814996],
+           [0.50710318, 0.09060996],
+           [0.50978318, 0.09173996],
+           [0.51186318, 0.09221996],
+           [0.51351318, 0.09236996],
+           [0.51498318, 0.09240996],
+           [0.51689318, 0.09245996],
+           [0.51862318, 0.09248996],
+           [0.52048318, 0.09250996]])
+    Q = np.array([[0.50752854, 0.08787805],
+           [0.511343  , 0.08841504]])
     
     
     #shift
@@ -487,6 +484,8 @@ if __name__ == '__main__':
     
     figure(f1.number)
     arrow(a[0],a[1],g[0],g[1],color='red',length_includes_head=True, width=1e-5)
+    plot(a[0],a[1],'x')
+    plot(b[0],b[1],'o')
     
     
     ax = gca()

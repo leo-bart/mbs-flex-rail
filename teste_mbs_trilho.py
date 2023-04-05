@@ -27,7 +27,7 @@ mbs.gravity = np.array([0,-9.81,0],dtype=np.float64)
 '''
 Material
 '''
-steel = linearElasticMaterial('Steel',E = 207e9,
+steel = linearElasticMaterial('Steel',E = 207e12,
                               nu = 0.3,
                               rho = 7.85e3)
 
@@ -93,7 +93,7 @@ rail2.assembleTangentStiffnessMatrix()
 
 
 wheel = rigidBody('Wheel',)
-wsmass = 100.
+wsmass = 1400.
 wsInertiaRadial = 1/12*wsmass*(3*0.15**2+trackWidth**2) 
 I = np.diag([1/12*wsmass*trackWidth**2,1/12*wsmass*trackWidth**2,1/2*wsmass*0.15*0.15])
 wheel.setMass(wsmass)
@@ -169,12 +169,13 @@ def pullWheelset(t,p,v,m1,m2):
     w = m1.parent
     f = np.zeros_like(p)
     wpos = p[w.globalDof]
-    
+    wvel = v[w.globalDof]
+     
     if t > 0.8:
         f[w.globalDof[0]] = 10
     
-    f[w.globalDof[1]] = - wpos[1] * 1e2 * 0
-    f[w.globalDof[2]] = - wpos[2] * 1e3 * 0
+    f[w.globalDof[1]] = - wvel[1] * 1e2
+    f[w.globalDof[3]] = - wvel[3] * 1e3
         
     return f
 forceWheel.setForceFunction(pullWheelset)
@@ -390,8 +391,9 @@ def wrContactForce(t,p,v,*args):
     f = np.zeros_like(p)
     if minDist < 0.0:
         # 2d contact force on the wheel midplane
-        contactForce = 300e7 * minDist * wst2prof.transpose().dot(cNormal)
-        
+        contactForce = 525e8 * minDist * wst2prof.transpose().dot(cNormal)
+        # contactForce = - 940e9 * np.power(-minDist,1.5) * wst2prof.transpose().dot(cNormal)
+        #print(minDist)
         # gets the vector from the wheelset CoG to the contact point
         # first on profile local coordinates
         rhoM2star = cPoints[wheel] - wstPp
@@ -421,7 +423,6 @@ Multibody system setup
 mbs.addBody([rail,rail2,wheel])
 
 mbs.addForce(sleeper1)
-#mbs.addForce(sleeper2)
 mbs.addForce(contactL)
 mbs.addForce(contactR)
 mbs.addForce(forceWheel)
@@ -437,13 +438,13 @@ problem = mbs.generate_problem('ind3')
 
 DAE = IDA(problem)
 DAE.report_continuously = True
-# DAE.inith = 1e-4
-DAE.maxh = 1e-4
+DAE.inith = 1e-6
+DAE.maxh = 10e-4
 DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 10e2 # Hz
-finalTime = 0.012
+finalTime = 0.2
 
 #DAE.make_consistent('IDA_YA_YDP_INIT')
 
@@ -476,12 +477,14 @@ def plotRails():
         a = rail.plotPositions(5)
         b = rail2.plotPositions(5)
         k += 1
-        plt.plot(a[:,0],a[:,1], label='{:.2f} s'.format(t[i]), color='red', alpha = ( k/(nplots+1)))
-        plt.plot(b[:,0],b[:,1], label='{:.2f} s'.format(t[i]), color='blue', alpha = ( k/(nplots+1)))
+        plt.plot(a[:,0],a[:,2], label='{:.2f} s'.format(t[i]), color='red', alpha = ( k/(nplots+1)))
+        plt.plot(b[:,0],b[:,2], label='{:.2f} s'.format(t[i]), color='blue', alpha = ( k/(nplots+1)))
     plt.legend()
     plt.xlabel('Comprimento ao longo do trilho / m')
     plt.ylabel('Deslocamento vertical / m')
     plt.title(mbs.name)
+    
+    return a,b
 
 
 
@@ -495,7 +498,7 @@ def run_animation():
     # w1 = vp.cylinder(axis = vp.vec(0,0,0.5*trackWidth), radius = 0.15)
     # w2 = w1.clone(axis = vp.vec(0,0,-0.5*trackWidth))
     # wheelRep = vp.compound([w1,w2])
-    wheelRep = stl.stl_to_triangles('Rodeiro montado.stl')
+    wheelRep = stl.stl_to_triangles('Rodeiro_carga.stl')
     wheelRep.pos = vp.vec(*wheel.simQ[0,:3])
     wheelRep.rotate(angle=np.pi/2,axis=vp.vec(1,0,0))
     wheelRep.visible = True
@@ -514,8 +517,9 @@ def run_animation():
     axisY = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.0,0.5,0), shaftwidth=0.01, color=vp.color.green)
     axisz = vp.arrow(pos=vp.vec(0,0,0),axis=vp.vec(0.0,0,0.5), shaftwidth=0.01, color=vp.color.blue)    
     
-    vp.rate(1)
+    
     for i in range(len(t)):
+        vp.rate(10)
         scene.title =  't = {} s'.format(t[i])
         for n,r in enumerate([rail,rail2]):
             r.updateDisplacements(r.simQ[i])
@@ -528,4 +532,4 @@ def run_animation():
         wheelRep.rotate(angle=wheel.simU[i,4]/outFreq, axis=vp.vec(0,1,0))
         wheelRep.rotate(angle=wheel.simU[i,5]/outFreq, axis=vp.vec(0,0,1))
         
-run_animation()
+#run_animation()
