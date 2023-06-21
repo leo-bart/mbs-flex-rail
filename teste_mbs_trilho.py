@@ -93,7 +93,7 @@ rail2.assembleTangentStiffnessMatrix()
 
 
 wheel = rigidBody('Wheel',)
-wsmass = 1400.
+wsmass = 140.
 wsInertiaRadial = 1/12*wsmass*(3*0.15**2+trackWidth**2) 
 I = np.diag([1/12*wsmass*trackWidth**2,1/12*wsmass*trackWidth**2,1/2*wsmass*0.15*0.15])
 wheel.setMass(wsmass)
@@ -150,10 +150,10 @@ def slpForce(t,p,v,m1,m2):
     f[rightRail.globalDof[2::9]] = stiffness * (- ds - 0.02*dv) + 1e6 * rightDist
     
     ## TODO: Rotation stiffness
-    leftY = p[leftRail.globalDof[4::9]]
-    leftZ = p[leftRail.globalDof[5::9]]
-    rightY = p[rightRail.globalDof[4::9]]
-    rightZ = p[rightRail.globalDof[5::9]]
+    # leftY = p[leftRail.globalDof[4::9]]
+    # leftZ = p[leftRail.globalDof[5::9]]
+    # rightY = p[rightRail.globalDof[4::9]]
+    # rightZ = p[rightRail.globalDof[5::9]]
     
     
     
@@ -168,7 +168,7 @@ forceWheel.connect(wheel,MBS.ground())
 def pullWheelset(t,p,v,m1,m2):
     w = m1.parent
     f = np.zeros_like(p)
-    wpos = p[w.globalDof]
+    # wpos = p[w.globalDof]
     wvel = v[w.globalDof]
      
     if t > 0.8:
@@ -357,12 +357,21 @@ def wrContactForce(t,p,v,*args):
             plt.plot(wpConvSubsets[i][:,0],wpConvSubsets[i][:,1])
         
     rp = railBody.profiles[0]
-    rp.createConvexSubsets()
-    for cs in rp.convexSubsets:
-        cs[:,0] += railCpointPosi[2]
-        cs[:,1] += railCpointPosi[1]
+    rpConvSubsets = (rp.createConvexSubsets()).copy()
+    headOffset = 0.01 # offset to artificially increase head height
+                      # this prevent degenerate contact conditions when
+                      # wheel penetration is large compared to convex subset
+                      # total height
+    for i in range(len(rpConvSubsets)):
+        rpConvSubsets[i][:,0] += railCpointPosi[2]
+        rpConvSubsets[i][:,1] += railCpointPosi[1]
+        rpConvSubsets[i] = np.append(rpConvSubsets[i],[rpConvSubsets[i][-1,:]],axis=0)
+        rpConvSubsets[i] = np.append(rpConvSubsets[i],[rpConvSubsets[i][0,:]],axis=0)
+        # rpConvSubsets[i][-1,1] -= headOffset
+        # rpConvSubsets[i][-2,1] -= headOffset
+        
         if plot:
-            plt.plot(cs[:,0],cs[:,1])
+            plt.plot(rpConvSubsets[i][:,0],rpConvSubsets[i][:,1])
     
     
     
@@ -438,13 +447,13 @@ problem = mbs.generate_problem('ind3')
 
 DAE = IDA(problem)
 DAE.report_continuously = True
-DAE.inith = 1e-6
+DAE.inith = 1e-5
 DAE.maxh = 10e-4
 DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 10e2 # Hz
-finalTime = 0.2
+finalTime = 0.05
 
 #DAE.make_consistent('IDA_YA_YDP_INIT')
 

@@ -127,7 +127,7 @@ class planarProfile(profile):
             n0np = currPoint - firstPoint
             angSign = np.sign(np.cross(npm1np,npnpp1))
             currSet.append(self.points[i])
-            if angSign * rot < 0:
+            if angSign * rot < 0.01:
                 self.convexSubsets.append(np.array(currSet))
                 currSet = []
                 currSet.append(self.points[i])
@@ -135,6 +135,44 @@ class planarProfile(profile):
         self.convexSubsets.append(np.array(currSet))
         
         return self.convexSubsets
+    
+    
+    
+    # Find the indices of the points that form the convex hull
+    def find_convex_hull(self,points):
+        # Sort the points lexicographically
+        sorted_points = np.lexsort(points.T)
+        
+        # Create arrays to hold the upper and lower hulls
+        lower_hull = [sorted_points[0]]
+        upper_hull = [sorted_points[0]]
+        
+        # Compute the lower and upper hulls
+        for point in sorted_points[1:]:
+            # Update the lower hull
+            while len(lower_hull) > 1 and np.cross(
+                points[lower_hull[-1]] - points[lower_hull[-2]],
+                points[point] - points[lower_hull[-2]]
+            ) <= 0:
+                lower_hull.pop()
+            lower_hull.append(point)
+            
+            # Update the upper hull
+            while len(upper_hull) > 1 and np.cross(
+                points[upper_hull[-1]] - points[upper_hull[-2]],
+                points[point] - points[upper_hull[-2]]
+            ) >= 0:
+                upper_hull.pop()
+            upper_hull.append(point)
+        
+        # Combine the lower and upper hulls
+        convex_hull = lower_hull + upper_hull[1:-1][::-1]
+        
+        return points[convex_hull]
+    
+    def setConvexHull(self):
+        self.convexHull = self.find_convex_hull(self.points)
+        return self.convexHull
         
 
 class wheelRailContact(MBS.force):
@@ -181,43 +219,6 @@ class wheelRailContact(MBS.force):
         g = cso[mini,minj].dot(approxNormal)
         print(g)
                     
-        # GJK algorithm
-        # wi,ri = [0],[0]
-        # v = cso[wi[0],ri[0]]
-        # k = 0
-        # W = [v]
-        # close = False
-        # terminate = False
-        # while len(W) < 3 and not close and not terminate:
-        #     print(np.sqrt(v.dot(v)))
-        #     k = k+1
-        #     w, wj, rj = self.getSupportFunction(-v, cso)
-        #     ri.append(wj)
-        #     wi.append(rj)
-        #     W.append(w)
-        #     newW,l = self.S1D(*W) if len(W) == 2 else self.S2D(*W)
-        #     v = np.zeros(2)
-        #     retainedIdx = [False] * len(W)
-        #     for i in range(len(W)):
-        #         try:
-        #             retainedIdx[i] = (W[i] - newW[i]).all() == 0
-        #             v += l[i]*newW[i]
-        #         except:
-        #             pass
-                
-        #     W = newW
-        #     ri = [ri[i] for i in range(len(ri)) if retainedIdx[i]]
-        #     wi = [wi[i] for i in range(len(wi)) if retainedIdx[i]]
-            
-            
-        #     close = v.dot(v) <= 1e-6*np.max([yi.dot(yi) for yi in W])
-        #     terminate = v.dot(v) - v.dot(w) > 1e-12*v.dot(v)
-            
-        # pi = np.zeros(2)
-        # qi = np.zeros(2)
-        # for i in range(len(l)):
-        #     pi = l[i]*self.wheel.points[wi[i]]
-        #     qi = l[i]*self.rail.points[ri[i]]
         
         return self.wheel.points[mini], self.rail.points[minj], mini, minj, approxNormal, g
     
@@ -394,38 +395,74 @@ class wheelRailContact(MBS.force):
             f[self.body2.globalDof] = cForce
         
         return f
-        
-        
-        
+    
+   
+    
+    
 
-# if __name__=='__main__':
-#     b = rigidBody('Trilho')
+
+
+
+
+if __name__=='__main__':
+    b = rigidBody('Trilho')
     
-#     w = planarProfile('wheel')
-#     r = planarProfile('rail', convPar=-1)
+    w = planarProfile('wheel')
+    r = planarProfile('rail', convPar=-1)
     
-#     b.addProfile(r)
+    b.addProfile(r)
     
-#     w.setProfilePointsFromFile('/home/leonardo/git/mbsim-wagons/roda.dat')
-#     r.setProfilePointsFromFile('/home/leonardo/git/mbsim-wagons/tr68.dat')
+    w.setProfilePointsFromFile('./design2.pro')
+    r.setProfilePointsFromFile('./tr68.pro')
     
-#     r.centerProfile()
-#     r.rotatePoints(np.arctan(1/40))
-#     w.offsetPoints(np.array([-0.138,0.48728]))
+    r.centerProfile()
+    r.rotatePoints(np.arctan(1/40))
+    w.mirrorHoriz()
+    w.offsetPoints(np.array([-0.08,0.0032]))
     
-#     ax = plt.gca()
-#     #w.plotMe(ax)
-#     #r.plotMe(ax)
-#     ax.axis('equal')
+    ax = plt.gca()
+    # w.plotMe(ax)
+    # r.plotMe(ax)
+    ax.axis('equal')
     
-#     wr = wheelRailContact()
-#     wr.setWheel(w)
-#     wr.setRail(r)
+    ch = r.setConvexHull()
     
-#     pw,pr,iw,ir,n,g = wr.searchContactPoint()
+    wr = wheelRailContact()
+    wr.setWheel(w)
+    wr.setRail(r)
     
-#     #ax.plot(*pw,'o')
-#     #ax.plot(*pr,'o')
-#     ax.quiver(pr[0],pr[1],*n)
+    pw,pr,iw,ir,n,g = wr.searchContactPoint()
     
-#     w.createConvexSubsets()
+    # ax.plot(*pw,'o')
+    # ax.plot(*pr,'o')
+    # ax.quiver(pr[0],pr[1],*n)
+    
+    w.createConvexSubsets()
+    
+    import gjk
+    rail = 0
+    wheel = 1
+    cSubsets = {rail:None,wheel:None}
+    cPoints = {rail:None,wheel:None}
+    minDist = np.inf
+    
+    plt.fill(ch[:,0],ch[:,1],edgecolor='blue')
+    
+    for rSubset in [ch]:
+        for wSubset in w.convexSubsets:
+            if rSubset[-1,0] > wSubset[1,0]:
+                pass
+            pRail,pWheel,n,d = gjk.gjk(rSubset,wSubset,np.array([0.,-1.]))
+            plt.plot(wSubset[:,0],wSubset[:,1])
+            plt.arrow(pWheel[0],pWheel[1],pRail[0]-pWheel[0],pRail[1]-pWheel[1])
+            # print(d)
+            if d < minDist:
+                minDist = d
+                cSubsets[rail] = rSubset
+                cSubsets[wheel] = wSubset
+                cPoints[rail] = pRail
+                cPoints[wheel] = pWheel
+                cNormal = n
+                    
+                    
+    print(minDist)
