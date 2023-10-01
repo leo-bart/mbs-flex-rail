@@ -356,7 +356,10 @@ class linearSpring_PtP(force):
         return f
     
 class contact(force):
-    pass
+    def __init__(self,name_='Contact force'):
+        super().__init__(name_)
+        
+
         
     
     

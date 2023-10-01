@@ -21,14 +21,32 @@ class profile(object):
         print('Profile {} created.'.format(name))
         
     def setParent(self,body):
+        """
+        Set the parent body.
+
+        Parameters
+        ----------
+        body : body
+            The body to which the profile belongs.
+
+        Returns
+        -------
+        None.
+
+        """
         self.parent = body
         
+
 class planarProfile(profile):
+    """
+    Create planar profile.
     
+    
+    """
 
     def __init__(self,name, fileName='', convPar = 1):
-        '''
-        
+        """
+        Initialize profile object.
 
         Parameters
         ----------
@@ -43,7 +61,7 @@ class planarProfile(profile):
         -------
         None.
 
-        '''
+        """
         super().__init__(name)
         self.convPar = convPar
         if fileName != '':
@@ -90,17 +108,34 @@ class planarProfile(profile):
         self.mirror(0)
     
     def mirrorHoriz(self):
-        '''
-        Mirror points around the horizontal axis
+        """
+        Mirror points around the horizontal axis.
 
         Returns
         -------
         None.
 
-        '''
+        """
         self.mirror(1)
         
     def rotatePoints(self, angleInRad):
+        """
+        Apply rotation to profile points.
+        
+        This method rotates all points with respect to the origin using a
+        angleInRad angle. Then the profile points are update to the rotated
+        values.
+
+        Parameters
+        ----------
+        angleInRad : double
+            The rotation angle.
+
+        Returns
+        -------
+        None.
+
+        """
         R = np.array([[np.cos(angleInRad),np.sin(angleInRad)],
                       [-np.sin(angleInRad),np.cos(angleInRad)]])
         self.points = self.points.dot(R)
