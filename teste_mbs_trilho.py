@@ -9,20 +9,21 @@ from nachbagauer3Dc import node, railANCF3Dquadratic, beamANCF3Dquadratic
 from materialsc import linearElasticMaterial
 from bodiesc import flexibleBody3D, rigidBody
 from profiles import planarProfile
-import MultibodySystem as MBS
+import MBS.MultibodySystem as mbs
+import MBS.BodyConnections.Forces
+import MBS.BodyConnections.Contacts.Contact
 import gjk as gjk
 import numpy as np
 from assimulo.solvers import IDA, ODASSL
 import matplotlib.pyplot as plt
 import helper_funcs as hf
-import wheelrailcontact as wrcontact
 from copy import deepcopy
 
 #%% SYSTEM SETUP
 '''
 Initialize system
 '''
-mbs = MBS.MultibodySystem('Trilho com rodeiro')
+mbs = mbs.MultibodySystem('Trilho com rodeiro')
 mbs.gravity = np.array([0,-9.81,0],dtype=np.float64)
 
 '''
@@ -108,7 +109,7 @@ wheel.setPositionInitialConditions(1,0.8382/2 + 0.19416/2)
 '''
 Sleepers
 '''
-sleeper1 = MBS.force('Sleepers')
+sleeper1 = MBS.BodyConnections.Forces.force('Sleepers')
 sleeper1.connect(rail,rail2)
 #sleeper2 = MBS.force('Sleeper 2')
 #leeper2.connect(rail2,mbs.ground)
@@ -164,8 +165,8 @@ sleeper1.setForceFunction(slpForce)
 #sleeper2.setForceFunction(slpForce)
 
 # Force to move the wheel
-forceWheel = MBS.force('Wheel pull force')
-forceWheel.connect(wheel,MBS.ground())
+forceWheel = MBS.BodyConnections.Forces.force('Wheel pull force')
+forceWheel.connect(wheel,mbs.ground)
 def pullWheelset(t,p,v,m1,m2):
     w = m1.parent
     f = np.zeros_like(p)
@@ -209,13 +210,13 @@ poits pt2 below represent the reference contact marker, i.e., the
 reference frame of the wheel profile
 '''
 
-contactL = MBS.contact('Contact left wheel to rail')
+contactL = MBS.BodyConnections.Contacts.Contact.contact('Contact left wheel to rail')
 contactL.connect(rail,wheel,pt2=np.array([0.0,-0.41,-0.5*trackWidth]))
-contactR = MBS.contact('Contact right wheel to rail')
+contactR = MBS.BodyConnections.Contacts.Contact.contact('Contact right wheel to rail')
 contactR.connect(rail2,wheel,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
 
 
-# def wrContactForce(t,p,v,m1,m2):
+# # def wrContactForce(t,p,v,m1,m2):
 # def wrContactForce(t,p,v,*args):
 #     """
 #     Caculate wheel-rail contact force.
@@ -384,8 +385,8 @@ contactR.connect(rail2,wheel,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
     
     
 #     # find the contact point, if any
-#     cSubsets = {rail:None,wheel:None}
-#     cPoints = {rail:None,wheel:None}
+#     cSubsets = {"rail":None,"wheel":None}
+#     cPoints = {"rail":None,"wheel":None}
 #     minDist = np.inf
     
 #     for rSubset in rpConvSubsets:
@@ -395,14 +396,14 @@ contactR.connect(rail2,wheel,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
 #                 # print(d)
 #                 if d < minDist:
 #                     minDist = d
-#                     cSubsets[rail] = rSubset
-#                     cSubsets[wheel] = wSubset
-#                     cPoints[rail] = pRail
-#                     cPoints[wheel] = pWheel
+#                     cSubsets["rail"] = rSubset
+#                     cSubsets["wheel"] = wSubset
+#                     cPoints["rail"] = pRail
+#                     cPoints["wheel"] = pWheel
 #                     cNormal = n
     
-#     # plt.fill(cSubsets[rail][:,0],cSubsets[rail][:,1], edgecolor='blue')
-#     # plt.fill(cSubsets[wheel][:,0],cSubsets[wheel][:,1], edgecolor='orange')
+#     # plt.fill(cSubsets[rail][:,0],cSubsets["rail"][:,1], edgecolor='blue')
+#     # plt.fill(cSubsets[wheel][:,0],cSubsets["wheel"][:,1], edgecolor='orange')
 #     # print(minDist)
         
 #     f = np.zeros_like(p)
@@ -411,7 +412,7 @@ contactR.connect(rail2,wheel,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
 #         contactForce = 525e8 * minDist * wst2prof.transpose().dot(cNormal)
 #         # gets the vector from the wheelset CoG to the contact point
 #         # first on profile local coordinates
-#         rhoM2star = cPoints[wheel] - wstPp
+#         rhoM2star = cPoints["wheel"] - wstPp
 #         # then on global coordinates
 #         rhoM2star = Rwst.transpose().dot(wst2prof.transpose().dot(rhoM2star))
         
@@ -420,8 +421,8 @@ contactR.connect(rail2,wheel,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
 #             print('Warning: negative contact force {} N'.format(f[-5]))
 #         f[wstBody.globalDof[3:]] += hf.skew(rhoM2star).dot(contactForce)
         
-#         cPoints[rail] = Rwst.transpose().dot(wst2prof.transpose().dot(cPoints[rail]))
-#         localXi = e.mapToLocalCoords(cPoints[rail])
+#         cPoints["rail"] = Rwst.transpose().dot(wst2prof.transpose().dot(cPoints["rail"]))
+#         localXi = e.mapToLocalCoords(cPoints["rail"])
         
 #         # normal contact force
 #         f[railDof[e.globalDof]] -=  np.dot(
@@ -437,8 +438,8 @@ contactR.connect(rail2,wheel,pt2=np.array([0.0,-0.41,0.5*trackWidth]))
         
 #     return f
 
-contactR.setForceFunction(wrContactForce)
-contactL.setForceFunction(wrContactForce)
+# contactR.setForceFunction(wrContactForce)
+# contactL.setForceFunction(wrContactForce)
     
 
 '''
@@ -468,7 +469,7 @@ DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 10e2 # Hz
-finalTime = 0.01
+finalTime = .002
 
 #DAE.make_consistent('IDA_YA_YDP_INIT')
 
