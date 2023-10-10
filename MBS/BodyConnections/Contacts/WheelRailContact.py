@@ -8,13 +8,13 @@ Created on Sun Oct  1 11:19:18 2023
 @author: leonardo
 """
 
-import MultibodySystem as mbs
+import MBS.BodyConnections.Contacts.Contact
 import numpy as np
 import helper_funcs as hf
 import matplotlib.pyplot as plt
 import gjk 
 
-class wrContact (mbs.contact):
+class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
     """
     Wheel-rail contact force.
     
@@ -25,7 +25,7 @@ class wrContact (mbs.contact):
     def __init__(self,name_='Contact force'):
         super().__init__(name_)
         
-    def wrContactForce(t,p,v,*args):
+    def evaluateForceFunction(self,t,p,v,*args):
         """
         Caculate wheel-rail contact force.
         
@@ -210,14 +210,14 @@ class wrContact (mbs.contact):
                         cPoints["wheel"] = pWheel
                         cNormal = n
         
-        # plt.fill(cSubsets[rail][:,0],cSubsets[rail][:,1], edgecolor='blue')
-        # plt.fill(cSubsets[wheel][:,0],cSubsets[wheel][:,1], edgecolor='orange')
+        # plt.fill(cSubsets["rail"][:,0],cSubsets["rail"][:,1], edgecolor='blue')
+        # plt.fill(cSubsets["wheel"][:,0],cSubsets["wheel"][:,1], edgecolor='orange')
         # print(minDist)
             
         f = np.zeros_like(p)
         if minDist < 0.0:
             # 2d contact force on the wheel midplane
-            contactForce = 525e8 * minDist * wst2prof.transpose().dot(cNormal)
+            contactForce = 525e6 * minDist * wst2prof.transpose().dot(cNormal)
             # gets the vector from the wheelset CoG to the contact point
             # first on profile local coordinates
             rhoM2star = cPoints["wheel"] - wstPp
@@ -245,3 +245,8 @@ class wrContact (mbs.contact):
 
             
         return f
+    
+    
+    def plotContactPosition(self,t,p,v):
+        pass
+        

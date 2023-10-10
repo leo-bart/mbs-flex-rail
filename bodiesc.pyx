@@ -10,8 +10,10 @@ Classes to use with Multibody System as bodies
 
 import numpy as np
 import matplotlib.pyplot as plt
-import MultibodySystem as mbs
+import MBS.MultibodySystem as mbs
+import MBS.marker
 import helper_funcs as hf
+import profiles
 
 cdef class body(object):
     
@@ -111,14 +113,21 @@ cdef class body(object):
         
         return mrk
     
-    def addProfile(self, prof):
-        '''
-        Adds a profile to the body
+    def addProfile(self, prof, _marker=None):
+        """
+        Adds a profile to the body.
+        
+        If _marker is provided, then this marker is considered as the coordinate reference marker.
+        
+        In case _marker is not provided, a reference marker is created using 
+        the parent body reference marker origin as position.
 
         Parameters
         ----------
         prof : profile
             The profile to be added.
+        marker : marker or array
+            The reference marker.
 
         Returns
         -------
@@ -126,11 +135,23 @@ cdef class body(object):
             The profile that has been added. It is returned to be used in other
             parts of the code, if needed.
 
-        '''
+        """
         self.profiles.append(prof)
         prof.setParent(self)
         
+        if _marker==None:
+            prof.setReferenceMarker(self.addMarker(
+                MBS.marker.marker(prof.name + ' Reference Marker')))
+        elif isinstance(_marker,MBS.marker.marker):
+            prof.setReferenceMarker(_marker)
+        else:
+            prof.setReferenceMarker(self.addMarker(
+                MBS.marker.marker(prof.name + ' Reference Marker',
+                                                   _marker)))
+        
         return prof
+    
+    
     
     def setPositionInitialConditions(self,*args):
         '''
@@ -223,7 +244,7 @@ cdef class ground(body):
         super().__init__('Ground',0)
         self.type = 'Ground'
         self.massMatrix = np.array([[]])
-        self.addMarker(mbs.marker('O'))
+        self.addMarker(MBS.marker.marker('O'))
         self.globalDof = []
     
     @property
@@ -241,8 +262,7 @@ cdef class rigidBody(body):
         super().__init__(name_,6)
         self.type = 'Rigid body'
         
-        self.addMarker(mbs.marker('cog'))
-        self.markers[0].setParent(self)
+        self.addMarker(MBS.marker.marker('cog'))
         
         self.massMatrix = np.zeros((6,6))
         

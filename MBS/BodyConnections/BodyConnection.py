@@ -180,7 +180,7 @@ class fixedJoint(constraint):
         Fixed joint class
         
         A fixed joint guarantees the connected markers are in the same position
-        and orientation. Consequently, both markers will hold togheter, meaning
+        and orientation. Consequently, both markers will ne held togheter, meaning
         they can not have an initial offset
 
         Parameters
