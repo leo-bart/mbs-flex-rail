@@ -8,11 +8,12 @@ Sets profiles to be applied to beams and rails
 
 import numpy as np
 import matplotlib.pyplot as plt
-import helper_funcs as hf
-import MultibodySystem as MBS
 from bodiesc import rigidBody
 
+
+
 class profile(object):
+    """Generic profile class."""
     
     def __init__(self,name):
         self.name = name
@@ -39,9 +40,11 @@ class profile(object):
 
 class planarProfile(profile):
     """
-    Create planar profile.
+    Planar profile class.
     
-    
+    Points are given in (x,y) form, aligned to the reference marker. This means
+    that the z axis of the reference marker is ignored, therefore the user 
+    should set the marker accordingly.
     """
 
     def __init__(self,name, fileName='', convPar = 1):
@@ -68,6 +71,21 @@ class planarProfile(profile):
             self.setProfilePointsFromFile(fileName)
         
     def setProfilePointsFromFile(self, fileName, colDelimiter=';'):
+        """
+        Load data points from a text file (in csv-like format).
+
+        Parameters
+        ----------
+        fileName : TYPE
+            Text file name address.
+        colDelimiter : TYPE, optional
+            File delimiter. The default is ';'.
+
+        Returns
+        -------
+        None.
+
+        """
         self.setProfilePoints(np.genfromtxt(fileName, delimiter=colDelimiter))
 
     
@@ -91,20 +109,35 @@ class planarProfile(profile):
         self.points -= shift
         
     def offsetPoints(self, offset):
+        """
+        Offsets all points.
+        
+        Receives the offset vector [dx,dy] and offsets all points with
+        this vector. This permanently changes the position of the points
+        and is supposed to be used to adjust the initial configuration.
+        
+        To get current point positions considering the reference marker,
+        use function getCurrentPosition().
+        
+        Returns
+        -------
+        None.
+        
+        """
         self.points += offset
         
     def mirror(self, ax = 0):
         self.points[:,ax] *= -1
     
     def mirrorVert(self):
-        '''
-        Mirror points around the vertical axis
+        """
+        Mirror points around the vertical axis.
 
         Returns
         -------
         None.
 
-        '''
+        """
         self.mirror(0)
     
     def mirrorHoriz(self):
@@ -140,10 +173,20 @@ class planarProfile(profile):
                       [-np.sin(angleInRad),np.cos(angleInRad)]])
         self.points = self.points.dot(R)
         
-    def plotMe(self, ax):
+    def plotMe(self, ax=None):
+        if ax == None:
+            ax = plt.axes()
+        currentPoints = self.getCurrentPosition()
+        ax.plot(currentPoints[:,0], currentPoints[:,1])
+        ax.grid(True)
+            
+    def plotSubsets(self,ax=None):
         self.createConvexSubsets()
+        if ax == None:
+            ax = plt.axes()
         for cs in self.convexSubsets:
             ax.plot(cs[:,0], cs[:,1])
+            ax.grid(True)
         
     def createConvexSubsets(self):
         
@@ -182,11 +225,27 @@ class planarProfile(profile):
         method.
         """
         self.referenceMarker = _marker
+        
+    def getCurrentPosition(self):
+        currentPoints = self.points + self.referenceMarker.position[0:1]
+        return currentPoints
     
     
-    
-    # Find the indices of the points that form the convex hull
     def find_convex_hull(self,points):
+        """
+        Find the indices of the points that form the convex hull.
+
+        Parameters
+        ----------
+        points : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+
+        """
         # Sort the points lexicographically
         sorted_points = np.lexsort(points.T)
         
@@ -221,235 +280,6 @@ class planarProfile(profile):
         self.convexHull = self.find_convex_hull(self.points)
         return self.convexHull
         
-
-# class wheelRailContact(MBS.force):
-#     '''
-#     TODO: this class is not ready to be used
-#     '''
-    
-#     def __init__(self, name_='Wheel-rail contact'):
-#         super().__init__(name_)
-#         self.type = 'Wheel-rail contact'
-        
-#     def setWheel(self,wheelProf):
-#         self.wheel = wheelProf
-#         self.wheelProfLen = wheelProf.points.shape[0]
-        
-#     def setRail(self,railProf):
-#         self.rail = railProf
-#         self.railProfLen = railProf.points.shape[0]
-        
-#     def searchContactPoint(self, tol = 1e-6):
-        
-#         initialPoint = self.wheel.points[0]
-#         if self.rail.points[0,0] > initialPoint[0]:
-#             initialPoint = self.rail.points[0]
-        
-#         finalPoint = self.wheel.points[-1]
-#         if self.rail.points[-1,0] < finalPoint[0]:
-#             finalPoint = self.rail.points[-1]
-            
-        
-#         cso = self.computeMikowskiSum()
-#         mini, minj = 0,0
-#         dist = 1000.
-#         for i in range(self.wheelProfLen):
-#             for j in range(self.railProfLen):
-#                 thisDist = cso[i,j].dot(cso[i,j])
-#                 if thisDist < dist:
-#                     dist = thisDist
-#                     mini, minj = i,j
-        
-#         approxNormal = hf.unitaryVector(self.rail.points[minj+1] - self.rail.points[minj-1])[0][0:2]
-#         approxNormal = np.array([[0,-1],[1,0]]).dot(approxNormal)
-        
-#         g = cso[mini,minj].dot(approxNormal)
-#         print(g)
-                    
-        
-#         return self.wheel.points[mini], self.rail.points[minj], mini, minj, approxNormal, g
-    
-#     def getSupportFunction(self,v,cso):
-        
-#         supWheel = np.argmax(self.wheel.points.dot(v))
-#         supRail = np.argmax(self.rail.points.dot(-v))
-        
-#         return self.wheel.points[supWheel] - self.rail.points[supRail], supWheel, supRail
-            
-    
-#     def computeMikowskiSum(self):
-#         minkS = np.zeros((self.wheelProfLen,self.railProfLen,2))
-#         for i,wp in enumerate(self.wheel.points):
-#             for j,rp in enumerate(self.rail.points):
-#                 minkS[i,j] = wp-rp
-                
-#         return minkS
-    
-    
-#     def S2D(self,s1,s2,s3):
-#         '''
-#         Algorithm to compute the minimum distance of a 2-simplex (triangle)
-#         to the origin.
-        
-#         This implemented version is a modification to a purely 2D case.
-        
-#         Reference:
-#         MONTANARI, M.; PETRINIC, N.; BARBIERI, E. Improving the GJK Algorithm 
-#         for Faster and More Reliable Distance Queries Between Convex Objects. 
-#         ACM Transactions on Graphics, v. 36, n. 3, p. 1–17, 30 jun. 2017. 
-
-#         Parameters
-#         ----------
-#         s1 : array
-#             vertex 1.
-#         s2 : array
-#             vertex 2.
-#         s3 : array
-#             vertex 3.
-
-#         Returns
-#         -------
-#         W : list
-#             Contains the support vertices of the 1-simplex that supports the 
-#             point of minimal distance.
-#         lambda : list
-#             Coefficients of the 
-#         '''
-
-#         # the following is the main modifiction from Montanari's algorithm:
-#         # because we are dealing with a plane problem, the projection of the origin
-#         # on the plane that contains the simplex is always the origin itself
-#         p0 = np.zeros(2)
-#         s = [s1,s2,s3]
-#         mu_max = 0
-#         k = 0
-#         l = 1
-        
-#         for i in range(2):
-#             mu = s2[k]*s3[l] + s1[k]*s2[l] + s3[k]*s1[l] - s2[k]*s1[l] - s3[k]*s2[l] - s1[k]*s3[l]
-#             if mu*mu > mu_max*mu_max:
-#                 mu_max = mu
-#             k = l
-#             l = i
-            
-#         k = 0
-#         l = 1
-        
-#         C = np.zeros(3)
-#         for j in range(3):
-#             C[j] = (-1)**(j+1) * (p0[0]*s[k][1] + p0[1]*s[l][0] + s[k][0]*s[l][1] - p0[0]*s[l][1] - p0[1]*s[k][0] - s[l][0]*s[k][1])
-#             k = l
-#             l = j
-        
-#         if all( self.compareSigns(mu_max,c) for c in C):
-#             lam = C/mu_max
-#             W = s
-#             retainedIdx = [0,1,2]
-#         else:
-#             d = 1e6
-#             for j in [0,1,2]:
-#                 if self.compareSigns(mu_max, -C[j]):
-#                     Wstar, lamstar = self.S1D(*[s[m] for m in range(3) if m != j])
-#                     if len(Wstar) == 1:
-#                         dstar = Wstar[0]*lamstar[0]
-#                     else:
-#                         dstar = Wstar[0]*lamstar[0] + Wstar[1]*lamstar[1]
-#                     dstar = np.linalg.norm(dstar)
-#                     if dstar < d:
-#                         W = Wstar
-#                         lam = lamstar
-#                         d = dstar
-
-#         return W, lam
-            
-            
-            
-#     def S1D(self,s1,s2):
-#         '''
-#         Computes the point with minimal norm of the simplex defined by vertices
-#         s1 and s2.
-
-#         Reference:
-#         MONTANARI, M.; PETRINIC, N.; BARBIERI, E. Improving the GJK Algorithm 
-#         for Faster and More Reliable Distance Queries Between Convex 
-#         Objects. ACM Transactions on Graphics, v. 36, n. 3, p. 1–17, 30 jun. 2017. 
-
-
-#         Parameters
-#         ----------
-#         s1 : array
-#             first simplex point.
-#         s2 : array
-#             second simplex point.
-
-#         Returns
-#         -------
-#         W : list of points
-#             smallest subset of the input simplex which components are needed to support
-#             the vector of minimal distance.
-#         lam : list of weights
-#             weights of the input vectors to obtain the point of minimal distance.
-
-#         '''
-        
-#         t = hf.unitaryVector(s2 - s1)[0][:2]
-#         p0 = s2 - s2.dot(t) * t
-#         mu_max = 0
-#         for i in range(2):
-#             mu = s1[i] - s2[i]
-#             if mu*mu > mu_max*mu_max:
-#                 mu_max = mu
-#                 I = i
-#         C = np.zeros(2)
-#         s = [s1,s2]
-#         k = 1
-
-#         for j in range(2):
-#             C[j] = (-1)**(j+1) * (s[k][I] - p0[I])
-#             k = j
-#         if all( self.compareSigns(mu_max,c) for c in C):
-#             lam = C / mu_max
-#             W = [s1,s2]
-#         else:
-#             lam = [1]
-#             W = [s1]
-        
-        
-#         return W, lam
-    
-    
-    
-#     def compareSigns(self,a,b):
-#         if a > 0 and b > 0:
-#             return 1
-#         elif a < 0 and b < 0:
-#             return 1
-#         else:
-#             return 0
-        
-        
-#     def evaluateForceFunction(self,*args):
-#         p = args[1]
-#         v = args[2]
-#         f = np.zeros_like(p)
-        
-#         pw,pr,idxw,idxr,n, gap = self.searchContactPoint(self)
-        
-#         if gap < 0:
-#             cForce = gap * 167e6 * n
-        
-#             f[self.body1.globalDof] = -cForce
-#             f[self.body2.globalDof] = cForce
-        
-#         return f
-    
-   
-    
-    
-
-
-
-
 
 if __name__=='__main__':
     b = rigidBody('Trilho')
