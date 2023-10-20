@@ -6,6 +6,8 @@ Created on Sun Oct  1 18:30:48 2023
 @author: leonardo
 """
 import MBS.BodyConnections.BodyConnection
+import numpy as np
+import helper_funcs as hf
 
 class force(MBS.BodyConnections.BodyConnection.bodyConnection):
     def __init__(self,name_='Force'):
@@ -66,7 +68,7 @@ class linearSpring_PtP(force):
         
         P1 = p[dof1[:3]] + self.marker1.position
         V1 = v[dof1[:3]]
-
+        
         dof2 = self.body2.globalDof
         
         if len(dof2) > 0:

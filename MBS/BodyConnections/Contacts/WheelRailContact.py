@@ -25,6 +25,12 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
     def __init__(self,name_='Contact force'):
         super().__init__(name_)
         
+    def connect(self,_masterProfile,_slaveProfile):
+        self.masterProfile = _masterProfile
+        self.slaveProfile = _slaveProfile
+        
+        super().connect(_masterProfile.parent,_slaveProfile.parent)
+        
     def evaluateForceFunction(self,t,p,v,*args):
         """
         Caculate wheel-rail contact force.

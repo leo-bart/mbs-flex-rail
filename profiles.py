@@ -8,6 +8,7 @@ Sets profiles to be applied to beams and rails
 
 import numpy as np
 import matplotlib.pyplot as plt
+import helper_funcs as hf
 from bodiesc import rigidBody
 
 
@@ -227,7 +228,8 @@ class planarProfile(profile):
         self.referenceMarker = _marker
         
     def getCurrentPosition(self):
-        currentPoints = self.points + self.referenceMarker.position[0:1]
+        myMarker = self.referenceMarker
+        currentPoints = self.points + myMarker.orientation.transpose().dot(myMarker.position)[0:2]
         return currentPoints
     
     

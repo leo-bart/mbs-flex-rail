@@ -147,7 +147,8 @@ cdef class body(object):
         else:
             prof.setReferenceMarker(self.addMarker(
                 MBS.marker.marker(prof.name + ' Reference Marker',
-                                                   _marker)))
+                                                   _marker.position,
+                                                   _marker.orientation)))
         
         return prof
     

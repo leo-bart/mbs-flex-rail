@@ -201,16 +201,28 @@ rProf.centerProfile()
 rail.addProfile(rProf)
 rail2.addProfile(rProf)
 
+'''Contact markers'''
+leftWheelMarker = wheel.addMarker(MBS.marker.marker('Left wheel marker', 
+                                                    np.array([0,-0.8382/2,-0.459]),
+                                                    np.array([[ 0.0, 0.0, 1.0],
+                                                              [ 0.0,-1.0, 0.0],
+                                                              [ 1.0, 0.0, 0.0]])))
+rightWheelMarker = wheel.addMarker(MBS.marker.marker('Right wheel marker', 
+                                                     np.array([0,-0.8382/2,0.459]),
+                                                     np.array([[ 0.0, 0.0, 1.0],
+                                                               [ 0.0, 1.0, 0.0],
+                                                               [-1.0, 0.0, 0.0]])))
 
 
-wheel.addProfile(planarProfile('wheel','./design2.pro', convPar = 1))
-wheel.addProfile(planarProfile('wheel','./design2.pro', convPar = 1))
+wheel.addProfile(planarProfile('Left wheel profile','./design2.pro', convPar = 1),
+                 leftWheelMarker)
+wheel.addProfile(planarProfile('Right wheel profile','./design2.pro', convPar = 1),
+                 rightWheelMarker)
 
+'''TODO: PROBLEMAS AQUI. ACERTAR ORIENTAÇÃO DOS PERFIS'''
 wheel.profiles[0].rotatePoints(np.pi)
 wheel.profiles[1].rotatePoints(np.pi)
 wheel.profiles[0].mirrorVert()
-wheel.profiles[0].offsetPoints([0.459,-0.8382/2])
-wheel.profiles[1].offsetPoints([-0.459,-0.8382/2])
 
 '''
 CONTACT
