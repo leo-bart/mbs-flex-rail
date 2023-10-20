@@ -176,9 +176,10 @@ class planarProfile(profile):
         
     def plotMe(self, ax=None):
         if ax == None:
-            ax = plt.axes()
+            ax = plt.figure().add_subplot(projection='3d')
+
         currentPoints = self.getCurrentPosition()
-        ax.plot(currentPoints[:,0], currentPoints[:,1])
+        ax.plot(currentPoints[:,0], currentPoints[:,1], currentPoints[:,2])
         ax.grid(True)
             
     def plotSubsets(self,ax=None):
@@ -229,7 +230,7 @@ class planarProfile(profile):
         
     def getCurrentPosition(self):
         myMarker = self.referenceMarker
-        currentPoints = self.points + myMarker.orientation.transpose().dot(myMarker.position)[0:2]
+        currentPoints = self.points.dot(myMarker.orientation[0:2,:]) + myMarker.position
         return currentPoints
     
     

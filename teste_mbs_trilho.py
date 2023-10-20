@@ -220,6 +220,7 @@ wheel.addProfile(planarProfile('Right wheel profile','./design2.pro', convPar = 
                  rightWheelMarker)
 
 '''TODO: PROBLEMAS AQUI. ACERTAR ORIENTAÇÃO DOS PERFIS'''
+wheel.profiles[0].getCurrentPosition()
 wheel.profiles[0].rotatePoints(np.pi)
 wheel.profiles[1].rotatePoints(np.pi)
 wheel.profiles[0].mirrorVert()
