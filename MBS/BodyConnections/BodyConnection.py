@@ -12,10 +12,8 @@ from MBS.marker import marker
 
 
 class bodyConnection(object):
-    """
-    Generic class for a connection between bodies.
+    """Generic class for a connection between bodies."""
     
-    """
     def __init__(self,name_):
         self.name = name_
         self.body1 = None
@@ -28,6 +26,38 @@ class bodyConnection(object):
         @simLam.setter 
         def simLam(self, simArray):
             self.simLam = simArray
+            
+        @property
+        def simGap(self):
+            return self.simGap
+        @simGap.setter
+        def simGap(self, simArray):
+            self.simGap = simArray
+            
+    def evaluateGapFunction(self,*args):
+        '''
+        Evalute the connection gap
+        
+        This function can be overwritten by an appropriate evaluateGapFunction
+        implemented on the child class. However, the user can also create 
+        a standalone self.gapFunction and use this default construct.
+        
+        The function must return a list containing
+        1. the gap vector
+        2. the gap vector derivative
+
+        Parameters
+        ----------
+        *args : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        LIST (gap,gapdot)
+            gap and gap derivative vectors.
+
+        '''
+        return self.gapFunction(*args)
         
     def connect(self, body1, body2=None, pt1=np.zeros(3),pt2=np.zeros(3)):
         '''

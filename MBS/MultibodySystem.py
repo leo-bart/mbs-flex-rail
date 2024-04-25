@@ -160,6 +160,7 @@ class MultibodySystem(Mechanical_System):
         posi = pvec[:,:self.n_p]
         velo = pvec[:,self.n_p:2*self.n_p]
         lamb = pvec[:,2*self.n_p:]
+        gaps = np.zeros_like(lamb)
         
         # positions and velocities of the bodies  
         for b in self.bodies[1:]:
@@ -171,7 +172,9 @@ class MultibodySystem(Mechanical_System):
         
         constForces = []
         for f in self.forceList:
+            '''Initialize simLam vector for each constraint'''
             f.simLam = np.zeros([len(tvec),self.n_p])
+            f.simGap = np.zeros([len(tvec),self.n_p])
         for i in range(len(tvec)):
             GT = self.GT(posi[i])
             constForces.append(GT.dot(lamb[i]))
@@ -182,6 +185,7 @@ class MultibodySystem(Mechanical_System):
                     b.updateVelocities(b.simU[i])
             for f in self.forceList:
                 f.simLam[i,:] = f.evaluateForceFunction(tvec[i],posi[i],velo[i],f.marker1,f.marker2)
+                f.simGap[i,0:3],f.simGap[i,3:6] = f.evaluateGapFunction(tvec[i],posi[i],velo[i],f.marker1,f.marker2)
             
         constForces = np.array(constForces)
         for cst  in self.constraintList:

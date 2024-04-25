@@ -30,12 +30,51 @@ class marker(object):
         self.orientation = orientation
             
     def setParent(self, parent):
+        """
+        Parent body attribution.
+
+        Parameters
+        ----------
+        parent : Body
+            The body to which this marker belongs to.
+
+        Returns
+        -------
+        None.
+
+        """
         if parent is not None:
             self.parent = parent
             self.name = parent.name + '/' + self.name
             
     def setPosition(self,posi):
+        """
+        Marker position on parent body reference frame.
+
+        Parameters
+        ----------
+        posi : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        """
         self.position = posi
         
     def setOrientation(self,orient):
+        """
+        Marker rotation matrix, with respect to the parent body reference frame.
+
+        Parameters
+        ----------
+        orient : Array
+            Rotation matrix.
+
+        Returns
+        -------
+        None.
+
+        """
         self.orientation = orient

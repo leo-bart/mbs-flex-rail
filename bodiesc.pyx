@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import MBS.MultibodySystem as mbs
 import MBS.marker
 import helper_funcs as hf
-import profiles
+from profiles import profile
 
 cdef class body(object):
     
@@ -174,6 +174,9 @@ cdef class body(object):
         None.
 
         '''
+        cdef unsigned int j
+        cdef unsigned int valj
+        
         if len(args) == 1:
             if args[0].size == self.totalDof:
                 # then the input vector has the correct size
@@ -181,7 +184,15 @@ cdef class body(object):
             else:
                 print('Body {}: error on initial conditions attribution: expected a {}-dimensional vector'.format(self.name,self.totalDof))
         elif len(args) == 2:
-            self.q0[args[0]] = args[1]
+            # if we have two arguments, then the first one is the direction,
+            # and the second one is the value of the initial position on that 
+            # direction
+            
+            
+            j = args[0]
+            valj = args[1]
+            
+            self.q0[j] = valj
         else:
             print('{} setInitialConditions: expected 1 or 2 elements.'.format(self.name))
     
@@ -205,6 +216,9 @@ cdef class body(object):
         None.
 
         '''
+        cdef unsigned int j
+        cdef unsigned int valj
+        
         if len(args) == 1:
             if args[0].size == self.totalDof:
                 # then the input vector has the correct size
@@ -212,7 +226,10 @@ cdef class body(object):
             else:
                 print('Body {}: error on initial conditions attribution: expected a {}-dimensional vector'.format(self.name,self.totalDof))
         elif len(args) == 2:
-            self.u0[args[0]] = args[1]
+            j = args[0]
+            valj = args[1]
+            
+            self.u0[j] = valj
         else:
             print('{} setInitialConditions: expected 1 or 2 elements.'.format(self.name))
             
@@ -331,7 +348,120 @@ cdef class rigidBody(body):
         print('Contains markers:')
         for m in self.markers:
             print('\t{} at {}'.format(m.name,m.position))
+        print('Contains profiles:')
+        for p in self.profiles:
+            print('\t{}'.format(p.name))
         print('-'*80)
+        
+        
+
+############## SPECIAL RIGID BODIES ###########################################
+cdef class wheelset(rigidBody):
+    '''
+    Class for wheelsets.
+    
+    
+    '''
+    cdef double b2b                #back-to-back distance
+    cdef double radius             #gauge radius
+    
+    def __init__(self,str name_,
+                 leftProf,
+                 rightProf,
+                 double b2bDist,
+                 double gaugeRadius):
+        '''
+        Initialize wheelset.
+        
+        Left and right are considered in the following manner: suppose a
+        default coordinate system attached to the wheelset x pointing forward
+        and z poiting downward. y is such that the cross product of a unitary
+        vector in x and a unitary vector in y gives an unitary vector in z. 
+        On such a coordinate system, right is positive y and left is negative
+        y.
+        
+        The porfiles must be fed in such a way that, when the points are
+        plotted, the flange is on the left (-x) side of the plot. The
+        rolling surface should be upwards. The object
+        will adjust the profiles based on the b2b distance.
+        
+        Finally, the (0,0) coordinate must be the gauge point.
+        
+        Parameters
+        ----------
+        name_ : str
+            Object name.
+        leftProf : profile object
+            The profile to be attached to the left wheel.
+        rightProf : profile object
+            The profile to be attached to the right wheel.
+        b2bDist : double
+            Wheelset back-to-back distance.
+        radius : double
+            Wheel gauge radius
+
+        Returns
+        -------
+        None.
+
+        '''        
+        super().__init__(name_)
+        self.type = 'Wheelset'
+        self.addProfile(leftProf)
+        self.addProfile(rightProf)
+        self.b2b = b2bDist
+        self.radius = gaugeRadius
+        
+        self.adjustProfiles()
+        
+    def adjustProfiles(self):
+        left = self.getLeftProfile()
+        right = self.getRightProfile()
+        
+        # offsets and mirrors the left profile
+        leftBackCoordinate = np.min(left.points[:,0])
+        left.offsetPoints([+leftBackCoordinate+self.b2b,self.radius])
+        left.mirrorVert()
+        left.mirrorHoriz()
+        
+        # offsets the right profile
+        rightBackCoordinate = np.min(right.points[:,0])
+        right.offsetPoints([+leftBackCoordinate+self.b2b,self.radius])
+        right.mirrorHoriz()
+        
+    def getRightProfile(self):
+        return self.profiles[1]
+    
+    def getLeftProfile(self):
+        return self.profiles[0]
+        
+    def plotProfiles(self,plotFlag="both"):
+        '''
+        Plot the wheelset profiles.
+
+        Parameters
+        ----------
+        plotFlag : TYPE, optional
+            DESCRIPTION. The default is "both".
+
+        Returns
+        -------
+        None.
+
+        '''
+        
+        valid_values = ["both","left","right"]  # Define the valid values for x
+        if plotFlag not in valid_values:
+            raise ValueError("Invalid value for plotFlag. Should be 'both', 'left', or 'right'")
+        
+        if plotFlag in ("left","both"):
+            plt.plot(*self.getLeftProfile().points.T, label="Left profile")
+        if plotFlag in ("right","both"):
+            plt.plot(*self.getRightProfile().points.T, label="Right profile")
+            
+        plt.legend()
+        plt.show()
+    
             
 ###############################################################################
 ############## FLEXIBLE BODIES ################################################
@@ -498,6 +628,7 @@ cdef class flexibleBody(body):
     def assembleWeightVector(self, g=np.array([0,1])):
         Qg = np.zeros(self.totalDof)
         cdef double [:] Qg_view = Qg
+        cdef unsigned int dof
         
         for elem in self.elementList:
             Qelem = elem.getWeightNodalForces(g).reshape(1,-1)
@@ -511,6 +642,7 @@ cdef class flexibleBody(body):
     def assembleTangentStiffnessMatrix(self):
                          
         print('Assemblying tangent stiffness matrix')
+        cdef unsigned int i, j, dofi, dofj
         
         cdef double [:,:] ke
         self.stiffnessMatrix = np.zeros((self.totalDof, self.totalDof))

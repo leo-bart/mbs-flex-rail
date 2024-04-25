@@ -14,18 +14,26 @@ class force(MBS.BodyConnections.BodyConnection.bodyConnection):
         super().__init__(name_)
         self.type = 'Force'
         self.forceFunction = None
+        self.gapFunction = None
         self.marker1 = None
         self.marker2 = None
     
     def setForceFunction(self, f):
         self.forceFunction = f
         
+    def setGapFunction(self, g):
+        self.gapFunction = g
+        
     def evaluateForceFunction(self, *args):
         return self.forceFunction(*args)
+    
+    def evaluateGapFunction(self, *args):
+        return self.gapFunction(*args)
+
 
 class linearSpring_PtP(force):
     """
-    Linear spring object connecting two markers
+    Linear spring-damper object connecting two markers
     
     After declaring the spring, you'll need to call connect to join the bodies
     
@@ -59,10 +67,9 @@ class linearSpring_PtP(force):
     def damping(self, new_damping):
         self.c = new_damping
         
-    def evaluateForceFunction(self,*args):
-        p = args[1]
-        v = args[2]
-        f = np.zeros_like(p)
+    def evaluateGapFunction(self, *args):
+        p = args[1]     # get positions
+        v = args[2]     # get velocities
 
         dof1 = self.body1.globalDof
         
@@ -77,10 +84,36 @@ class linearSpring_PtP(force):
         else:
             P2 = self.marker2.position
             V2 = 0
-          
-        axis, dist = hf.unitaryVector(P2-P1)
         
-        valueForce =  (self.k * dist + self.c * (V1 - V2).dot(axis)) * axis
+        gap = P2 - P1
+        gapdot = V2 - V1
+        
+        return gap, gapdot
+        
+    def evaluateForceFunction(self,*args):
+        # p = args[1]
+        # v = args[2]
+        f = np.zeros_like(args[1]) # create force vector
+
+        dof1 = self.body1.globalDof
+        
+        # P1 = p[dof1[:3]] + self.marker1.position
+        # V1 = v[dof1[:3]]
+        
+        dof2 = self.body2.globalDof
+        
+        # if len(dof2) > 0:
+        #     P2 = p[dof2[:3]] + self.marker2.position
+        #     V2 = v[dof2[:3]]
+        # else:
+        #     P2 = self.marker2.position
+        #     V2 = 0
+        
+        gap,gapdot = self.evaluateGapFunction(args)
+          
+        axis, dist = hf.unitaryVector(gap)
+        
+        valueForce =  (self.k * dist + self.c * (gapdot).dot(axis)) * axis
         f[dof1[:3]] = valueForce
         if len(dof2) > 0:
             f[dof2[:3]] = -valueForce
