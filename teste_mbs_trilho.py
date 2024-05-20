@@ -25,14 +25,14 @@ import matplotlib.pyplot as plt
 Initialize system
 '''
 system = mbs.MultibodySystem('Trilho com rodeiro')
-system.gravity = np.array([0, -9.81, 0], dtype=np.float64)
+system.gravity = np.array([0., 0., 9.81], dtype=np.float64)
 
 '''
 Material
 '''
-steel = linearElasticMaterial('Steel', E=207e12,
+steel = linearElasticMaterial('Steel', E=207e09,
                               nu=0.3,
-                              rho=7.85e6)
+                              rho=7.85e3)
 
 
 '''
@@ -40,44 +40,54 @@ Mesh
 '''
 nq = []
 nq2 = []
-nel = 1
+nel = 4
 totalLength = 2 * nel * 0.58
 trackWidth = 1.0
 for i in range(nel+1):
-    nq.append(node([totalLength * i/nel, 0.0, -0.5*trackWidth-0.039,
-                   0.0, 0.99968765, 0.02499219,  # 0.0,1.0,0.0,
-                   0.0, -0.02499219, 0.9968765]))
-    nq2.append(node([totalLength * i/nel, 0.0, 0.5*trackWidth+0.039,
-                     0.0, 0.99968765, -0.02499219,
-                     0.0, 0.02499219, 0.9968765]))
+    nq.append(node([totalLength * i/nel, -0.5*trackWidth-0.039, 0.1857/2,
+                   0.0, -0.9968765, -0.02499219,
+                   0.0, 0.02499219, -0.99968765]))
+    nq2.append(node([totalLength * i/nel, 0.5*trackWidth+0.039, 0.1857/2,
+                     0.0, -0.9968765,   0.02499219,
+                     0.0, -0.02499219, -0.99968765]))
 
 
 eq = []
 eq2 = []
+railHeight = 0.18575
+railWidth = 6 * 0.0254
+railCentroidHeight = 0.0805
+railBaseHeight = 2.2147e-3
+railHeadHeight = 3.2165e-3
+railBaseWidth = 135.605e-3
+railWebWidth = 23.815e-3
+railHeadWidth = 78.339e-3
+railXSecArea = 8652.0e-6
+
 for j in range(nel):
     eq.append(
         railANCF3Dquadratic(nq[j], nq[j+1],
-                            0.18575,
-                            6*0.0254,
-                            0.0805,
-                            0.022147,
-                            0.032165,
-                            135.605e-3,
-                            23.815e-3,
-                            78.339e-3,
-                            8652.0e-6)
+                            railHeight,
+                            railWidth,
+                            railCentroidHeight,
+                            railBaseHeight,
+                            railHeadHeight,
+                            railBaseWidth,
+                            railWebWidth,
+                            railHeadWidth,
+                            railXSecArea)
     )
     eq2.append(
         railANCF3Dquadratic(nq2[j], nq2[j+1],
-                            0.18575,
-                            6*0.0254,
-                            0.0805,
-                            0.022147,
-                            0.032165,
-                            135.605e-3,
-                            23.815e-3,
-                            78.339e-3,
-                            8652.0e-6)
+                            railHeight,
+                            railWidth,
+                            railCentroidHeight,
+                            railBaseHeight,
+                            railHeadHeight,
+                            railBaseWidth,
+                            railWebWidth,
+                            railHeadWidth,
+                            railXSecArea)
     )
 
 '''
@@ -99,28 +109,24 @@ t1fix = MBS.BodyConnections.BodyConnection.nodeEncastreToRigidBody(
     "Rail 1 fixed joint",
     rail,
     system.ground,
-    np.array(
-        [0.0, 0.0, -0.5*trackWidth-0.039]),
-    np.array([0.0, 0.0, -0.5*trackWidth-0.039]))
+    np.array([0.0, -0.5*trackWidth-0.039, 0.0]),
+    np.array([0.0, -0.5*trackWidth-0.039, 0.0]))
 
 
-wLprofile = planarProfile('Design 2 profile - VALE', './design2.pro')
-wRprofile = planarProfile('Design 2 profile - VALE', './design2.pro')
+wLprofile = planarProfile('Design 2 profile - VALE', './design2.pro', 1)
+wRprofile = planarProfile('Design 2 profile - VALE', './design2.pro', -1)
 wheel = wheelset('Wheel',
                  wLprofile, wRprofile,
-                 0.938,
-                 0.8382/2)
-wsmass = 140.
+                 b2bDist=0.917,
+                 gaugeRadius=0.831/2)
+wsmass = 2700.
 wsInertiaRadial = 1/12*wsmass*(3*0.15**2+trackWidth**2)
-I = np.diag([1/12*wsmass*trackWidth**2, 1/12*wsmass *
-            trackWidth**2, 1/2*wsmass*0.15*0.15])
+wsInertiaTensor = np.diag([wsInertiaRadial, 1/2*wsmass*0.15*0.15,
+                           wsInertiaRadial])
 wheel.setMass(wsmass)
-wheel.setInertiaTensor(I)
+wheel.setInertiaTensor(wsInertiaTensor)
 wheel.setPositionInitialConditions(0, 0.75)
-# wheel.setPositionInitialConditions(0,totalLength/2)
-wheel.setPositionInitialConditions(1, 0.8382/2 + 0.194157/2)
-# wheel.setPositionInitialConditions(2,-0.5*trackWidth)
-# wheel.setPositionInitialConditions(3,0.25)
+wheel.setPositionInitialConditions(2, -0.83825/2)
 
 '''
 Sleepers
@@ -132,39 +138,61 @@ sleeper1.connect(rail, rail2)
 
 
 def slpForce(t, p, v, m1, m2):
+    """
+    Force evaluation function for sleepers.
+
+    Parameters
+    ----------
+    t : TYPE
+        DESCRIPTION.
+    p : TYPE
+        DESCRIPTION.
+    v : TYPE
+        DESCRIPTION.
+    m1 : TYPE
+        DESCRIPTION.
+    m2 : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
     leftRail = m1.parent
     rightRail = m2.parent
 
     # Vertical stiffness
-    # states
-    leftDist = p[leftRail.globalDof[1::9]]
-    leftVelo = v[leftRail.globalDof[1::9]]
-    rightDist = p[rightRail.globalDof[1::9]]
-    rightVelo = v[rightRail.globalDof[1::9]]
-
-    f = np.zeros_like(p)
-    f[leftRail.globalDof[1::9]] = 3e6 * leftDist + 3e4 * leftVelo
-    f[rightRail.globalDof[1::9]] = 3e6 * rightDist + 3e4 * rightVelo
-    # increased stiffness on rail ends
-    f[leftRail.globalDof[1]] += 32 * (3e6 * leftDist[0])
-    f[leftRail.globalDof[-8]] += 32 * (3e6 * leftDist[-1])
-    f[rightRail.globalDof[1]] += 32 * (3e6 * rightDist[0])
-    f[rightRail.globalDof[-8]] += 32 * (3e6 * rightDist[-1])
-
-    # Lateral stiffness
-    stiffness = 35e9 * 0.17 * 0.24 / trackWidth
-
     # states
     leftDist = p[leftRail.globalDof[2::9]]
     leftVelo = v[leftRail.globalDof[2::9]]
     rightDist = p[rightRail.globalDof[2::9]]
     rightVelo = v[rightRail.globalDof[2::9]]
 
+    f = np.zeros_like(p)
+    f[leftRail.globalDof[2::9]] = 3e6 * leftDist + 3e4 * leftVelo
+    f[rightRail.globalDof[2::9]] = 3e6 * rightDist + 3e4 * rightVelo
+    # increased stiffness on rail ends
+    f[leftRail.globalDof[2]] += 32 * (3e6 * leftDist[0])
+    f[leftRail.globalDof[-7]] += 32 * (3e6 * leftDist[-1])
+    f[rightRail.globalDof[2]] += 32 * (3e6 * rightDist[0])
+    f[rightRail.globalDof[-7]] += 32 * (3e6 * rightDist[-1])
+
+    # Lateral stiffness
+    stiffness = 35e9 * 0.17 * 0.24 / trackWidth
+
+    # states
+    leftDist = p[leftRail.globalDof[1::9]]
+    leftVelo = v[leftRail.globalDof[1::9]]
+    rightDist = p[rightRail.globalDof[1::9]]
+    rightVelo = v[rightRail.globalDof[1::9]]
+
     ds = leftDist - rightDist
     dv = leftVelo - rightVelo
 
-    f[leftRail.globalDof[2::9]] = stiffness * (ds + 0.02*dv) + 1e6 * leftDist
-    f[rightRail.globalDof[2::9]] = stiffness * \
+    f[leftRail.globalDof[1::9]] = stiffness * (ds + 0.02*dv) + 1e6 * leftDist
+    f[rightRail.globalDof[1::9]] = stiffness * \
         (- ds - 0.02*dv) + 1e6 * rightDist
 
     # TODO: Rotation stiffness
@@ -177,6 +205,28 @@ def slpForce(t, p, v, m1, m2):
 
 
 def slpGap(t, p, v, m1, m2):
+    """
+    Gap evaluation function for sleepers.
+
+    Parameters
+    ----------
+    t : TYPE
+        DESCRIPTION.
+    p : TYPE
+        DESCRIPTION.
+    v : TYPE
+        DESCRIPTION.
+    m1 : TYPE
+        DESCRIPTION.
+    m2 : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    TYPE
+        DESCRIPTION.
+
+    """
     return np.zeros((1, 3)), np.zeros((1, 3))
 
 
@@ -190,6 +240,28 @@ forceWheel.connect(wheel, system.ground)
 
 
 def pullWheelset(t, p, v, m1, m2):
+    """
+    Apply forces to wheelset.
+
+    Parameters
+    ----------
+    t : TYPE
+        DESCRIPTION.
+    p : TYPE
+        DESCRIPTION.
+    v : TYPE
+        DESCRIPTION.
+    m1 : TYPE
+        DESCRIPTION.
+    m2 : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    f : TYPE
+        DESCRIPTION.
+
+    """
     w = m1.parent
     f = np.zeros_like(p)
     wpos, wvel = pullWstGap(t, p, v, m1, m2)
@@ -198,13 +270,37 @@ def pullWheelset(t, p, v, m1, m2):
     if t > 0.8:
         f[w.globalDof[0]] = 10
 
-    f[w.globalDof[1]] = - wvel[1] * 1e2
-    f[w.globalDof[3]] = - wvel[3] * 1e3
+    f[w.globalDof[2]] = - wvel[2] * 1e4
+    f[w.globalDof[3]] = - wvel[3] * 1e8
 
     return f
 
 
 def pullWstGap(t, p, v, m1, m2):
+    """
+    Determine gap for pull wheelset forces
+
+    Parameters
+    ----------
+    t : TYPE
+        DESCRIPTION.
+    p : TYPE
+        DESCRIPTION.
+    v : TYPE
+        DESCRIPTION.
+    m1 : TYPE
+        DESCRIPTION.
+    m2 : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    wpos : TYPE
+        DESCRIPTION.
+    wvel : TYPE
+        DESCRIPTION.
+
+    """
     wstBody = m1.parent
     wpos = p[wstBody.globalDof]
     wvel = v[wstBody.globalDof]
@@ -239,9 +335,6 @@ rProfR.setProfilePointsFromFile('./tr68.pro')
 rail.addProfile(rProfL, leftRailMarker)
 rail2.addProfile(rProfR, rightRailMarker)
 
-rail.profiles[0].rotatePoints(np.arctan(1./40))
-rail2.profiles[0].rotatePoints(-np.arctan(1./40))
-
 '''Contact markers'''
 leftWheelMarker = wheel.addMarker(MBS.marker.marker('Left wheel marker',
                                                     np.array(
@@ -257,9 +350,11 @@ rightWheelMarker = wheel.addMarker(MBS.marker.marker('Right wheel marker',
                                                                [-1.0, 0.0, 0.0]])))
 
 
-wheel.addProfile(planarProfile('Left wheel profile', './design2.pro', convPar=1),
+wheel.addProfile(planarProfile('Left wheel profile', './design2.pro',
+                               convPar=1),
                  leftWheelMarker)
-wheel.addProfile(planarProfile('Right wheel profile', './design2.pro', convPar=1),
+wheel.addProfile(planarProfile('Right wheel profile', './design2.pro',
+                               convPar=1),
                  rightWheelMarker)
 
 wheel.profiles[2].rotatePoints(np.pi)
@@ -269,18 +364,10 @@ wheel.profiles[3].mirrorVert()
 
 '''
 CONTACT
-
-poits pt2 below represent the reference contact marker, i.e., the
-reference frame of the wheel profile
 '''
 
-contactL = MBS.BodyConnections.Contacts.WheelRailContact.wrContact(
-    'Contact left wheel to rail')
-contactL.connect(rail.profiles[0], wheel.profiles[2])
-contactR = MBS.BodyConnections.Contacts.WheelRailContact.wrContact(
-    'Contact right wheel to rail')
-contactR.connect(rail2.profiles[0], wheel.profiles[3])
-
+wheelRailContact = MBS.BodyConnections.Contacts.WheelRailContact.wrContact2(
+    rail, rail2, wheel, 'Contact test')
 
 '''
 Multibody system setup
@@ -288,8 +375,7 @@ Multibody system setup
 system.addBody([rail, rail2, wheel])
 
 system.addForce(sleeper1)
-system.addForce(contactL)
-system.addForce(contactR)
+system.addForce(wheelRailContact)
 system.addForce(forceWheel)
 # system.addConstraint(t1fix)
 
@@ -305,12 +391,13 @@ problem = system.generate_problem('ind3')
 DAE = IDA(problem)
 DAE.report_continuously = True
 DAE.inith = 1e-5
-DAE.maxh = 1e-4
+DAE.maxh = 5e-4
+DAE.maxord = 4
 DAE.num_threads = 12
 DAE.suppress_alg = True
 
-outFreq = 10e2  # Hz
-finalTime = .5
+outFreq = 5e2  # Hz
+finalTime = 1.
 
 # DAE.make_consistent('IDA_YA_YDP_INIT')
 
@@ -334,10 +421,9 @@ lam = oFiles['lam']
 system.postProcess(t, p, v)
 
 
-def plotRails():
+def plotRails(nplots=4):
     from helper_funcs import unitaryVector as uv
     plt.figure()
-    nplots = 4
     k = 0
     for i in np.arange(0, p.shape[0], int(p.shape[0]/nplots)):
         rail.updateDisplacements(rail.simQ[i])
@@ -374,7 +460,7 @@ def run_animation(vprate=10):
     # wheelRep = vp.compound([w1,w2])
     wheelRep = stl.stl_to_triangles('Rodeiro_carga.stl')
     wheelRep.pos = vp.vec(*wheel.simQ[0, :3])
-    wheelRep.rotate(angle=np.pi/2, axis=vp.vec(1, 0, 0))
+    # wheelRep.rotate(angle=np.pi/2, axis=vp.vec(1, 0, 0))
     wheelRep.visible = True
     wheelRep.color = vp.color.cyan
 
@@ -394,6 +480,7 @@ def run_animation(vprate=10):
     axisz = vp.arrow(pos=vp.vec(0, 0, 0), axis=vp.vec(
         0.0, 0, 0.5), shaftwidth=0.01, color=vp.color.blue)
 
+    outFreq = 100
     for i in range(len(t)):
         vp.rate(vprate)
         scene.title = 't = {} s'.format(t[i])

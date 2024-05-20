@@ -38,7 +38,7 @@ cpdef unitaryVector(double [:] vec):
         
         
     if norma != 0:
-        norma = np.sqrt(norma)
+        norma = norma**0.5
         
         for i in range(3):
             unitVec[i] = vec[i] / norma

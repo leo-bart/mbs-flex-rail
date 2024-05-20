@@ -29,15 +29,7 @@ cimport cython
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #         3D NODE                                                             %
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
-cdef public class node[object c_PyObj, type c_PyObj_t]:    
-    
-    cdef double [9] q0
-    cdef double [9] q
-    cdef double [9] u0
-    cdef double [9] u
-    cdef long [9] globalDof
-    cdef public str name
-    cdef object marker
+cdef public class node[object c_PyObj, type c_PyObj_t]:  
     """
     finite element node with nine dof
     
@@ -49,6 +41,15 @@ cdef public class node[object c_PyObj, type c_PyObj_t]:
                 listOfDof[3:6] - x,y,z coordinates of the section slope w.r.t. eta
                 listOfDof[6:9] - x,y,z coordinates of the section slope w.r.t. zeta
     """
+    
+    cdef double [9] q0
+    cdef double [9] q
+    cdef double [9] u0
+    cdef double [9] u
+    cdef long [9] globalDof
+    cdef public str name
+    cdef object marker
+    
        
     def __init__(self, listOfDof=[0.]*9):
                 
@@ -1103,7 +1104,7 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
                  double _wh,
                  double _cSecArea):
         '''
-        
+        Initialize flexible rail
 
         Parameters
         ----------
@@ -1157,10 +1158,23 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
         self.changedStates = np.bool8(True) 
         
  
-    def getWidth(self, double eta_ = -1):
-        # based on an equivalent section to TR68 rail
+    def getWidth(self, double zeta_ = -1):
+        """
+        Return the width of the cross section as a function of the height
 
-        cdef double heiFromFoot = self.height / 2 * (1 + eta_)
+        Parameters
+        ----------
+        double zeta_ : double [-1,1], optional
+            Height coordinate. The default is -1.
+
+        Returns
+        -------
+        double
+            Width of the cross-section at height zeta_.
+
+        """
+
+        cdef double heiFromFoot = self.height / 2 * (1 + zeta_)
          
         if heiFromFoot < self.baseHeight:
             return self.baseWidth
@@ -1197,10 +1211,10 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
         cdef double HW = self.webHeight
         cdef double HH = self.headHeight
         cdef double area = self.crossSecArea
-        cdef double etaHc = 2 * self.centroidHeightFromBase / H - 1       # centroid height in element specficic coordinates
-        cdef double etaHb = 2 * self.baseHeight / H - 1
-        cdef double etaHw = 2 * self.baseHeight / H - 4 * self.webHeight - 1
-        cdef double etaHh = - 2 * self.headHeight / H + 1
+        cdef double zetaHc = 2 * self.centroidHeightFromBase / H - 1       # centroid height in element specficic coordinates
+        cdef double zetaHb = 2 * self.baseHeight / H - 1
+        cdef double zetaHw = 2 * self.baseHeight / H - 4 * self.webHeight - 1
+        cdef double zetaHh = - 2 * self.headHeight / H + 1
         
         # TODO use composite quadrature rules to integrate over different sections
    
@@ -1219,9 +1233,9 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
         cdef list gaussW = self.gaussIntegrationPoints[nGaussW]
         
         # height of the sections
-        cdef double etaBase = self.baseHeight / self.height
-        cdef double etaWeb = self.webHeight / self.height
-        cdef double etaHead = self.headHeight / self.height
+        cdef double zetaBase = self.baseHeight / self.height
+        cdef double zetaWeb = self.webHeight / self.height
+        cdef double zetaHead = self.headHeight / self.height
               
         # Gauss weights
         cdef list wL = self.gaussWeights[nGaussL]
@@ -1251,29 +1265,29 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
                 for b  in range(nGaussH):  
                     'height quadrature'
                     ip_v[0] = gaussL[p]
-                    ip_v[2] = gaussW[c]
+                    ip_v[1] = gaussW[c]
                     
                     w_v[0] = wL[p]
-                    w_v[1] = wH[b]
-                    w_v[2] = wW[c]
+                    w_v[1] = wW[c]
+                    w_v[2] = wH[b]
                     
-                    # TODO create one ip_v for each section
+                    
                     # BASE SECTION
-                    ip_v[1] = gaussH[b] * 2*HB/H + etaHb
+                    ip_v[2] = gaussH[b] * 2*HB/H + zetaHb
                     W = WB
                     Qe += self.forceAtIntegrationPoint(
                         ip_v,
                         w_v,q,0) * W * (H-HB) / 4
                     
-                    # BASE SECTION
-                    ip_v[1] = gaussH[b] * 2*HW/H + etaHw
+                    # WEB SECTION
+                    ip_v[2] = gaussH[b] * 2*HW/H + zetaHw
                     W = WW
                     Qe += self.forceAtIntegrationPoint(
                         ip_v,
                         w_v,q,0) * W * HW / 4
                     
-                    # BASE SECTION
-                    ip_v[1] = gaussH[b] * 2 * HH/H + etaHh
+                    # HEAD SECTION
+                    ip_v[2] = gaussH[b] * 2 * HH/H + zetaHh
                     W = WH
                     Qe += self.forceAtIntegrationPoint(
                         ip_v,
@@ -1282,8 +1296,9 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
                 # end of width integration
             # end of height integration
             ip_v[0] = gaussL[p]
-            ip_v[1] = etaHc
-            ip_v[2] = 0.0
+            ip_v[1] = 0.0
+            ip_v[2] = zetaHc
+            
             
             w_v[0] = wL[p]
             w_v[1] = 1.0
@@ -1343,8 +1358,8 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
         '''
         Shape functions respect the order of the nodes: 1, intermediate, 2
         '''
-        cdef double eta = eta_ * self.height / 2
-        cdef double zeta = zeta_ * self.getWidth(eta_) / 2
+        cdef double zeta = zeta_ * self.height / 2
+        cdef double eta = eta_ * self.getWidth(zeta_) / 2
         
         #first node
         cdef double S1 = - xi_/2 * (1-xi_)
@@ -1388,8 +1403,8 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
 
         """
         cdef double L = self.length
-        cdef double eta = eta_ * self.height / 2
-        cdef double zeta = zeta_ * self.getWidth(eta_) / 2
+        cdef double zeta = zeta_ * self.height / 2
+        cdef double eta = eta_ * self.getWidth(zeta_) / 2
         
         # reusable variables
         cdef double s1,s2,s3 
@@ -1482,6 +1497,55 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
             dtype=np.float64))*eye(len(self.q))*self.parentBody.material.rho
         
         return Qg.reshape(1,-1)
+    
+    def getProfileGlobalCoordinates(self, xi_):
+        """
+        Return a list of the global coordinates of the rail profile.
+        
+        This function receives a longitudinal coordinate xi_ and returns
+        the global coordinates of the profile points.
+
+        Returns
+        -------
+        An array with the points written in global coordinates.
+
+        """
+        
+        cdef double[:] profileRefPoint # np.array shape (3,)
+        cdef double[:,:] xSectionOrientation # np.array shape (3,3)
+        cdef double[:,:] pointsInGlobalCoords # np.array shape (n,3)
+        cdef double[:,:] originalPoints
+        
+        cdef unsigned int i,j # counters
+        
+        profileRefPoint = self.interpolatePosition(xi_, 0, 1)
+        xSectionOrientation = self.getJacobian(xi_, 0, 1).T
+        pointsInGlobalCoords = np.zeros((self.parentBody.profiles[0].nPoints,3))
+        originalPoints = self.parentBody.profiles[0].points
+        
+               
+        for i in range(self.parentBody.profiles[0].nPoints):
+            # originalPoints are 2d points corresponding to y and z directions.
+            # Therefore, the matrix product has only to multiplications
+            pointsInGlobalCoords[i, 0] = (
+                xSectionOrientation[0, 1] * originalPoints[i, 0] +
+                xSectionOrientation[0, 2] * originalPoints[i, 1] +
+                profileRefPoint[0]
+            )
+            
+            pointsInGlobalCoords[i, 1] = (
+                xSectionOrientation[1, 1] * originalPoints[i, 0] +
+                xSectionOrientation[1, 2] * originalPoints[i, 1] +
+                profileRefPoint[1]
+            )
+            
+            pointsInGlobalCoords[i, 2] = (
+                xSectionOrientation[2, 1] * originalPoints[i, 0] +
+                xSectionOrientation[2, 2] * originalPoints[i, 1] +
+                profileRefPoint[2]
+            )
+                    
+        return np.array(pointsInGlobalCoords)
 
 
 

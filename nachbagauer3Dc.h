@@ -10,8 +10,8 @@ struct c_PyObj;
  * #         3D NODE                                                             %
  * #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  * cdef public class node[object c_PyObj, type c_PyObj_t]:             # <<<<<<<<<<<<<<
- * 
- *     cdef double [9] q0
+ *     """
+ *     finite element node with nine dof
  */
 struct c_PyObj {
   PyObject_HEAD

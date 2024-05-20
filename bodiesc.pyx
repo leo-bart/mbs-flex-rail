@@ -154,7 +154,7 @@ cdef class body(object):
     
     
     
-    def setPositionInitialConditions(self,*args):
+    def setPositionInitialConditions(self, *args):
         '''
         Set the initial conditions on position level
         
@@ -175,7 +175,7 @@ cdef class body(object):
 
         '''
         cdef unsigned int j
-        cdef unsigned int valj
+        cdef double valj
         
         if len(args) == 1:
             if args[0].size == self.totalDof:
@@ -217,7 +217,7 @@ cdef class body(object):
 
         '''
         cdef unsigned int j
-        cdef unsigned int valj
+        cdef double valj
         
         if len(args) == 1:
             if args[0].size == self.totalDof:
@@ -418,16 +418,26 @@ cdef class wheelset(rigidBody):
         left = self.getLeftProfile()
         right = self.getRightProfile()
         
+        halfb2b = self.b2b/2
+        
         # offsets and mirrors the left profile
         leftBackCoordinate = np.min(left.points[:,0])
-        left.offsetPoints([+leftBackCoordinate+self.b2b,self.radius])
+        left.offsetPoints([+leftBackCoordinate+halfb2b,self.radius])
         left.mirrorVert()
-        left.mirrorHoriz()
-        
+        left.referenceMarker.setPosition(np.array([
+                                            0.0,
+                                            -leftBackCoordinate-halfb2b,
+                                            self.radius])
+            )
+    
         # offsets the right profile
         rightBackCoordinate = np.min(right.points[:,0])
-        right.offsetPoints([+leftBackCoordinate+self.b2b,self.radius])
-        right.mirrorHoriz()
+        right.offsetPoints([+leftBackCoordinate+halfb2b,self.radius])
+        right.referenceMarker.setPosition(np.array([
+                                            0.0,
+                                            leftBackCoordinate+halfb2b,
+                                            self.radius])
+            )
         
     def getRightProfile(self):
         return self.profiles[1]
@@ -459,6 +469,9 @@ cdef class wheelset(rigidBody):
         if plotFlag in ("right","both"):
             plt.plot(*self.getRightProfile().points.T, label="Right profile")
             
+        plt.xlabel('y')
+        plt.ylabel('z')
+        plt.gca().invert_yaxis()           
         plt.legend()
         plt.show()
     

@@ -19,7 +19,7 @@ class profile(object):
         self.name = name
         self.body = None
         self.refPointCoordinates = np.zeros(2)
-        print('Profile {} created.'.format(name))
+        # print('Profile {} created.'.format(name))
 
     def setParent(self, body):
         """
