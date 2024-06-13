@@ -5,17 +5,14 @@ Created on Wed Mar 23 07:01:46 2022
 
 @author: leonardo
 """
-import vtk
-import convert_stl as stl
 import vpython as vp
-from nachbagauer3Dc import node, railANCF3Dquadratic, beamANCF3Dquadratic
-from materialsc import linearElasticMaterial
-from bodiesc import flexibleBody3D, wheelset
+from bodiesc import wheelset
 from profiles import planarProfile
 import MBS.MultibodySystem as mbs
 import MBS.BodyConnections.Forces
 import MBS.BodyConnections.BodyConnection
 import MBS.BodyConnections.Contacts.WheelRailContact
+import MBS.Bodies.flexibleTrack
 import numpy as np
 from assimulo.solvers import IDA
 import matplotlib.pyplot as plt
@@ -24,101 +21,37 @@ import matplotlib.pyplot as plt
 '''
 Initialize system
 '''
-system = mbs.MultibodySystem('Trilho com rodeiro')
+system = mbs.RailwaySystem('Trilho com rodeiro')
 system.gravity = np.array([0., 0., 9.81], dtype=np.float64)
 
-'''
-Material
-'''
-steel = linearElasticMaterial('Steel', E=207e09,
-                              nu=0.3,
-                              rho=7.85e3)
-
+initialVelocity = 0.1  # m/s
 
 '''
-Mesh
+Track
 '''
-nq = []
-nq2 = []
-nel = 4
-totalLength = 2 * nel * 0.58
 trackWidth = 1.0
-for i in range(nel+1):
-    nq.append(node([totalLength * i/nel, -0.5*trackWidth-0.039, 0.1857/2,
-                   0.0, -0.9968765, -0.02499219,
-                   0.0, 0.02499219, -0.99968765]))
-    nq2.append(node([totalLength * i/nel, 0.5*trackWidth+0.039, 0.1857/2,
-                     0.0, -0.9968765,   0.02499219,
-                     0.0, -0.02499219, -0.99968765]))
 
+track = MBS.Bodies.flexibleTrack.flexibleTrack('Via',
+                                               system=system,
+                                               gauge=trackWidth,
+                                               length=2.0,  # unused yet
+                                               sleeperDistance=0.58,
+                                               nel=5)
+track.activeSleepers = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10]
 
-eq = []
-eq2 = []
-railHeight = 0.18575
-railWidth = 6 * 0.0254
-railCentroidHeight = 0.0805
-railBaseHeight = 2.2147e-3
-railHeadHeight = 3.2165e-3
-railBaseWidth = 135.605e-3
-railWebWidth = 23.815e-3
-railHeadWidth = 78.339e-3
-railXSecArea = 8652.0e-6
-
-for j in range(nel):
-    eq.append(
-        railANCF3Dquadratic(nq[j], nq[j+1],
-                            railHeight,
-                            railWidth,
-                            railCentroidHeight,
-                            railBaseHeight,
-                            railHeadHeight,
-                            railBaseWidth,
-                            railWebWidth,
-                            railHeadWidth,
-                            railXSecArea)
-    )
-    eq2.append(
-        railANCF3Dquadratic(nq2[j], nq2[j+1],
-                            railHeight,
-                            railWidth,
-                            railCentroidHeight,
-                            railBaseHeight,
-                            railHeadHeight,
-                            railBaseWidth,
-                            railWebWidth,
-                            railHeadWidth,
-                            railXSecArea)
-    )
+rail = track.leftRail
+rail2 = track.rightRail
 
 '''
-Bodies
+Wheel profiles
 '''
-rail = flexibleBody3D('Rail L', steel)
-rail.addElement(eq)
-rail.nonLinear = 'L'
-rail.assembleTangentStiffnessMatrix()
-
-rail2 = flexibleBody3D('Rail R', steel)
-rail2.addElement(eq2)
-rail2.nonLinear = 'L'
-rail2.assembleTangentStiffnessMatrix()
-
-
-# Rail boundary conditions
-t1fix = MBS.BodyConnections.BodyConnection.nodeEncastreToRigidBody(
-    "Rail 1 fixed joint",
-    rail,
-    system.ground,
-    np.array([0.0, -0.5*trackWidth-0.039, 0.0]),
-    np.array([0.0, -0.5*trackWidth-0.039, 0.0]))
-
-
 wLprofile = planarProfile('Design 2 profile - VALE', './design2.pro', 1)
 wRprofile = planarProfile('Design 2 profile - VALE', './design2.pro', -1)
+wheelRadius = 0.831 * 0.5
 wheel = wheelset('Wheel',
                  wLprofile, wRprofile,
                  b2bDist=0.917,
-                 gaugeRadius=0.831/2)
+                 gaugeRadius=wheelRadius)
 wsmass = 2700.
 wsInertiaRadial = 1/12*wsmass*(3*0.15**2+trackWidth**2)
 wsInertiaTensor = np.diag([wsInertiaRadial, 1/2*wsmass*0.15*0.15,
@@ -126,115 +59,11 @@ wsInertiaTensor = np.diag([wsInertiaRadial, 1/2*wsmass*0.15*0.15,
 wheel.setMass(wsmass)
 wheel.setInertiaTensor(wsInertiaTensor)
 wheel.setPositionInitialConditions(0, 0.75)
-wheel.setPositionInitialConditions(2, -0.83825/2)
-
-'''
-Sleepers
-'''
-sleeper1 = MBS.BodyConnections.Forces.force('Sleepers')
-sleeper1.connect(rail, rail2)
-# sleeper2 = MBS.force('Sleeper 2')
-# leeper2.connect(rail2,mbs.ground)
+wheel.setPositionInitialConditions(2, -0.838261/2)
+wheel.setVelocityInitialConditions(0, initialVelocity)
+wheel.setVelocityInitialConditions(4, -initialVelocity / wheelRadius)
 
 
-def slpForce(t, p, v, m1, m2):
-    """
-    Force evaluation function for sleepers.
-
-    Parameters
-    ----------
-    t : TYPE
-        DESCRIPTION.
-    p : TYPE
-        DESCRIPTION.
-    v : TYPE
-        DESCRIPTION.
-    m1 : TYPE
-        DESCRIPTION.
-    m2 : TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    TYPE
-        DESCRIPTION.
-
-    """
-    leftRail = m1.parent
-    rightRail = m2.parent
-
-    # Vertical stiffness
-    # states
-    leftDist = p[leftRail.globalDof[2::9]]
-    leftVelo = v[leftRail.globalDof[2::9]]
-    rightDist = p[rightRail.globalDof[2::9]]
-    rightVelo = v[rightRail.globalDof[2::9]]
-
-    f = np.zeros_like(p)
-    f[leftRail.globalDof[2::9]] = 3e6 * leftDist + 3e4 * leftVelo
-    f[rightRail.globalDof[2::9]] = 3e6 * rightDist + 3e4 * rightVelo
-    # increased stiffness on rail ends
-    f[leftRail.globalDof[2]] += 32 * (3e6 * leftDist[0])
-    f[leftRail.globalDof[-7]] += 32 * (3e6 * leftDist[-1])
-    f[rightRail.globalDof[2]] += 32 * (3e6 * rightDist[0])
-    f[rightRail.globalDof[-7]] += 32 * (3e6 * rightDist[-1])
-
-    # Lateral stiffness
-    stiffness = 35e9 * 0.17 * 0.24 / trackWidth
-
-    # states
-    leftDist = p[leftRail.globalDof[1::9]]
-    leftVelo = v[leftRail.globalDof[1::9]]
-    rightDist = p[rightRail.globalDof[1::9]]
-    rightVelo = v[rightRail.globalDof[1::9]]
-
-    ds = leftDist - rightDist
-    dv = leftVelo - rightVelo
-
-    f[leftRail.globalDof[1::9]] = stiffness * (ds + 0.02*dv) + 1e6 * leftDist
-    f[rightRail.globalDof[1::9]] = stiffness * \
-        (- ds - 0.02*dv) + 1e6 * rightDist
-
-    # TODO: Rotation stiffness
-    # leftY = p[leftRail.globalDof[4::9]]
-    # leftZ = p[leftRail.globalDof[5::9]]
-    # rightY = p[rightRail.globalDof[4::9]]
-    # rightZ = p[rightRail.globalDof[5::9]]
-
-    return -f
-
-
-def slpGap(t, p, v, m1, m2):
-    """
-    Gap evaluation function for sleepers.
-
-    Parameters
-    ----------
-    t : TYPE
-        DESCRIPTION.
-    p : TYPE
-        DESCRIPTION.
-    v : TYPE
-        DESCRIPTION.
-    m1 : TYPE
-        DESCRIPTION.
-    m2 : TYPE
-        DESCRIPTION.
-
-    Returns
-    -------
-    TYPE
-        DESCRIPTION.
-
-    """
-    return np.zeros((1, 3)), np.zeros((1, 3))
-
-
-sleeper1.setForceFunction(slpForce)
-sleeper1.setGapFunction(slpGap)
-# sleeper2.setForceFunction(slpForce)
-
-# Force to move the wheel
 forceWheel = MBS.BodyConnections.Forces.force('Wheel pull force')
 forceWheel.connect(wheel, system.ground)
 
@@ -267,8 +96,8 @@ def pullWheelset(t, p, v, m1, m2):
     wpos, wvel = pullWstGap(t, p, v, m1, m2)
     # wvel = v[w.globalDof]
 
-    if t > 0.8:
-        f[w.globalDof[0]] = 10
+    if t > 0.1:
+        f[w.globalDof[0]] = 1000
 
     f[w.globalDof[2]] = - wvel[2] * 1e4
     f[w.globalDof[3]] = - wvel[3] * 1e8
@@ -310,74 +139,21 @@ def pullWstGap(t, p, v, m1, m2):
 forceWheel.setForceFunction(pullWheelset)
 forceWheel.setGapFunction(pullWstGap)
 
-'''
-Profiles
-'''
-leftRailMarker = rail.addMarker(MBS.marker.marker('Left rail marker',
-                                                  np.array(
-                                                      [0.0, 0.189, -0.5*trackWidth-0.039]),
-                                                  np.array([[0.0, 0.0, 1.0],
-                                                            [0.0, -1.0, 0.0],
-                                                            [1.0, 0.0, 0.0]])))
-rightRailMarker = rail2.addMarker(MBS.marker.marker('Right rail marker',
-                                                    np.array(
-                                                        [0.0, 0.189,  0.5*trackWidth+0.039]),
-                                                    np.array([[0.0, 0.0, 1.0],
-                                                              [0.0, -1.0, 0.0],
-                                                              [1.0, 0.0, 0.0]])))
-
-
-rProfL = planarProfile('Left rail', convPar=-1)
-rProfL.setProfilePointsFromFile('./tr68.pro')
-rProfR = planarProfile('Right rail', convPar=1)
-rProfR.setProfilePointsFromFile('./tr68.pro')
-
-rail.addProfile(rProfL, leftRailMarker)
-rail2.addProfile(rProfR, rightRailMarker)
-
-'''Contact markers'''
-leftWheelMarker = wheel.addMarker(MBS.marker.marker('Left wheel marker',
-                                                    np.array(
-                                                        [0, -0.8382/2, -0.459]),
-                                                    np.array([[0.0, 0.0, 1.0],
-                                                              [0.0, -1.0, 0.0],
-                                                              [1.0, 0.0, 0.0]])))
-rightWheelMarker = wheel.addMarker(MBS.marker.marker('Right wheel marker',
-                                                     np.array(
-                                                         [0, -0.8382/2, 0.459]),
-                                                     np.array([[0.0, 0.0, 1.0],
-                                                               [0.0, 1.0, 0.0],
-                                                               [-1.0, 0.0, 0.0]])))
-
-
-wheel.addProfile(planarProfile('Left wheel profile', './design2.pro',
-                               convPar=1),
-                 leftWheelMarker)
-wheel.addProfile(planarProfile('Right wheel profile', './design2.pro',
-                               convPar=1),
-                 rightWheelMarker)
-
-wheel.profiles[2].rotatePoints(np.pi)
-wheel.profiles[2].mirrorVert()
-wheel.profiles[3].mirrorVert()
-
 
 '''
 CONTACT
 '''
 
-wheelRailContact = MBS.BodyConnections.Contacts.WheelRailContact.wrContact2(
+wheelRailContact = MBS.BodyConnections.Contacts.WheelRailContact.wrContact(
     rail, rail2, wheel, 'Contact test')
 
 '''
 Multibody system setup
 '''
-system.addBody([rail, rail2, wheel])
-
-system.addForce(sleeper1)
+system.addTrack(track)
+system.addBody([wheel])
 system.addForce(wheelRailContact)
 system.addForce(forceWheel)
-# system.addConstraint(t1fix)
 
 system.setupSystem()
 
@@ -387,17 +163,19 @@ Solution
 '''
 
 problem = system.generate_problem('ind3')
+wheelRailContact.evaluateForceFunction(0, system.pos0, system.vel0)
 
 DAE = IDA(problem)
 DAE.report_continuously = True
-DAE.inith = 1e-5
-DAE.maxh = 5e-4
-DAE.maxord = 4
+DAE.inith = 1e-4
+DAE.maxh = 5e-3
+DAE.atol = 1e-6
+# DAE.maxord = 3
 DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 5e2  # Hz
-finalTime = 1.
+finalTime = 2.5
 
 # DAE.make_consistent('IDA_YA_YDP_INIT')
 
@@ -451,9 +229,10 @@ Output wheelset configuration
 ''' VPYTHON visuals '''
 
 
-def run_animation(vprate=10):
+def run_animation(vprate=100):
     scene = vp.canvas(width=1600, height=700, background=vp.color.gray(0.7),
-                      forward=vp.vec(1, 0, 0), range=0.5)
+                      forward=vp.vec(1, 0, 0),
+                      up=vp.vec(0, 0, -1), range=0.5)
 
     # w1 = vp.cylinder(axis = vp.vec(0,0,0.5*trackWidth), radius = 0.15)
     # w2 = w1.clone(axis = vp.vec(0,0,-0.5*trackWidth))
@@ -464,13 +243,20 @@ def run_animation(vprate=10):
     wheelRep.visible = True
     wheelRep.color = vp.color.cyan
 
+    # rail profile
+    rail_points = track.leftRail.profiles[0].points.tolist()
+    rail_points.append(rail_points[0])
+    rail_points = vp.shapes.points(pos=rail_points, rotate=vp.pi/2)
+
     rail.updateDisplacements(rail.simQ[0])
     rail2.updateDisplacements(rail2.simQ[0])
     path = []
     for p in rail2.plotPositions():
         path.append(vp.vec(*p))
-    c2 = vp.curve(path, color=vp.color.blue, radius=0.01)
-    c1 = vp.curve(path, color=vp.color.green, radius=0.01)
+    # c2 = vp.curve(path, color=vp.color.blue, radius=0.01)
+    c2 = vp.extrusion(path=path, shape=rail_points, color=vp.color.blue)
+    # c1 = vp.curve(path, color=vp.color.green, radius=0.01)
+    c1 = vp.extrusion(path=path, shape=rail_points, color=vp.color.blue)
     crails = [c1, c2]
 
     axisX = vp.arrow(pos=vp.vec(0, 0, 0), axis=vp.vec(
@@ -481,13 +267,15 @@ def run_animation(vprate=10):
         0.0, 0, 0.5), shaftwidth=0.01, color=vp.color.blue)
 
     outFreq = 100
-    for i in range(len(t)):
-        vp.rate(vprate)
+    vp.rate(vprate)
+    for i in range(0, len(t), 20):
         scene.title = 't = {} s'.format(t[i])
         for n, r in enumerate([rail, rail2]):
             r.updateDisplacements(r.simQ[i])
-            for j, p in enumerate(r.plotPositions(eta=1)):
-                crails[n].modify(j, vp.vec(*p))
+            path = [vp.vec(p[0], p[1], p[2])
+                    for p in r.plotPositions().tolist()]
+            crails[n] = vp.extrusion(
+                path=path, shape=rail_points, color=vp.color.blue)
         wheelRep.pos.x = wheel.simQ[i, 0]
         wheelRep.pos.y = wheel.simQ[i, 1]
         wheelRep.pos.z = wheel.simQ[i, 2]
@@ -498,54 +286,54 @@ def run_animation(vprate=10):
 # run_animation()
 
 
-'''
-Output to Paraview
-'''
+# '''
+# Output to Paraview
+# '''
 
 
-def load_stl(file_path):
-    reader = vtk.vtkSTLReader()
-    reader.SetFileName(file_path)
-    reader.Update()
-    return reader.GetOutput()
+# def load_stl(file_path):
+#     reader = vtk.vtkSTLReader()
+#     reader.SetFileName(file_path)
+#     reader.Update()
+#     return reader.GetOutput()
 
 
-def write_vtk(filename, dataset):
-    writer = vtk.vtkXMLPolyDataWriter()
-    writer.SetFileName(filename)
-    writer.SetInputData(dataset)
-    writer.Write()
+# def write_vtk(filename, dataset):
+#     writer = vtk.vtkXMLPolyDataWriter()
+#     writer.SetFileName(filename)
+#     writer.SetInputData(dataset)
+#     writer.Write()
 
 
-def output_paraview():
-    wheelCenter = np.zeros(3)
+# def output_paraview():
+#     wheelCenter = np.zeros(3)
 
-    # Load the STL file
-    geometry = load_stl('Rodeiro_carga_2.stl')
+#     # Load the STL file
+#     geometry = load_stl('Rodeiro_carga_2.stl')
 
-    for i in range(len(t)):
-        wheelCenter[0] = wheel.simQ[i, 0]  # Simulate falling motion
-        wheelCenter[1] = wheel.simQ[i, 2]
-        wheelCenter[2] = wheel.simQ[i, 1]
+#     for i in range(len(t)):
+#         wheelCenter[0] = wheel.simQ[i, 0]  # Simulate falling motion
+#         wheelCenter[1] = wheel.simQ[i, 2]
+#         wheelCenter[2] = wheel.simQ[i, 1]
 
-        # Translate the geometry to the new position
-        transform = vtk.vtkTransform()
-        transform.Translate(wheelCenter)
+#         # Translate the geometry to the new position
+#         transform = vtk.vtkTransform()
+#         transform.Translate(wheelCenter)
 
-        transform_filter = vtk.vtkTransformFilter()
-        transform_filter.SetTransform(transform)
-        transform_filter.SetInputData(geometry)
-        transform_filter.Update()
+#         transform_filter = vtk.vtkTransformFilter()
+#         transform_filter.SetTransform(transform)
+#         transform_filter.SetInputData(geometry)
+#         transform_filter.Update()
 
-        polydata = transform_filter.GetOutput()
+#         polydata = transform_filter.GetOutput()
 
-        # Add wheel.simQ[i,:] values to the point data
-        simQ_values = vtk.vtkDoubleArray()
-        simQ_values.SetName("SimQ")
-        simQ_values.SetNumberOfComponents(3)
-        simQ_values.InsertNextTuple(wheel.simQ[i, 0:3])
+#         # Add wheel.simQ[i,:] values to the point data
+#         simQ_values = vtk.vtkDoubleArray()
+#         simQ_values.SetName("SimQ")
+#         simQ_values.SetNumberOfComponents(3)
+#         simQ_values.InsertNextTuple(wheel.simQ[i, 0:3])
 
-        polydata.GetPointData().AddArray(simQ_values)
+#         polydata.GetPointData().AddArray(simQ_values)
 
-        write_vtk("./results/wheelset_ani_test/wheelset_anim_%04d.vtp" %
-                  i, polydata)
+#         write_vtk("./results/wheelset_ani_test/wheelset_anim_%04d.vtp" %
+#                   i, polydata)

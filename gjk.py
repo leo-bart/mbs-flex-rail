@@ -440,6 +440,8 @@ def signedVolumesDistance(tau, indexP, indexQ):
 if __name__ == '__main__':
     close('all')
 
+    import gjkc
+
     # P = np.array([[0.,2],[1.,1],[2.,2],[1.,3]],dtype=float)
     # Q = np.array([[1,0],[2.,1.75],[3,0]],dtype=float)
     P = np.array([[0., 1], [1., 1], [1.1, 0], [0., 0]], dtype=float)
@@ -470,6 +472,7 @@ if __name__ == '__main__':
     fill(P[:, 0], P[:, 1], linewidth=1, edgecolor='black')
     fill(Q[:, 0], Q[:, 1], linewidth=1, edgecolor='black')
 
+    a, b, n, d = gjkc.gjk(P, Q, v, verb=True)
     a, b, n, d = gjk(P, Q, v)
     g = b-a
 

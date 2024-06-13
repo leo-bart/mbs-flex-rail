@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# distutils: language=c++
 """
 Created on Fri Feb  25 10:11:22 2022
 

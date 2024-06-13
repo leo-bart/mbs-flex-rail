@@ -6,7 +6,7 @@
 #include "Python.h"
 struct c_PyObj;
 
-/* "nachbagauer3Dc.pyx":32
+/* "nachbagauer3Dc.pyx":36
  * #         3D NODE                                                             %
  * #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
  * cdef public class node[object c_PyObj, type c_PyObj_t]:             # <<<<<<<<<<<<<<

@@ -1651,7 +1651,7 @@ struct __pyx_MemviewEnum_obj;
 struct __pyx_memoryview_obj;
 struct __pyx_memoryviewslice_obj;
 
-/* "materialsc.pyx":13
+/* "materialsc.pyx":14
  * import numpy as np
  * 
  * cdef class material(object):             # <<<<<<<<<<<<<<
@@ -17782,7 +17782,7 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
-/* "materialsc.pyx":18
+/* "materialsc.pyx":19
  *     '''
  * 
  *     def __init__(self,name):             # <<<<<<<<<<<<<<
@@ -17826,12 +17826,12 @@ static int __pyx_pw_10materialsc_8material_1__init__(PyObject *__pyx_v_self, PyO
           (void)__Pyx_Arg_NewRef_VARARGS(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 18, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 19, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "__init__") < 0)) __PYX_ERR(0, 18, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "__init__") < 0)) __PYX_ERR(0, 19, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 1)) {
       goto __pyx_L5_argtuple_error;
@@ -17842,7 +17842,7 @@ static int __pyx_pw_10materialsc_8material_1__init__(PyObject *__pyx_v_self, PyO
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 18, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 1, 1, __pyx_nargs); __PYX_ERR(0, 19, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -17875,16 +17875,16 @@ static int __pyx_pf_10materialsc_8material___init__(struct __pyx_obj_10materials
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
 
-  /* "materialsc.pyx":19
+  /* "materialsc.pyx":20
  * 
  *     def __init__(self,name):
  *         self.name = name             # <<<<<<<<<<<<<<
  * 
  * class linearElasticMaterial(material):
  */
-  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_name, __pyx_v_name) < 0) __PYX_ERR(0, 19, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_name, __pyx_v_name) < 0) __PYX_ERR(0, 20, __pyx_L1_error)
 
-  /* "materialsc.pyx":18
+  /* "materialsc.pyx":19
  *     '''
  * 
  *     def __init__(self,name):             # <<<<<<<<<<<<<<
@@ -18297,7 +18297,7 @@ static PyObject *__pyx_pf_10materialsc_8material_4__setstate_cython__(struct __p
   return __pyx_r;
 }
 
-/* "materialsc.pyx":26
+/* "materialsc.pyx":27
  *     '''
  * 
  *     def __init__(self,name,E,nu,rho):             # <<<<<<<<<<<<<<
@@ -18371,7 +18371,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 26, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 27, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -18379,9 +18379,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 26, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 27, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 1); __PYX_ERR(0, 26, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 1); __PYX_ERR(0, 27, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
@@ -18389,9 +18389,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[2]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 26, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 27, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 2); __PYX_ERR(0, 26, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 2); __PYX_ERR(0, 27, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
@@ -18399,9 +18399,9 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[3]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 26, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 27, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 3); __PYX_ERR(0, 26, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 3); __PYX_ERR(0, 27, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  4:
@@ -18409,14 +18409,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[4]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 26, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 27, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 4); __PYX_ERR(0, 26, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, 4); __PYX_ERR(0, 27, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "__init__") < 0)) __PYX_ERR(0, 26, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "__init__") < 0)) __PYX_ERR(0, 27, __pyx_L3_error)
       }
     } else if (unlikely(__pyx_nargs != 5)) {
       goto __pyx_L5_argtuple_error;
@@ -18435,7 +18435,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, __pyx_nargs); __PYX_ERR(0, 26, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("__init__", 1, 5, 5, __pyx_nargs); __PYX_ERR(0, 27, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -18479,7 +18479,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial___init__(CYTHON_U
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__init__", 1);
 
-  /* "materialsc.pyx":45
+  /* "materialsc.pyx":46
  * 
  *         '''
  *         super().__init__(name)             # <<<<<<<<<<<<<<
@@ -18487,20 +18487,20 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial___init__(CYTHON_U
  *         self.E = E
  */
   __pyx_t_2 = __Pyx_CyFunction_GetClassObj(__pyx_self);
-  if (!__pyx_t_2) { PyErr_SetString(PyExc_SystemError, "super(): empty __class__ cell"); __PYX_ERR(0, 45, __pyx_L1_error) }
+  if (!__pyx_t_2) { PyErr_SetString(PyExc_SystemError, "super(): empty __class__ cell"); __PYX_ERR(0, 46, __pyx_L1_error) }
   __Pyx_INCREF(__pyx_t_2);
-  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_3 = PyTuple_New(2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_GIVEREF(__pyx_t_2);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error);
   __Pyx_INCREF(__pyx_v_self);
   __Pyx_GIVEREF(__pyx_v_self);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_v_self)) __PYX_ERR(0, 45, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_3, 1, __pyx_v_self)) __PYX_ERR(0, 46, __pyx_L1_error);
   __pyx_t_2 = 0;
-  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_super, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_super, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_init); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 45, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_init); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 46, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_2 = NULL;
@@ -18521,112 +18521,112 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial___init__(CYTHON_U
     PyObject *__pyx_callargs[2] = {__pyx_t_2, __pyx_v_name};
     __pyx_t_1 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_2); __pyx_t_2 = 0;
-    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 45, __pyx_L1_error)
+    if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 46, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "materialsc.pyx":47
+  /* "materialsc.pyx":48
  *         super().__init__(name)
  * 
  *         self.E = E             # <<<<<<<<<<<<<<
  *         self.nu = nu
  *         self.rho = rho
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_E, __pyx_v_E) < 0) __PYX_ERR(0, 47, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_E, __pyx_v_E) < 0) __PYX_ERR(0, 48, __pyx_L1_error)
 
-  /* "materialsc.pyx":48
+  /* "materialsc.pyx":49
  * 
  *         self.E = E
  *         self.nu = nu             # <<<<<<<<<<<<<<
  *         self.rho = rho
  * 
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_nu, __pyx_v_nu) < 0) __PYX_ERR(0, 48, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_nu, __pyx_v_nu) < 0) __PYX_ERR(0, 49, __pyx_L1_error)
 
-  /* "materialsc.pyx":49
+  /* "materialsc.pyx":50
  *         self.E = E
  *         self.nu = nu
  *         self.rho = rho             # <<<<<<<<<<<<<<
  * 
  *         # Lam constants for 3d stress-strain state
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_rho, __pyx_v_rho) < 0) __PYX_ERR(0, 49, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_rho, __pyx_v_rho) < 0) __PYX_ERR(0, 50, __pyx_L1_error)
 
-  /* "materialsc.pyx":52
+  /* "materialsc.pyx":53
  * 
  *         # Lam constants for 3d stress-strain state
  *         self.mu = self.E / (1+self.nu) * 0.5             # <<<<<<<<<<<<<<
  *         self.lam = self.nu * self.E / ( (1+self.nu)*(1-2*self.nu) )
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_E); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_E); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyInt_AddCObj(__pyx_int_1, __pyx_t_3, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_AddCObj(__pyx_int_1, __pyx_t_3, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyNumber_Divide(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyNumber_Divide(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyNumber_Multiply(__pyx_t_3, __pyx_float_0_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 52, __pyx_L1_error)
+  __pyx_t_2 = PyNumber_Multiply(__pyx_t_3, __pyx_float_0_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_mu, __pyx_t_2) < 0) __PYX_ERR(0, 52, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_mu, __pyx_t_2) < 0) __PYX_ERR(0, 53, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-  /* "materialsc.pyx":53
+  /* "materialsc.pyx":54
  *         # Lam constants for 3d stress-strain state
  *         self.mu = self.E / (1+self.nu) * 0.5
  *         self.lam = self.nu * self.E / ( (1+self.nu)*(1-2*self.nu) )             # <<<<<<<<<<<<<<
  * 
  *         D = np.zeros((6,6))
  */
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_E); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_E); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = PyNumber_Multiply(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_1 = PyNumber_Multiply(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_2 = __Pyx_PyInt_AddCObj(__pyx_int_1, __pyx_t_3, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyInt_AddCObj(__pyx_int_1, __pyx_t_3, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_5 = __Pyx_PyInt_MultiplyCObj(__pyx_int_2, __pyx_t_3, 2, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_MultiplyCObj(__pyx_int_2, __pyx_t_3, 2, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_5, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_5, 1, 0, 0); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = PyNumber_Multiply(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_5 = PyNumber_Multiply(__pyx_t_2, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyNumber_Divide(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 53, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyNumber_Divide(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_lam, __pyx_t_3) < 0) __PYX_ERR(0, 53, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_lam, __pyx_t_3) < 0) __PYX_ERR(0, 54, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-  /* "materialsc.pyx":55
+  /* "materialsc.pyx":56
  *         self.lam = self.nu * self.E / ( (1+self.nu)*(1-2*self.nu) )
  * 
  *         D = np.zeros((6,6))             # <<<<<<<<<<<<<<
  *         cdef double[:,:] D_view = D
  * 
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_zeros); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_zeros); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_t_5 = NULL;
@@ -18647,200 +18647,200 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial___init__(CYTHON_U
     PyObject *__pyx_callargs[2] = {__pyx_t_5, __pyx_tuple__9};
     __pyx_t_3 = __Pyx_PyObject_FastCall(__pyx_t_1, __pyx_callargs+1-__pyx_t_4, 1+__pyx_t_4);
     __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 55, __pyx_L1_error)
+    if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 56, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
   __pyx_v_D = __pyx_t_3;
   __pyx_t_3 = 0;
 
-  /* "materialsc.pyx":56
+  /* "materialsc.pyx":57
  * 
  *         D = np.zeros((6,6))
  *         cdef double[:,:] D_view = D             # <<<<<<<<<<<<<<
  * 
  *         # following Lai, Introduction to Continuum Mechanics, 2010 notation
  */
-  __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(__pyx_v_D, PyBUF_WRITABLE); if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 56, __pyx_L1_error)
+  __pyx_t_6 = __Pyx_PyObject_to_MemoryviewSlice_dsds_double(__pyx_v_D, PyBUF_WRITABLE); if (unlikely(!__pyx_t_6.memview)) __PYX_ERR(0, 57, __pyx_L1_error)
   __pyx_v_D_view = __pyx_t_6;
   __pyx_t_6.memview = NULL;
   __pyx_t_6.data = NULL;
 
-  /* "materialsc.pyx":59
+  /* "materialsc.pyx":60
  * 
  *         # following Lai, Introduction to Continuum Mechanics, 2010 notation
  *         C11 = self.lam + 2*self.mu             # <<<<<<<<<<<<<<
  *         D[0,0] = C11
  *         D[1,1] = C11
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyInt_MultiplyCObj(__pyx_int_2, __pyx_t_1, 2, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_MultiplyCObj(__pyx_int_2, __pyx_t_1, 2, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyNumber_Add(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 59, __pyx_L1_error)
+  __pyx_t_1 = PyNumber_Add(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 60, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_C11 = __pyx_t_1;
   __pyx_t_1 = 0;
 
-  /* "materialsc.pyx":60
+  /* "materialsc.pyx":61
  *         # following Lai, Introduction to Continuum Mechanics, 2010 notation
  *         C11 = self.lam + 2*self.mu
  *         D[0,0] = C11             # <<<<<<<<<<<<<<
  *         D[1,1] = C11
  *         D[2,2] = C11
  */
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__10, __pyx_v_C11) < 0))) __PYX_ERR(0, 60, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__10, __pyx_v_C11) < 0))) __PYX_ERR(0, 61, __pyx_L1_error)
 
-  /* "materialsc.pyx":61
+  /* "materialsc.pyx":62
  *         C11 = self.lam + 2*self.mu
  *         D[0,0] = C11
  *         D[1,1] = C11             # <<<<<<<<<<<<<<
  *         D[2,2] = C11
  * 
  */
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__11, __pyx_v_C11) < 0))) __PYX_ERR(0, 61, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__11, __pyx_v_C11) < 0))) __PYX_ERR(0, 62, __pyx_L1_error)
 
-  /* "materialsc.pyx":62
+  /* "materialsc.pyx":63
  *         D[0,0] = C11
  *         D[1,1] = C11
  *         D[2,2] = C11             # <<<<<<<<<<<<<<
  * 
  *         D[0,1] = self.lam
  */
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__12, __pyx_v_C11) < 0))) __PYX_ERR(0, 62, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__12, __pyx_v_C11) < 0))) __PYX_ERR(0, 63, __pyx_L1_error)
 
-  /* "materialsc.pyx":64
+  /* "materialsc.pyx":65
  *         D[2,2] = C11
  * 
  *         D[0,1] = self.lam             # <<<<<<<<<<<<<<
  *         D[1,2] = self.lam
  *         D[2,3] = self.lam
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__13, __pyx_t_1) < 0))) __PYX_ERR(0, 64, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__13, __pyx_t_1) < 0))) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "materialsc.pyx":65
+  /* "materialsc.pyx":66
  * 
  *         D[0,1] = self.lam
  *         D[1,2] = self.lam             # <<<<<<<<<<<<<<
  *         D[2,3] = self.lam
  *         D[1,0] = self.lam
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__14, __pyx_t_1) < 0))) __PYX_ERR(0, 65, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__14, __pyx_t_1) < 0))) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "materialsc.pyx":66
+  /* "materialsc.pyx":67
  *         D[0,1] = self.lam
  *         D[1,2] = self.lam
  *         D[2,3] = self.lam             # <<<<<<<<<<<<<<
  *         D[1,0] = self.lam
  *         D[2,1] = self.lam
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__15, __pyx_t_1) < 0))) __PYX_ERR(0, 66, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__15, __pyx_t_1) < 0))) __PYX_ERR(0, 67, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "materialsc.pyx":67
+  /* "materialsc.pyx":68
  *         D[1,2] = self.lam
  *         D[2,3] = self.lam
  *         D[1,0] = self.lam             # <<<<<<<<<<<<<<
  *         D[2,1] = self.lam
  *         D[3,2] = self.lam
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__16, __pyx_t_1) < 0))) __PYX_ERR(0, 67, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__16, __pyx_t_1) < 0))) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "materialsc.pyx":68
+  /* "materialsc.pyx":69
  *         D[2,3] = self.lam
  *         D[1,0] = self.lam
  *         D[2,1] = self.lam             # <<<<<<<<<<<<<<
  *         D[3,2] = self.lam
  * 
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 68, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__17, __pyx_t_1) < 0))) __PYX_ERR(0, 68, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__17, __pyx_t_1) < 0))) __PYX_ERR(0, 69, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "materialsc.pyx":69
+  /* "materialsc.pyx":70
  *         D[1,0] = self.lam
  *         D[2,1] = self.lam
  *         D[3,2] = self.lam             # <<<<<<<<<<<<<<
  * 
  *         D[3,3] = 2*self.mu
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_lam); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 70, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__18, __pyx_t_1) < 0))) __PYX_ERR(0, 69, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__18, __pyx_t_1) < 0))) __PYX_ERR(0, 70, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "materialsc.pyx":71
+  /* "materialsc.pyx":72
  *         D[3,2] = self.lam
  * 
  *         D[3,3] = 2*self.mu             # <<<<<<<<<<<<<<
  *         D[4,4] = 2*self.mu
  *         D[5,5] = 2*self.mu
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 71, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyInt_MultiplyCObj(__pyx_int_2, __pyx_t_1, 2, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 71, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_MultiplyCObj(__pyx_int_2, __pyx_t_1, 2, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__19, __pyx_t_5) < 0))) __PYX_ERR(0, 71, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__19, __pyx_t_5) < 0))) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "materialsc.pyx":72
+  /* "materialsc.pyx":73
  * 
  *         D[3,3] = 2*self.mu
  *         D[4,4] = 2*self.mu             # <<<<<<<<<<<<<<
  *         D[5,5] = 2*self.mu
  * 
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mu); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 72, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mu); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 73, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_1 = __Pyx_PyInt_MultiplyCObj(__pyx_int_2, __pyx_t_5, 2, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 72, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyInt_MultiplyCObj(__pyx_int_2, __pyx_t_5, 2, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__20, __pyx_t_1) < 0))) __PYX_ERR(0, 72, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__20, __pyx_t_1) < 0))) __PYX_ERR(0, 73, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "materialsc.pyx":73
+  /* "materialsc.pyx":74
  *         D[3,3] = 2*self.mu
  *         D[4,4] = 2*self.mu
  *         D[5,5] = 2*self.mu             # <<<<<<<<<<<<<<
  * 
  *         self.constitutiveMatrix = D
  */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 73, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = __Pyx_PyInt_MultiplyCObj(__pyx_int_2, __pyx_t_1, 2, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 73, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyInt_MultiplyCObj(__pyx_int_2, __pyx_t_1, 2, 0, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__21, __pyx_t_5) < 0))) __PYX_ERR(0, 73, __pyx_L1_error)
+  if (unlikely((PyObject_SetItem(__pyx_v_D, __pyx_tuple__21, __pyx_t_5) < 0))) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
-  /* "materialsc.pyx":75
+  /* "materialsc.pyx":76
  *         D[5,5] = 2*self.mu
  * 
  *         self.constitutiveMatrix = D             # <<<<<<<<<<<<<<
  * 
  * 
  */
-  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_constitutiveMatrix, __pyx_v_D) < 0) __PYX_ERR(0, 75, __pyx_L1_error)
+  if (__Pyx_PyObject_SetAttrStr(__pyx_v_self, __pyx_n_s_constitutiveMatrix, __pyx_v_D) < 0) __PYX_ERR(0, 76, __pyx_L1_error)
 
-  /* "materialsc.pyx":26
+  /* "materialsc.pyx":27
  *     '''
  * 
  *     def __init__(self,name,E,nu,rho):             # <<<<<<<<<<<<<<
@@ -18868,7 +18868,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial___init__(CYTHON_U
   return __pyx_r;
 }
 
-/* "materialsc.pyx":79
+/* "materialsc.pyx":80
  * 
  * 
  *     def stressTensor(self,strainTensor,bint split=False):             # <<<<<<<<<<<<<<
@@ -18936,7 +18936,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[0]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 79, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
         else goto __pyx_L5_argtuple_error;
         CYTHON_FALLTHROUGH;
         case  1:
@@ -18944,21 +18944,21 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
           (void)__Pyx_Arg_NewRef_FASTCALL(values[1]);
           kw_args--;
         }
-        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 79, __pyx_L3_error)
+        else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
         else {
-          __Pyx_RaiseArgtupleInvalid("stressTensor", 0, 2, 3, 1); __PYX_ERR(0, 79, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("stressTensor", 0, 2, 3, 1); __PYX_ERR(0, 80, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (kw_args > 0) {
           PyObject* value = __Pyx_GetKwValue_FASTCALL(__pyx_kwds, __pyx_kwvalues, __pyx_n_s_split);
           if (value) { values[2] = __Pyx_Arg_NewRef_FASTCALL(value); kw_args--; }
-          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 79, __pyx_L3_error)
+          else if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
         const Py_ssize_t kwd_pos_args = __pyx_nargs;
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "stressTensor") < 0)) __PYX_ERR(0, 79, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values + 0, kwd_pos_args, "stressTensor") < 0)) __PYX_ERR(0, 80, __pyx_L3_error)
       }
     } else {
       switch (__pyx_nargs) {
@@ -18973,14 +18973,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
     __pyx_v_self = values[0];
     __pyx_v_strainTensor = values[1];
     if (values[2]) {
-      __pyx_v_split = __Pyx_PyObject_IsTrue(values[2]); if (unlikely((__pyx_v_split == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 79, __pyx_L3_error)
+      __pyx_v_split = __Pyx_PyObject_IsTrue(values[2]); if (unlikely((__pyx_v_split == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 80, __pyx_L3_error)
     } else {
       __pyx_v_split = ((int)((int)0));
     }
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("stressTensor", 0, 2, 3, __pyx_nargs); __PYX_ERR(0, 79, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("stressTensor", 0, 2, 3, __pyx_nargs); __PYX_ERR(0, 80, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -19034,33 +19034,33 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("stressTensor", 1);
 
-  /* "materialsc.pyx":106
+  /* "materialsc.pyx":107
  *         '''
  * 
  *         T = np.zeros_like(strainTensor,dtype=np.float64)             # <<<<<<<<<<<<<<
  *         Tc = T.copy()
  *         cdef double [:,:] T_view
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_1, __pyx_n_s_np); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_zeros_like); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_t_1, __pyx_n_s_zeros_like); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_v_strainTensor);
   __Pyx_GIVEREF(__pyx_v_strainTensor);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_strainTensor)) __PYX_ERR(0, 106, __pyx_L1_error);
-  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 106, __pyx_L1_error)
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_strainTensor)) __PYX_ERR(0, 107, __pyx_L1_error);
+  __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __Pyx_GetModuleGlobalName(__pyx_t_4, __pyx_n_s_np); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_float64); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 106, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_dtype, __pyx_t_5) < 0) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 106, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_1, __pyx_t_3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 107, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -19068,14 +19068,14 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
   __pyx_v_T = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "materialsc.pyx":107
+  /* "materialsc.pyx":108
  * 
  *         T = np.zeros_like(strainTensor,dtype=np.float64)
  *         Tc = T.copy()             # <<<<<<<<<<<<<<
  *         cdef double [:,:] T_view
  *         cdef double [:,:] Tc_view
  */
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_T, __pyx_n_s_copy); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 107, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_T, __pyx_n_s_copy); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 108, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __pyx_t_1 = NULL;
   __pyx_t_6 = 0;
@@ -19095,53 +19095,53 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
     PyObject *__pyx_callargs[2] = {__pyx_t_1, NULL};
     __pyx_t_5 = __Pyx_PyObject_FastCall(__pyx_t_3, __pyx_callargs+1-__pyx_t_6, 0+__pyx_t_6);
     __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
-    if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 107, __pyx_L1_error)
+    if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 108, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   }
   __pyx_v_Tc = __pyx_t_5;
   __pyx_t_5 = 0;
 
-  /* "materialsc.pyx":113
+  /* "materialsc.pyx":114
  * 
  *         # gets Lam constants from material
  *         cdef double mu = self.mu             # <<<<<<<<<<<<<<
  *         cdef double E = self.E
  *         cdef double nu = self.nu
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mu); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 113, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_mu); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 114, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 113, __pyx_L1_error)
+  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 114, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_mu = __pyx_t_7;
 
-  /* "materialsc.pyx":114
+  /* "materialsc.pyx":115
  *         # gets Lam constants from material
  *         cdef double mu = self.mu
  *         cdef double E = self.E             # <<<<<<<<<<<<<<
  *         cdef double nu = self.nu
  *         cdef double ks = 10*(1+nu)/(12+11*nu)   # shear constant
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_E); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 114, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_E); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 114, __pyx_L1_error)
+  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 115, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_E = __pyx_t_7;
 
-  /* "materialsc.pyx":115
+  /* "materialsc.pyx":116
  *         cdef double mu = self.mu
  *         cdef double E = self.E
  *         cdef double nu = self.nu             # <<<<<<<<<<<<<<
  *         cdef double ks = 10*(1+nu)/(12+11*nu)   # shear constant
  * 
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 115, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 115, __pyx_L1_error)
+  __pyx_t_7 = __pyx_PyFloat_AsDouble(__pyx_t_5); if (unlikely((__pyx_t_7 == (double)-1) && PyErr_Occurred())) __PYX_ERR(0, 116, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   __pyx_v_nu = __pyx_t_7;
 
-  /* "materialsc.pyx":116
+  /* "materialsc.pyx":117
  *         cdef double E = self.E
  *         cdef double nu = self.nu
  *         cdef double ks = 10*(1+nu)/(12+11*nu)   # shear constant             # <<<<<<<<<<<<<<
@@ -19152,27 +19152,27 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
   __pyx_t_8 = (12.0 + (11.0 * __pyx_v_nu));
   if (unlikely(__pyx_t_8 == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    __PYX_ERR(0, 116, __pyx_L1_error)
+    __PYX_ERR(0, 117, __pyx_L1_error)
   }
   __pyx_v_ks = (__pyx_t_7 / __pyx_t_8);
 
-  /* "materialsc.pyx":121
+  /* "materialsc.pyx":122
  * 
  * 
  *         if T.shape[0] == 2:             # <<<<<<<<<<<<<<
  *             if not split:
  *             # regular stress tensor
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_T, __pyx_n_s_shape); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_T, __pyx_n_s_shape); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_5, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_3 = __Pyx_GetItemInt(__pyx_t_5, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_9 = (__Pyx_PyInt_BoolEqObjC(__pyx_t_3, __pyx_int_2, 2, 0)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 121, __pyx_L1_error)
+  __pyx_t_9 = (__Pyx_PyInt_BoolEqObjC(__pyx_t_3, __pyx_int_2, 2, 0)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 122, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   if (__pyx_t_9) {
 
-    /* "materialsc.pyx":122
+    /* "materialsc.pyx":123
  * 
  *         if T.shape[0] == 2:
  *             if not split:             # <<<<<<<<<<<<<<
@@ -19182,7 +19182,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
     __pyx_t_9 = (!__pyx_v_split);
     if (__pyx_t_9) {
 
-      /* "materialsc.pyx":124
+      /* "materialsc.pyx":125
  *             if not split:
  *             # regular stress tensor
  *                 for i in range(2):             # <<<<<<<<<<<<<<
@@ -19192,7 +19192,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
       for (__pyx_t_10 = 0; __pyx_t_10 < 2; __pyx_t_10+=1) {
         __pyx_v_i = __pyx_t_10;
 
-        /* "materialsc.pyx":125
+        /* "materialsc.pyx":126
  *             # regular stress tensor
  *                 for i in range(2):
  *                     for j in range(2):             # <<<<<<<<<<<<<<
@@ -19202,109 +19202,109 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
         for (__pyx_t_11 = 0; __pyx_t_11 < 2; __pyx_t_11+=1) {
           __pyx_v_j = __pyx_t_11;
 
-          /* "materialsc.pyx":126
+          /* "materialsc.pyx":127
  *                 for i in range(2):
  *                     for j in range(2):
  *                         T[0,0] = strainTensor[0,0] + self.nu*strainTensor[1,1]             # <<<<<<<<<<<<<<
  *                         T[1,1] = self.nu*strainTensor[0,0] + strainTensor[1,1]
  *                         T[1,0] = (1-self.nu) * strainTensor[1,0]
  */
-          __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 126, __pyx_L1_error)
+          __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 126, __pyx_L1_error)
+          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 127, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_2 = PyNumber_Multiply(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 126, __pyx_L1_error)
+          __pyx_t_2 = PyNumber_Multiply(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = PyNumber_Add(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 126, __pyx_L1_error)
+          __pyx_t_1 = PyNumber_Add(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__10, __pyx_t_1) < 0))) __PYX_ERR(0, 126, __pyx_L1_error)
+          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__10, __pyx_t_1) < 0))) __PYX_ERR(0, 127, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-          /* "materialsc.pyx":127
+          /* "materialsc.pyx":128
  *                     for j in range(2):
  *                         T[0,0] = strainTensor[0,0] + self.nu*strainTensor[1,1]
  *                         T[1,1] = self.nu*strainTensor[0,0] + strainTensor[1,1]             # <<<<<<<<<<<<<<
  *                         T[1,0] = (1-self.nu) * strainTensor[1,0]
  *                         T[0,1] = T[1,0]
  */
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_3 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 127, __pyx_L1_error)
+          __pyx_t_3 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 128, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_3);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 127, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_1 = PyNumber_Add(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 127, __pyx_L1_error)
+          __pyx_t_1 = PyNumber_Add(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__11, __pyx_t_1) < 0))) __PYX_ERR(0, 127, __pyx_L1_error)
+          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__11, __pyx_t_1) < 0))) __PYX_ERR(0, 128, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-          /* "materialsc.pyx":128
+          /* "materialsc.pyx":129
  *                         T[0,0] = strainTensor[0,0] + self.nu*strainTensor[1,1]
  *                         T[1,1] = self.nu*strainTensor[0,0] + strainTensor[1,1]
  *                         T[1,0] = (1-self.nu) * strainTensor[1,0]             # <<<<<<<<<<<<<<
  *                         T[0,1] = T[1,0]
  *                         T = self.E / (1-self.nu**2) * T
  */
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_2 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_1, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 128, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_1, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 129, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__16); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 128, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__16); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 129, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_3 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 128, __pyx_L1_error)
+          __pyx_t_3 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 129, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_3);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__16, __pyx_t_3) < 0))) __PYX_ERR(0, 128, __pyx_L1_error)
+          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__16, __pyx_t_3) < 0))) __PYX_ERR(0, 129, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "materialsc.pyx":129
+          /* "materialsc.pyx":130
  *                         T[1,1] = self.nu*strainTensor[0,0] + strainTensor[1,1]
  *                         T[1,0] = (1-self.nu) * strainTensor[1,0]
  *                         T[0,1] = T[1,0]             # <<<<<<<<<<<<<<
  *                         T = self.E / (1-self.nu**2) * T
  * 
  */
-          __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__16); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 129, __pyx_L1_error)
+          __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__16); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 130, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_3);
-          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__13, __pyx_t_3) < 0))) __PYX_ERR(0, 129, __pyx_L1_error)
+          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__13, __pyx_t_3) < 0))) __PYX_ERR(0, 130, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-          /* "materialsc.pyx":130
+          /* "materialsc.pyx":131
  *                         T[1,0] = (1-self.nu) * strainTensor[1,0]
  *                         T[0,1] = T[1,0]
  *                         T = self.E / (1-self.nu**2) * T             # <<<<<<<<<<<<<<
  * 
  * 
  */
-          __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_E); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 130, __pyx_L1_error)
+          __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_E); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 131, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_3);
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_2 = PyNumber_Power(__pyx_t_1, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 130, __pyx_L1_error)
+          __pyx_t_2 = PyNumber_Power(__pyx_t_1, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_2, 1, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_2, 1, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __pyx_t_2 = __Pyx_PyNumber_Divide(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 130, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyNumber_Divide(__pyx_t_3, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 131, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = PyNumber_Multiply(__pyx_t_2, __pyx_v_T); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 130, __pyx_L1_error)
+          __pyx_t_1 = PyNumber_Multiply(__pyx_t_2, __pyx_v_T); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 131, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           __Pyx_DECREF_SET(__pyx_v_T, __pyx_t_1);
@@ -19312,7 +19312,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
         }
       }
 
-      /* "materialsc.pyx":122
+      /* "materialsc.pyx":123
  * 
  *         if T.shape[0] == 2:
  *             if not split:             # <<<<<<<<<<<<<<
@@ -19322,7 +19322,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
       goto __pyx_L4;
     }
 
-    /* "materialsc.pyx":136
+    /* "materialsc.pyx":137
  *             else:
  * 
  *                 T[0,0] = E * strainTensor[0,0]             # <<<<<<<<<<<<<<
@@ -19330,126 +19330,126 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
  *                 T[0,1] = 2 * ks * mu * strainTensor[0,1]
  */
     /*else*/ {
-      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_E); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 136, __pyx_L1_error)
+      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_E); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 136, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_3 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 136, __pyx_L1_error)
+      __pyx_t_3 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 137, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__10, __pyx_t_3) < 0))) __PYX_ERR(0, 136, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__10, __pyx_t_3) < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "materialsc.pyx":137
+      /* "materialsc.pyx":138
  * 
  *                 T[0,0] = E * strainTensor[0,0]
  *                 T[1,1] = E * strainTensor[1,1]             # <<<<<<<<<<<<<<
  *                 T[0,1] = 2 * ks * mu * strainTensor[0,1]
  *                 T[1,0] = T[0,1]
  */
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 137, __pyx_L1_error)
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 138, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 137, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 138, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = PyNumber_Multiply(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 137, __pyx_L1_error)
+      __pyx_t_1 = PyNumber_Multiply(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__11, __pyx_t_1) < 0))) __PYX_ERR(0, 137, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__11, __pyx_t_1) < 0))) __PYX_ERR(0, 138, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "materialsc.pyx":138
+      /* "materialsc.pyx":139
  *                 T[0,0] = E * strainTensor[0,0]
  *                 T[1,1] = E * strainTensor[1,1]
  *                 T[0,1] = 2 * ks * mu * strainTensor[0,1]             # <<<<<<<<<<<<<<
  *                 T[1,0] = T[0,1]
  * 
  */
-      __pyx_t_1 = PyFloat_FromDouble(((2.0 * __pyx_v_ks) * __pyx_v_mu)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 138, __pyx_L1_error)
+      __pyx_t_1 = PyFloat_FromDouble(((2.0 * __pyx_v_ks) * __pyx_v_mu)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 139, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__13); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 138, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__13); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 139, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_3 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 138, __pyx_L1_error)
+      __pyx_t_3 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 139, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__13, __pyx_t_3) < 0))) __PYX_ERR(0, 138, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__13, __pyx_t_3) < 0))) __PYX_ERR(0, 139, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "materialsc.pyx":139
+      /* "materialsc.pyx":140
  *                 T[1,1] = E * strainTensor[1,1]
  *                 T[0,1] = 2 * ks * mu * strainTensor[0,1]
  *                 T[1,0] = T[0,1]             # <<<<<<<<<<<<<<
  * 
  *                 Tc[0,0] = nu * ( nu * strainTensor[0,0] + strainTensor[1,1])
  */
-      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__13); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 139, __pyx_L1_error)
+      __pyx_t_3 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__13); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 140, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__16, __pyx_t_3) < 0))) __PYX_ERR(0, 139, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__16, __pyx_t_3) < 0))) __PYX_ERR(0, 140, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
 
-      /* "materialsc.pyx":141
+      /* "materialsc.pyx":142
  *                 T[1,0] = T[0,1]
  * 
  *                 Tc[0,0] = nu * ( nu * strainTensor[0,0] + strainTensor[1,1])             # <<<<<<<<<<<<<<
  *                 Tc[1,1] = nu * ( strainTensor[0,0] + nu * strainTensor[1,1])
  *                 Tc *=  E / ( 1- nu*nu )
  */
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_nu); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 141, __pyx_L1_error)
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_nu); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 142, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_2 = PyFloat_FromDouble(__pyx_v_nu); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
+      __pyx_t_2 = PyFloat_FromDouble(__pyx_v_nu); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 142, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_5 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 141, __pyx_L1_error)
+      __pyx_t_5 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 142, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = PyNumber_Add(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 141, __pyx_L1_error)
+      __pyx_t_2 = PyNumber_Add(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 142, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = PyNumber_Multiply(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 141, __pyx_L1_error)
+      __pyx_t_1 = PyNumber_Multiply(__pyx_t_3, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      if (unlikely((PyObject_SetItem(__pyx_v_Tc, __pyx_tuple__10, __pyx_t_1) < 0))) __PYX_ERR(0, 141, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_Tc, __pyx_tuple__10, __pyx_t_1) < 0))) __PYX_ERR(0, 142, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-      /* "materialsc.pyx":142
+      /* "materialsc.pyx":143
  * 
  *                 Tc[0,0] = nu * ( nu * strainTensor[0,0] + strainTensor[1,1])
  *                 Tc[1,1] = nu * ( strainTensor[0,0] + nu * strainTensor[1,1])             # <<<<<<<<<<<<<<
  *                 Tc *=  E / ( 1- nu*nu )
  * 
  */
-      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 143, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 143, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_nu); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_nu); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 143, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 143, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_4 = PyNumber_Multiply(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_Multiply(__pyx_t_3, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 143, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_5 = PyNumber_Add(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_5 = PyNumber_Add(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 143, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = PyNumber_Multiply(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 142, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_Multiply(__pyx_t_1, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 143, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (unlikely((PyObject_SetItem(__pyx_v_Tc, __pyx_tuple__11, __pyx_t_4) < 0))) __PYX_ERR(0, 142, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_Tc, __pyx_tuple__11, __pyx_t_4) < 0))) __PYX_ERR(0, 143, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "materialsc.pyx":143
+      /* "materialsc.pyx":144
  *                 Tc[0,0] = nu * ( nu * strainTensor[0,0] + strainTensor[1,1])
  *                 Tc[1,1] = nu * ( strainTensor[0,0] + nu * strainTensor[1,1])
  *                 Tc *=  E / ( 1- nu*nu )             # <<<<<<<<<<<<<<
@@ -19459,11 +19459,11 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
       __pyx_t_8 = (1.0 - (__pyx_v_nu * __pyx_v_nu));
       if (unlikely(__pyx_t_8 == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-        __PYX_ERR(0, 143, __pyx_L1_error)
+        __PYX_ERR(0, 144, __pyx_L1_error)
       }
-      __pyx_t_4 = PyFloat_FromDouble((__pyx_v_E / __pyx_t_8)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 143, __pyx_L1_error)
+      __pyx_t_4 = PyFloat_FromDouble((__pyx_v_E / __pyx_t_8)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 144, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = PyNumber_InPlaceMultiply(__pyx_v_Tc, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 143, __pyx_L1_error)
+      __pyx_t_5 = PyNumber_InPlaceMultiply(__pyx_v_Tc, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 144, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF_SET(__pyx_v_Tc, __pyx_t_5);
@@ -19471,7 +19471,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
     }
     __pyx_L4:;
 
-    /* "materialsc.pyx":121
+    /* "materialsc.pyx":122
  * 
  * 
  *         if T.shape[0] == 2:             # <<<<<<<<<<<<<<
@@ -19481,23 +19481,23 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
     goto __pyx_L3;
   }
 
-  /* "materialsc.pyx":145
+  /* "materialsc.pyx":146
  *                 Tc *=  E / ( 1- nu*nu )
  * 
  *         elif T.shape[0] == 3:             # <<<<<<<<<<<<<<
  *             if not split:
  *             # regular stress tensor
  */
-  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_T, __pyx_n_s_shape); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_T, __pyx_n_s_shape); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 146, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_5, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_GetItemInt(__pyx_t_5, 0, long, 1, __Pyx_PyInt_From_long, 0, 0, 1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 146, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-  __pyx_t_9 = (__Pyx_PyInt_BoolEqObjC(__pyx_t_4, __pyx_int_3, 3, 0)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 145, __pyx_L1_error)
+  __pyx_t_9 = (__Pyx_PyInt_BoolEqObjC(__pyx_t_4, __pyx_int_3, 3, 0)); if (unlikely((__pyx_t_9 < 0))) __PYX_ERR(0, 146, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   if (__pyx_t_9) {
 
-    /* "materialsc.pyx":146
+    /* "materialsc.pyx":147
  * 
  *         elif T.shape[0] == 3:
  *             if not split:             # <<<<<<<<<<<<<<
@@ -19507,7 +19507,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
     __pyx_t_9 = (!__pyx_v_split);
     if (__pyx_t_9) {
 
-      /* "materialsc.pyx":148
+      /* "materialsc.pyx":149
  *             if not split:
  *             # regular stress tensor
  *                 for i in range(3):             # <<<<<<<<<<<<<<
@@ -19517,7 +19517,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
       for (__pyx_t_10 = 0; __pyx_t_10 < 3; __pyx_t_10+=1) {
         __pyx_v_i = __pyx_t_10;
 
-        /* "materialsc.pyx":149
+        /* "materialsc.pyx":150
  *             # regular stress tensor
  *                 for i in range(3):
  *                     for j in range(3):             # <<<<<<<<<<<<<<
@@ -19527,109 +19527,109 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
         for (__pyx_t_11 = 0; __pyx_t_11 < 3; __pyx_t_11+=1) {
           __pyx_v_j = __pyx_t_11;
 
-          /* "materialsc.pyx":150
+          /* "materialsc.pyx":151
  *                 for i in range(3):
  *                     for j in range(3):
  *                         T[0,0] = strainTensor[0,0] + self.nu*strainTensor[1,1]             # <<<<<<<<<<<<<<
  *                         T[1,1] = self.nu*strainTensor[0,0] + strainTensor[1,1]
  *                         T[1,0] = (1-self.nu) * strainTensor[1,0]
  */
-          __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 150, __pyx_L1_error)
+          __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 151, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 150, __pyx_L1_error)
+          __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 151, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_5);
-          __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_2 = PyNumber_Multiply(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 150, __pyx_L1_error)
+          __pyx_t_2 = PyNumber_Multiply(__pyx_t_5, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = PyNumber_Add(__pyx_t_4, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 150, __pyx_L1_error)
+          __pyx_t_1 = PyNumber_Add(__pyx_t_4, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__10, __pyx_t_1) < 0))) __PYX_ERR(0, 150, __pyx_L1_error)
+          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__10, __pyx_t_1) < 0))) __PYX_ERR(0, 151, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-          /* "materialsc.pyx":151
+          /* "materialsc.pyx":152
  *                     for j in range(3):
  *                         T[0,0] = strainTensor[0,0] + self.nu*strainTensor[1,1]
  *                         T[1,1] = self.nu*strainTensor[0,0] + strainTensor[1,1]             # <<<<<<<<<<<<<<
  *                         T[1,0] = (1-self.nu) * strainTensor[1,0]
  *                         T[0,1] = T[1,0]
  */
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 152, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_4 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 151, __pyx_L1_error)
+          __pyx_t_4 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 152, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 151, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 152, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
-          __pyx_t_1 = PyNumber_Add(__pyx_t_4, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 151, __pyx_L1_error)
+          __pyx_t_1 = PyNumber_Add(__pyx_t_4, __pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__11, __pyx_t_1) < 0))) __PYX_ERR(0, 151, __pyx_L1_error)
+          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__11, __pyx_t_1) < 0))) __PYX_ERR(0, 152, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-          /* "materialsc.pyx":152
+          /* "materialsc.pyx":153
  *                         T[0,0] = strainTensor[0,0] + self.nu*strainTensor[1,1]
  *                         T[1,1] = self.nu*strainTensor[0,0] + strainTensor[1,1]
  *                         T[1,0] = (1-self.nu) * strainTensor[1,0]             # <<<<<<<<<<<<<<
  *                         T[0,1] = T[1,0]
  *                         T = self.E / (1-self.nu**2) * T
  */
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_2 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_1, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 152, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_1, 1, 0, 0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 153, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__16); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 152, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__16); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 153, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_4 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 152, __pyx_L1_error)
+          __pyx_t_4 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 153, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__16, __pyx_t_4) < 0))) __PYX_ERR(0, 152, __pyx_L1_error)
+          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__16, __pyx_t_4) < 0))) __PYX_ERR(0, 153, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-          /* "materialsc.pyx":153
+          /* "materialsc.pyx":154
  *                         T[1,1] = self.nu*strainTensor[0,0] + strainTensor[1,1]
  *                         T[1,0] = (1-self.nu) * strainTensor[1,0]
  *                         T[0,1] = T[1,0]             # <<<<<<<<<<<<<<
  *                         T = self.E / (1-self.nu**2) * T
  * 
  */
-          __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__16); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 153, __pyx_L1_error)
+          __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__16); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 154, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
-          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__13, __pyx_t_4) < 0))) __PYX_ERR(0, 153, __pyx_L1_error)
+          if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__13, __pyx_t_4) < 0))) __PYX_ERR(0, 154, __pyx_L1_error)
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-          /* "materialsc.pyx":154
+          /* "materialsc.pyx":155
  *                         T[1,0] = (1-self.nu) * strainTensor[1,0]
  *                         T[0,1] = T[1,0]
  *                         T = self.E / (1-self.nu**2) * T             # <<<<<<<<<<<<<<
  * 
  * 
  */
-          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_E); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 154, __pyx_L1_error)
+          __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_E); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 155, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_4);
-          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 154, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyObject_GetAttrStr(__pyx_v_self, __pyx_n_s_nu); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
-          __pyx_t_2 = PyNumber_Power(__pyx_t_1, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 154, __pyx_L1_error)
+          __pyx_t_2 = PyNumber_Power(__pyx_t_1, __pyx_int_2, Py_None); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 155, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_2, 1, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 154, __pyx_L1_error)
+          __pyx_t_1 = __Pyx_PyInt_SubtractCObj(__pyx_int_1, __pyx_t_2, 1, 0, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-          __pyx_t_2 = __Pyx_PyNumber_Divide(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 154, __pyx_L1_error)
+          __pyx_t_2 = __Pyx_PyNumber_Divide(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 155, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_2);
           __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          __pyx_t_1 = PyNumber_Multiply(__pyx_t_2, __pyx_v_T); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 154, __pyx_L1_error)
+          __pyx_t_1 = PyNumber_Multiply(__pyx_t_2, __pyx_v_T); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 155, __pyx_L1_error)
           __Pyx_GOTREF(__pyx_t_1);
           __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
           __Pyx_DECREF_SET(__pyx_v_T, __pyx_t_1);
@@ -19637,7 +19637,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
         }
       }
 
-      /* "materialsc.pyx":146
+      /* "materialsc.pyx":147
  * 
  *         elif T.shape[0] == 3:
  *             if not split:             # <<<<<<<<<<<<<<
@@ -19647,7 +19647,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
       goto __pyx_L9;
     }
 
-    /* "materialsc.pyx":160
+    /* "materialsc.pyx":161
  *             else:
  * 
  *                 T = E * strainTensor             # <<<<<<<<<<<<<<
@@ -19655,177 +19655,177 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
  *                 T[1,2] = 2 * ks * mu * strainTensor[1,2]
  */
     /*else*/ {
-      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_E); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 160, __pyx_L1_error)
+      __pyx_t_1 = PyFloat_FromDouble(__pyx_v_E); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = PyNumber_Multiply(__pyx_t_1, __pyx_v_strainTensor); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 160, __pyx_L1_error)
+      __pyx_t_2 = PyNumber_Multiply(__pyx_t_1, __pyx_v_strainTensor); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF_SET(__pyx_v_T, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "materialsc.pyx":161
+      /* "materialsc.pyx":162
  * 
  *                 T = E * strainTensor
  *                 T[0,1:2] = 2 * ks * mu * strainTensor[0,1:2]             # <<<<<<<<<<<<<<
  *                 T[1,2] = 2 * ks * mu * strainTensor[1,2]
  *                 T[1,0] = T[0,1]
  */
-      __pyx_t_2 = PyFloat_FromDouble(((2.0 * __pyx_v_ks) * __pyx_v_mu)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 161, __pyx_L1_error)
+      __pyx_t_2 = PyFloat_FromDouble(((2.0 * __pyx_v_ks) * __pyx_v_mu)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 162, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__23); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 161, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__23); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 162, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_4 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 161, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 162, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__23, __pyx_t_4) < 0))) __PYX_ERR(0, 161, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__23, __pyx_t_4) < 0))) __PYX_ERR(0, 162, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "materialsc.pyx":162
+      /* "materialsc.pyx":163
  *                 T = E * strainTensor
  *                 T[0,1:2] = 2 * ks * mu * strainTensor[0,1:2]
  *                 T[1,2] = 2 * ks * mu * strainTensor[1,2]             # <<<<<<<<<<<<<<
  *                 T[1,0] = T[0,1]
  *                 T[2,1] = T[1,2]
  */
-      __pyx_t_4 = PyFloat_FromDouble(((2.0 * __pyx_v_ks) * __pyx_v_mu)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 162, __pyx_L1_error)
+      __pyx_t_4 = PyFloat_FromDouble(((2.0 * __pyx_v_ks) * __pyx_v_mu)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 163, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__14); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 162, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__14); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 163, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = PyNumber_Multiply(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 162, __pyx_L1_error)
+      __pyx_t_2 = PyNumber_Multiply(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 163, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__14, __pyx_t_2) < 0))) __PYX_ERR(0, 162, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__14, __pyx_t_2) < 0))) __PYX_ERR(0, 163, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "materialsc.pyx":163
+      /* "materialsc.pyx":164
  *                 T[0,1:2] = 2 * ks * mu * strainTensor[0,1:2]
  *                 T[1,2] = 2 * ks * mu * strainTensor[1,2]
  *                 T[1,0] = T[0,1]             # <<<<<<<<<<<<<<
  *                 T[2,1] = T[1,2]
  *                 T[2,0] = T[0,2]
  */
-      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__13); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 163, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__13); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 164, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__16, __pyx_t_2) < 0))) __PYX_ERR(0, 163, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__16, __pyx_t_2) < 0))) __PYX_ERR(0, 164, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "materialsc.pyx":164
+      /* "materialsc.pyx":165
  *                 T[1,2] = 2 * ks * mu * strainTensor[1,2]
  *                 T[1,0] = T[0,1]
  *                 T[2,1] = T[1,2]             # <<<<<<<<<<<<<<
  *                 T[2,0] = T[0,2]
  * 
  */
-      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__14); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 164, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__14); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 165, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__17, __pyx_t_2) < 0))) __PYX_ERR(0, 164, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__17, __pyx_t_2) < 0))) __PYX_ERR(0, 165, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "materialsc.pyx":165
+      /* "materialsc.pyx":166
  *                 T[1,0] = T[0,1]
  *                 T[2,1] = T[1,2]
  *                 T[2,0] = T[0,2]             # <<<<<<<<<<<<<<
  * 
  *                 Tc[0,0] = 2 * nu * strainTensor[0,0] + strainTensor[1,1] + strainTensor[2,2]
  */
-      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__24); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 165, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_T, __pyx_tuple__24); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 166, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__25, __pyx_t_2) < 0))) __PYX_ERR(0, 165, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_T, __pyx_tuple__25, __pyx_t_2) < 0))) __PYX_ERR(0, 166, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-      /* "materialsc.pyx":167
+      /* "materialsc.pyx":168
  *                 T[2,0] = T[0,2]
  * 
  *                 Tc[0,0] = 2 * nu * strainTensor[0,0] + strainTensor[1,1] + strainTensor[2,2]             # <<<<<<<<<<<<<<
  *                 Tc[1,1] = strainTensor[0,0] + 2 * nu * strainTensor[1,1] + strainTensor[2,2]
  *                 Tc[2,2] = strainTensor[0,0] + strainTensor[1,1] + 2 * nu * strainTensor[2,2]
  */
-      __pyx_t_2 = PyFloat_FromDouble((2.0 * __pyx_v_nu)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_2 = PyFloat_FromDouble((2.0 * __pyx_v_nu)); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 168, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_4 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_Multiply(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 168, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = PyNumber_Add(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_2 = PyNumber_Add(__pyx_t_4, __pyx_t_1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 168, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__12); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_1 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__12); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_4 = PyNumber_Add(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 167, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_Add(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 168, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely((PyObject_SetItem(__pyx_v_Tc, __pyx_tuple__10, __pyx_t_4) < 0))) __PYX_ERR(0, 167, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_Tc, __pyx_tuple__10, __pyx_t_4) < 0))) __PYX_ERR(0, 168, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "materialsc.pyx":168
+      /* "materialsc.pyx":169
  * 
  *                 Tc[0,0] = 2 * nu * strainTensor[0,0] + strainTensor[1,1] + strainTensor[2,2]
  *                 Tc[1,1] = strainTensor[0,0] + 2 * nu * strainTensor[1,1] + strainTensor[2,2]             # <<<<<<<<<<<<<<
  *                 Tc[2,2] = strainTensor[0,0] + strainTensor[1,1] + 2 * nu * strainTensor[2,2]
  *                 Tc *=  E * nu / (( 1 + nu ) * (1 - 2 * nu))
  */
-      __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 169, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_1 = PyFloat_FromDouble((2.0 * __pyx_v_nu)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __pyx_t_1 = PyFloat_FromDouble((2.0 * __pyx_v_nu)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __pyx_t_2 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_5 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __pyx_t_5 = PyNumber_Multiply(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 169, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_2 = PyNumber_Add(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __pyx_t_2 = PyNumber_Add(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__12); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__12); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 169, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_4 = PyNumber_Add(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 168, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_Add(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 169, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      if (unlikely((PyObject_SetItem(__pyx_v_Tc, __pyx_tuple__11, __pyx_t_4) < 0))) __PYX_ERR(0, 168, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_Tc, __pyx_tuple__11, __pyx_t_4) < 0))) __PYX_ERR(0, 169, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "materialsc.pyx":169
+      /* "materialsc.pyx":170
  *                 Tc[0,0] = 2 * nu * strainTensor[0,0] + strainTensor[1,1] + strainTensor[2,2]
  *                 Tc[1,1] = strainTensor[0,0] + 2 * nu * strainTensor[1,1] + strainTensor[2,2]
  *                 Tc[2,2] = strainTensor[0,0] + strainTensor[1,1] + 2 * nu * strainTensor[2,2]             # <<<<<<<<<<<<<<
  *                 Tc *=  E * nu / (( 1 + nu ) * (1 - 2 * nu))
  * 
  */
-      __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__10); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_5 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__11); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_2 = PyNumber_Add(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_2 = PyNumber_Add(__pyx_t_4, __pyx_t_5); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_5 = PyFloat_FromDouble((2.0 * __pyx_v_nu)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_5 = PyFloat_FromDouble((2.0 * __pyx_v_nu)); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_5);
-      __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__12); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_4 = __Pyx_PyObject_GetItem(__pyx_v_strainTensor, __pyx_tuple__12); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_1 = PyNumber_Multiply(__pyx_t_5, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_1 = PyNumber_Multiply(__pyx_t_5, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-      __pyx_t_4 = PyNumber_Add(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 169, __pyx_L1_error)
+      __pyx_t_4 = PyNumber_Add(__pyx_t_2, __pyx_t_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-      if (unlikely((PyObject_SetItem(__pyx_v_Tc, __pyx_tuple__12, __pyx_t_4) < 0))) __PYX_ERR(0, 169, __pyx_L1_error)
+      if (unlikely((PyObject_SetItem(__pyx_v_Tc, __pyx_tuple__12, __pyx_t_4) < 0))) __PYX_ERR(0, 170, __pyx_L1_error)
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-      /* "materialsc.pyx":170
+      /* "materialsc.pyx":171
  *                 Tc[1,1] = strainTensor[0,0] + 2 * nu * strainTensor[1,1] + strainTensor[2,2]
  *                 Tc[2,2] = strainTensor[0,0] + strainTensor[1,1] + 2 * nu * strainTensor[2,2]
  *                 Tc *=  E * nu / (( 1 + nu ) * (1 - 2 * nu))             # <<<<<<<<<<<<<<
@@ -19836,11 +19836,11 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
       __pyx_t_7 = ((1.0 + __pyx_v_nu) * (1.0 - (2.0 * __pyx_v_nu)));
       if (unlikely(__pyx_t_7 == 0)) {
         PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-        __PYX_ERR(0, 170, __pyx_L1_error)
+        __PYX_ERR(0, 171, __pyx_L1_error)
       }
-      __pyx_t_4 = PyFloat_FromDouble((__pyx_t_8 / __pyx_t_7)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 170, __pyx_L1_error)
+      __pyx_t_4 = PyFloat_FromDouble((__pyx_t_8 / __pyx_t_7)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 171, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_1 = PyNumber_InPlaceMultiply(__pyx_v_Tc, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 170, __pyx_L1_error)
+      __pyx_t_1 = PyNumber_InPlaceMultiply(__pyx_v_Tc, __pyx_t_4); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 171, __pyx_L1_error)
       __Pyx_GOTREF(__pyx_t_1);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
       __Pyx_DECREF_SET(__pyx_v_Tc, __pyx_t_1);
@@ -19848,7 +19848,7 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
     }
     __pyx_L9:;
 
-    /* "materialsc.pyx":145
+    /* "materialsc.pyx":146
  *                 Tc *=  E / ( 1- nu*nu )
  * 
  *         elif T.shape[0] == 3:             # <<<<<<<<<<<<<<
@@ -19858,25 +19858,25 @@ static PyObject *__pyx_pf_10materialsc_21linearElasticMaterial_2stressTensor(CYT
   }
   __pyx_L3:;
 
-  /* "materialsc.pyx":173
+  /* "materialsc.pyx":174
  * 
  * 
  *         return T, Tc             # <<<<<<<<<<<<<<
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 173, __pyx_L1_error)
+  __pyx_t_1 = PyTuple_New(2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 174, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_v_T);
   __Pyx_GIVEREF(__pyx_v_T);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_T)) __PYX_ERR(0, 173, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_v_T)) __PYX_ERR(0, 174, __pyx_L1_error);
   __Pyx_INCREF(__pyx_v_Tc);
   __Pyx_GIVEREF(__pyx_v_Tc);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_v_Tc)) __PYX_ERR(0, 173, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_1, 1, __pyx_v_Tc)) __PYX_ERR(0, 174, __pyx_L1_error);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "materialsc.pyx":79
+  /* "materialsc.pyx":80
  * 
  * 
  *     def stressTensor(self,strainTensor,bint split=False):             # <<<<<<<<<<<<<<
@@ -21602,8 +21602,8 @@ static int __Pyx_CreateStringTabAndInitStrings(void) {
 }
 /* #### Code section: cached_builtins ### */
 static CYTHON_SMALL_CODE int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_super = __Pyx_GetBuiltinName(__pyx_n_s_super); if (!__pyx_builtin_super) __PYX_ERR(0, 45, __pyx_L1_error)
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 124, __pyx_L1_error)
+  __pyx_builtin_super = __Pyx_GetBuiltinName(__pyx_n_s_super); if (!__pyx_builtin_super) __PYX_ERR(0, 46, __pyx_L1_error)
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) __PYX_ERR(0, 125, __pyx_L1_error)
   __pyx_builtin___import__ = __Pyx_GetBuiltinName(__pyx_n_s_import); if (!__pyx_builtin___import__) __PYX_ERR(1, 100, __pyx_L1_error)
   __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) __PYX_ERR(1, 141, __pyx_L1_error)
   __pyx_builtin_MemoryError = __Pyx_GetBuiltinName(__pyx_n_s_MemoryError); if (!__pyx_builtin_MemoryError) __PYX_ERR(1, 156, __pyx_L1_error)
@@ -21659,174 +21659,174 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GOTREF(__pyx_tuple__8);
   __Pyx_GIVEREF(__pyx_tuple__8);
 
-  /* "materialsc.pyx":55
+  /* "materialsc.pyx":56
  *         self.lam = self.nu * self.E / ( (1+self.nu)*(1-2*self.nu) )
  * 
  *         D = np.zeros((6,6))             # <<<<<<<<<<<<<<
  *         cdef double[:,:] D_view = D
  * 
  */
-  __pyx_tuple__9 = PyTuple_Pack(2, __pyx_int_6, __pyx_int_6); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 55, __pyx_L1_error)
+  __pyx_tuple__9 = PyTuple_Pack(2, __pyx_int_6, __pyx_int_6); if (unlikely(!__pyx_tuple__9)) __PYX_ERR(0, 56, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__9);
   __Pyx_GIVEREF(__pyx_tuple__9);
 
-  /* "materialsc.pyx":60
+  /* "materialsc.pyx":61
  *         # following Lai, Introduction to Continuum Mechanics, 2010 notation
  *         C11 = self.lam + 2*self.mu
  *         D[0,0] = C11             # <<<<<<<<<<<<<<
  *         D[1,1] = C11
  *         D[2,2] = C11
  */
-  __pyx_tuple__10 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_0); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 60, __pyx_L1_error)
+  __pyx_tuple__10 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_0); if (unlikely(!__pyx_tuple__10)) __PYX_ERR(0, 61, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__10);
   __Pyx_GIVEREF(__pyx_tuple__10);
 
-  /* "materialsc.pyx":61
+  /* "materialsc.pyx":62
  *         C11 = self.lam + 2*self.mu
  *         D[0,0] = C11
  *         D[1,1] = C11             # <<<<<<<<<<<<<<
  *         D[2,2] = C11
  * 
  */
-  __pyx_tuple__11 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_1); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 61, __pyx_L1_error)
+  __pyx_tuple__11 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_1); if (unlikely(!__pyx_tuple__11)) __PYX_ERR(0, 62, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__11);
   __Pyx_GIVEREF(__pyx_tuple__11);
 
-  /* "materialsc.pyx":62
+  /* "materialsc.pyx":63
  *         D[0,0] = C11
  *         D[1,1] = C11
  *         D[2,2] = C11             # <<<<<<<<<<<<<<
  * 
  *         D[0,1] = self.lam
  */
-  __pyx_tuple__12 = PyTuple_Pack(2, __pyx_int_2, __pyx_int_2); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 62, __pyx_L1_error)
+  __pyx_tuple__12 = PyTuple_Pack(2, __pyx_int_2, __pyx_int_2); if (unlikely(!__pyx_tuple__12)) __PYX_ERR(0, 63, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__12);
   __Pyx_GIVEREF(__pyx_tuple__12);
 
-  /* "materialsc.pyx":64
+  /* "materialsc.pyx":65
  *         D[2,2] = C11
  * 
  *         D[0,1] = self.lam             # <<<<<<<<<<<<<<
  *         D[1,2] = self.lam
  *         D[2,3] = self.lam
  */
-  __pyx_tuple__13 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_1); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_tuple__13 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_1); if (unlikely(!__pyx_tuple__13)) __PYX_ERR(0, 65, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__13);
   __Pyx_GIVEREF(__pyx_tuple__13);
 
-  /* "materialsc.pyx":65
+  /* "materialsc.pyx":66
  * 
  *         D[0,1] = self.lam
  *         D[1,2] = self.lam             # <<<<<<<<<<<<<<
  *         D[2,3] = self.lam
  *         D[1,0] = self.lam
  */
-  __pyx_tuple__14 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_2); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 65, __pyx_L1_error)
+  __pyx_tuple__14 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_2); if (unlikely(!__pyx_tuple__14)) __PYX_ERR(0, 66, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__14);
   __Pyx_GIVEREF(__pyx_tuple__14);
 
-  /* "materialsc.pyx":66
+  /* "materialsc.pyx":67
  *         D[0,1] = self.lam
  *         D[1,2] = self.lam
  *         D[2,3] = self.lam             # <<<<<<<<<<<<<<
  *         D[1,0] = self.lam
  *         D[2,1] = self.lam
  */
-  __pyx_tuple__15 = PyTuple_Pack(2, __pyx_int_2, __pyx_int_3); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 66, __pyx_L1_error)
+  __pyx_tuple__15 = PyTuple_Pack(2, __pyx_int_2, __pyx_int_3); if (unlikely(!__pyx_tuple__15)) __PYX_ERR(0, 67, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__15);
   __Pyx_GIVEREF(__pyx_tuple__15);
 
-  /* "materialsc.pyx":67
+  /* "materialsc.pyx":68
  *         D[1,2] = self.lam
  *         D[2,3] = self.lam
  *         D[1,0] = self.lam             # <<<<<<<<<<<<<<
  *         D[2,1] = self.lam
  *         D[3,2] = self.lam
  */
-  __pyx_tuple__16 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_0); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 67, __pyx_L1_error)
+  __pyx_tuple__16 = PyTuple_Pack(2, __pyx_int_1, __pyx_int_0); if (unlikely(!__pyx_tuple__16)) __PYX_ERR(0, 68, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__16);
   __Pyx_GIVEREF(__pyx_tuple__16);
 
-  /* "materialsc.pyx":68
+  /* "materialsc.pyx":69
  *         D[2,3] = self.lam
  *         D[1,0] = self.lam
  *         D[2,1] = self.lam             # <<<<<<<<<<<<<<
  *         D[3,2] = self.lam
  * 
  */
-  __pyx_tuple__17 = PyTuple_Pack(2, __pyx_int_2, __pyx_int_1); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 68, __pyx_L1_error)
+  __pyx_tuple__17 = PyTuple_Pack(2, __pyx_int_2, __pyx_int_1); if (unlikely(!__pyx_tuple__17)) __PYX_ERR(0, 69, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__17);
   __Pyx_GIVEREF(__pyx_tuple__17);
 
-  /* "materialsc.pyx":69
+  /* "materialsc.pyx":70
  *         D[1,0] = self.lam
  *         D[2,1] = self.lam
  *         D[3,2] = self.lam             # <<<<<<<<<<<<<<
  * 
  *         D[3,3] = 2*self.mu
  */
-  __pyx_tuple__18 = PyTuple_Pack(2, __pyx_int_3, __pyx_int_2); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 69, __pyx_L1_error)
+  __pyx_tuple__18 = PyTuple_Pack(2, __pyx_int_3, __pyx_int_2); if (unlikely(!__pyx_tuple__18)) __PYX_ERR(0, 70, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__18);
   __Pyx_GIVEREF(__pyx_tuple__18);
 
-  /* "materialsc.pyx":71
+  /* "materialsc.pyx":72
  *         D[3,2] = self.lam
  * 
  *         D[3,3] = 2*self.mu             # <<<<<<<<<<<<<<
  *         D[4,4] = 2*self.mu
  *         D[5,5] = 2*self.mu
  */
-  __pyx_tuple__19 = PyTuple_Pack(2, __pyx_int_3, __pyx_int_3); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 71, __pyx_L1_error)
+  __pyx_tuple__19 = PyTuple_Pack(2, __pyx_int_3, __pyx_int_3); if (unlikely(!__pyx_tuple__19)) __PYX_ERR(0, 72, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__19);
   __Pyx_GIVEREF(__pyx_tuple__19);
 
-  /* "materialsc.pyx":72
+  /* "materialsc.pyx":73
  * 
  *         D[3,3] = 2*self.mu
  *         D[4,4] = 2*self.mu             # <<<<<<<<<<<<<<
  *         D[5,5] = 2*self.mu
  * 
  */
-  __pyx_tuple__20 = PyTuple_Pack(2, __pyx_int_4, __pyx_int_4); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 72, __pyx_L1_error)
+  __pyx_tuple__20 = PyTuple_Pack(2, __pyx_int_4, __pyx_int_4); if (unlikely(!__pyx_tuple__20)) __PYX_ERR(0, 73, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__20);
   __Pyx_GIVEREF(__pyx_tuple__20);
 
-  /* "materialsc.pyx":73
+  /* "materialsc.pyx":74
  *         D[3,3] = 2*self.mu
  *         D[4,4] = 2*self.mu
  *         D[5,5] = 2*self.mu             # <<<<<<<<<<<<<<
  * 
  *         self.constitutiveMatrix = D
  */
-  __pyx_tuple__21 = PyTuple_Pack(2, __pyx_int_5, __pyx_int_5); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 73, __pyx_L1_error)
+  __pyx_tuple__21 = PyTuple_Pack(2, __pyx_int_5, __pyx_int_5); if (unlikely(!__pyx_tuple__21)) __PYX_ERR(0, 74, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__21);
   __Pyx_GIVEREF(__pyx_tuple__21);
 
-  /* "materialsc.pyx":161
+  /* "materialsc.pyx":162
  * 
  *                 T = E * strainTensor
  *                 T[0,1:2] = 2 * ks * mu * strainTensor[0,1:2]             # <<<<<<<<<<<<<<
  *                 T[1,2] = 2 * ks * mu * strainTensor[1,2]
  *                 T[1,0] = T[0,1]
  */
-  __pyx_slice__22 = PySlice_New(__pyx_int_1, __pyx_int_2, Py_None); if (unlikely(!__pyx_slice__22)) __PYX_ERR(0, 161, __pyx_L1_error)
+  __pyx_slice__22 = PySlice_New(__pyx_int_1, __pyx_int_2, Py_None); if (unlikely(!__pyx_slice__22)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_slice__22);
   __Pyx_GIVEREF(__pyx_slice__22);
-  __pyx_tuple__23 = PyTuple_Pack(2, __pyx_int_0, __pyx_slice__22); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 161, __pyx_L1_error)
+  __pyx_tuple__23 = PyTuple_Pack(2, __pyx_int_0, __pyx_slice__22); if (unlikely(!__pyx_tuple__23)) __PYX_ERR(0, 162, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__23);
   __Pyx_GIVEREF(__pyx_tuple__23);
 
-  /* "materialsc.pyx":165
+  /* "materialsc.pyx":166
  *                 T[1,0] = T[0,1]
  *                 T[2,1] = T[1,2]
  *                 T[2,0] = T[0,2]             # <<<<<<<<<<<<<<
  * 
  *                 Tc[0,0] = 2 * nu * strainTensor[0,0] + strainTensor[1,1] + strainTensor[2,2]
  */
-  __pyx_tuple__24 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_2); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_tuple__24 = PyTuple_Pack(2, __pyx_int_0, __pyx_int_2); if (unlikely(!__pyx_tuple__24)) __PYX_ERR(0, 166, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__24);
   __Pyx_GIVEREF(__pyx_tuple__24);
-  __pyx_tuple__25 = PyTuple_Pack(2, __pyx_int_2, __pyx_int_0); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_tuple__25 = PyTuple_Pack(2, __pyx_int_2, __pyx_int_0); if (unlikely(!__pyx_tuple__25)) __PYX_ERR(0, 166, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__25);
   __Pyx_GIVEREF(__pyx_tuple__25);
 
@@ -21954,29 +21954,29 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_GIVEREF(__pyx_tuple__39);
   __pyx_codeobj__40 = (PyObject*)__Pyx_PyCode_New(2, 0, 0, 2, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__39, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_stringsource, __pyx_n_s_setstate_cython, 16, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__40)) __PYX_ERR(1, 16, __pyx_L1_error)
 
-  /* "materialsc.pyx":26
+  /* "materialsc.pyx":27
  *     '''
  * 
  *     def __init__(self,name,E,nu,rho):             # <<<<<<<<<<<<<<
  *         ''' Material initialization method
  * 
  */
-  __pyx_tuple__41 = PyTuple_Pack(8, __pyx_n_s_self, __pyx_n_s_name, __pyx_n_s_E, __pyx_n_s_nu, __pyx_n_s_rho, __pyx_n_s_D, __pyx_n_s_D_view, __pyx_n_s_C11); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_tuple__41 = PyTuple_Pack(8, __pyx_n_s_self, __pyx_n_s_name, __pyx_n_s_E, __pyx_n_s_nu, __pyx_n_s_rho, __pyx_n_s_D, __pyx_n_s_D_view, __pyx_n_s_C11); if (unlikely(!__pyx_tuple__41)) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__41);
   __Pyx_GIVEREF(__pyx_tuple__41);
-  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(5, 0, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_materialsc_pyx, __pyx_n_s_init, 26, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_codeobj__42 = (PyObject*)__Pyx_PyCode_New(5, 0, 0, 8, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__41, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_materialsc_pyx, __pyx_n_s_init, 27, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__42)) __PYX_ERR(0, 27, __pyx_L1_error)
 
-  /* "materialsc.pyx":79
+  /* "materialsc.pyx":80
  * 
  * 
  *     def stressTensor(self,strainTensor,bint split=False):             # <<<<<<<<<<<<<<
  *         '''
  *         Calcultes the stress tensor given a strain tensor and
  */
-  __pyx_tuple__43 = PyTuple_Pack(13, __pyx_n_s_self, __pyx_n_s_strainTensor, __pyx_n_s_split, __pyx_n_s_T, __pyx_n_s_Tc, __pyx_n_s_T_view, __pyx_n_s_Tc_view, __pyx_n_s_mu, __pyx_n_s_E, __pyx_n_s_nu, __pyx_n_s_ks, __pyx_n_s_i, __pyx_n_s_j); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_tuple__43 = PyTuple_Pack(13, __pyx_n_s_self, __pyx_n_s_strainTensor, __pyx_n_s_split, __pyx_n_s_T, __pyx_n_s_Tc, __pyx_n_s_T_view, __pyx_n_s_Tc_view, __pyx_n_s_mu, __pyx_n_s_E, __pyx_n_s_nu, __pyx_n_s_ks, __pyx_n_s_i, __pyx_n_s_j); if (unlikely(!__pyx_tuple__43)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple__43);
   __Pyx_GIVEREF(__pyx_tuple__43);
-  __pyx_codeobj__44 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 13, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__43, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_materialsc_pyx, __pyx_n_s_stressTensor, 79, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__44)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_codeobj__44 = (PyObject*)__Pyx_PyCode_New(3, 0, 0, 13, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__43, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_materialsc_pyx, __pyx_n_s_stressTensor, 80, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__44)) __PYX_ERR(0, 80, __pyx_L1_error)
 
   /* "(tree fragment)":1
  * def __pyx_unpickle_material(__pyx_type, long __pyx_checksum, __pyx_state):             # <<<<<<<<<<<<<<
@@ -22074,15 +22074,15 @@ static int __Pyx_modinit_type_init_code(void) {
   __Pyx_RefNannySetupContext("__Pyx_modinit_type_init_code", 0);
   /*--- Type init code ---*/
   #if CYTHON_USE_TYPE_SPECS
-  __pyx_ptype_10materialsc_material = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_10materialsc_material_spec, NULL); if (unlikely(!__pyx_ptype_10materialsc_material)) __PYX_ERR(0, 13, __pyx_L1_error)
-  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_10materialsc_material_spec, __pyx_ptype_10materialsc_material) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
+  __pyx_ptype_10materialsc_material = (PyTypeObject *) __Pyx_PyType_FromModuleAndSpec(__pyx_m, &__pyx_type_10materialsc_material_spec, NULL); if (unlikely(!__pyx_ptype_10materialsc_material)) __PYX_ERR(0, 14, __pyx_L1_error)
+  if (__Pyx_fix_up_extension_type_from_spec(&__pyx_type_10materialsc_material_spec, __pyx_ptype_10materialsc_material) < 0) __PYX_ERR(0, 14, __pyx_L1_error)
   #else
   __pyx_ptype_10materialsc_material = &__pyx_type_10materialsc_material;
   #endif
   #if !CYTHON_COMPILING_IN_LIMITED_API
   #endif
   #if !CYTHON_USE_TYPE_SPECS
-  if (__Pyx_PyType_Ready(__pyx_ptype_10materialsc_material) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
+  if (__Pyx_PyType_Ready(__pyx_ptype_10materialsc_material) < 0) __PYX_ERR(0, 14, __pyx_L1_error)
   #endif
   #if PY_MAJOR_VERSION < 3
   __pyx_ptype_10materialsc_material->tp_print = 0;
@@ -22092,9 +22092,9 @@ static int __Pyx_modinit_type_init_code(void) {
     __pyx_ptype_10materialsc_material->tp_getattro = __Pyx_PyObject_GenericGetAttr;
   }
   #endif
-  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_material, (PyObject *) __pyx_ptype_10materialsc_material) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
+  if (PyObject_SetAttr(__pyx_m, __pyx_n_s_material, (PyObject *) __pyx_ptype_10materialsc_material) < 0) __PYX_ERR(0, 14, __pyx_L1_error)
   #if !CYTHON_COMPILING_IN_LIMITED_API
-  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_10materialsc_material) < 0) __PYX_ERR(0, 13, __pyx_L1_error)
+  if (__Pyx_setup_reduce((PyObject *) __pyx_ptype_10materialsc_material) < 0) __PYX_ERR(0, 14, __pyx_L1_error)
   #endif
   __pyx_vtabptr_array = &__pyx_vtable_array;
   __pyx_vtable_array.get_memview = (PyObject *(*)(struct __pyx_array_obj *))__pyx_array_get_memview;
@@ -23068,16 +23068,16 @@ if (!__Pyx_RefNanny) {
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_pyx_unpickle_Enum, __pyx_t_7) < 0) __PYX_ERR(1, 1, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-  /* "materialsc.pyx":11
+  /* "materialsc.pyx":12
  * """
  * 
  * import numpy as np             # <<<<<<<<<<<<<<
  * 
  * cdef class material(object):
  */
-  __pyx_t_7 = __Pyx_ImportDottedModule(__pyx_n_s_numpy, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __pyx_t_7 = __Pyx_ImportDottedModule(__pyx_n_s_numpy, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_7) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_np, __pyx_t_7) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
   /* "(tree fragment)":1
@@ -23103,79 +23103,79 @@ if (!__Pyx_RefNanny) {
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
   PyType_Modified(__pyx_ptype_10materialsc_material);
 
-  /* "materialsc.pyx":21
+  /* "materialsc.pyx":22
  *         self.name = name
  * 
  * class linearElasticMaterial(material):             # <<<<<<<<<<<<<<
  *     '''
  *     Linear elastic material
  */
-  __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_7 = PyTuple_New(1); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 22, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
   __Pyx_INCREF((PyObject *)__pyx_ptype_10materialsc_material);
   __Pyx_GIVEREF((PyObject *)__pyx_ptype_10materialsc_material);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 0, ((PyObject *)__pyx_ptype_10materialsc_material))) __PYX_ERR(0, 21, __pyx_L1_error);
-  __pyx_t_4 = __Pyx_PEP560_update_bases(__pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 21, __pyx_L1_error)
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_7, 0, ((PyObject *)__pyx_ptype_10materialsc_material))) __PYX_ERR(0, 22, __pyx_L1_error);
+  __pyx_t_4 = __Pyx_PEP560_update_bases(__pyx_t_7); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 22, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
-  __pyx_t_5 = __Pyx_CalculateMetaclass(NULL, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_5 = __Pyx_CalculateMetaclass(NULL, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 22, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_5);
-  __pyx_t_9 = __Pyx_Py3MetaclassPrepare(__pyx_t_5, __pyx_t_4, __pyx_n_s_linearElasticMaterial, __pyx_n_s_linearElasticMaterial, (PyObject *) NULL, __pyx_n_s_materialsc, __pyx_kp_s_Linear_elastic_material); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_9 = __Pyx_Py3MetaclassPrepare(__pyx_t_5, __pyx_t_4, __pyx_n_s_linearElasticMaterial, __pyx_n_s_linearElasticMaterial, (PyObject *) NULL, __pyx_n_s_materialsc, __pyx_kp_s_Linear_elastic_material); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 22, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_9);
   if (__pyx_t_4 != __pyx_t_7) {
-    if (unlikely((PyDict_SetItemString(__pyx_t_9, "__orig_bases__", __pyx_t_7) < 0))) __PYX_ERR(0, 21, __pyx_L1_error)
+    if (unlikely((PyDict_SetItemString(__pyx_t_9, "__orig_bases__", __pyx_t_7) < 0))) __PYX_ERR(0, 22, __pyx_L1_error)
   }
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  __pyx_t_7 = PyList_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_7 = PyList_New(0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 22, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_7);
 
-  /* "materialsc.pyx":26
+  /* "materialsc.pyx":27
  *     '''
  * 
  *     def __init__(self,name,E,nu,rho):             # <<<<<<<<<<<<<<
  *         ''' Material initialization method
  * 
  */
-  __pyx_t_10 = __Pyx_CyFunction_New(&__pyx_mdef_10materialsc_21linearElasticMaterial_1__init__, 0, __pyx_n_s_linearElasticMaterial___init, NULL, __pyx_n_s_materialsc, __pyx_d, ((PyObject *)__pyx_codeobj__42)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 26, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_CyFunction_New(&__pyx_mdef_10materialsc_21linearElasticMaterial_1__init__, 0, __pyx_n_s_linearElasticMaterial___init, NULL, __pyx_n_s_materialsc, __pyx_d, ((PyObject *)__pyx_codeobj__42)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_INCREF(__pyx_t_10);
   PyList_Append(__pyx_t_7, __pyx_t_10);
   __Pyx_GIVEREF(__pyx_t_10);
-  if (__Pyx_SetNameInClass(__pyx_t_9, __pyx_n_s_init, __pyx_t_10) < 0) __PYX_ERR(0, 26, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_9, __pyx_n_s_init, __pyx_t_10) < 0) __PYX_ERR(0, 27, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-  /* "materialsc.pyx":79
+  /* "materialsc.pyx":80
  * 
  * 
  *     def stressTensor(self,strainTensor,bint split=False):             # <<<<<<<<<<<<<<
  *         '''
  *         Calcultes the stress tensor given a strain tensor and
  */
-  __pyx_t_10 = __Pyx_PyBool_FromLong(((int)0)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyBool_FromLong(((int)0)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
-  __pyx_t_11 = PyTuple_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_t_11 = PyTuple_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_11);
   __Pyx_GIVEREF(__pyx_t_10);
-  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_10)) __PYX_ERR(0, 79, __pyx_L1_error);
+  if (__Pyx_PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_10)) __PYX_ERR(0, 80, __pyx_L1_error);
   __pyx_t_10 = 0;
-  __pyx_t_10 = __Pyx_CyFunction_New(&__pyx_mdef_10materialsc_21linearElasticMaterial_3stressTensor, 0, __pyx_n_s_linearElasticMaterial_stressTens, NULL, __pyx_n_s_materialsc, __pyx_d, ((PyObject *)__pyx_codeobj__44)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 79, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_CyFunction_New(&__pyx_mdef_10materialsc_21linearElasticMaterial_3stressTensor, 0, __pyx_n_s_linearElasticMaterial_stressTens, NULL, __pyx_n_s_materialsc, __pyx_d, ((PyObject *)__pyx_codeobj__44)); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
   __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_10, __pyx_t_11);
   __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-  if (__Pyx_SetNameInClass(__pyx_t_9, __pyx_n_s_stressTensor, __pyx_t_10) < 0) __PYX_ERR(0, 79, __pyx_L1_error)
+  if (__Pyx_SetNameInClass(__pyx_t_9, __pyx_n_s_stressTensor, __pyx_t_10) < 0) __PYX_ERR(0, 80, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
 
-  /* "materialsc.pyx":21
+  /* "materialsc.pyx":22
  *         self.name = name
  * 
  * class linearElasticMaterial(material):             # <<<<<<<<<<<<<<
  *     '''
  *     Linear elastic material
  */
-  __pyx_t_10 = __Pyx_Py3ClassCreate(__pyx_t_5, __pyx_n_s_linearElasticMaterial, __pyx_t_4, __pyx_t_9, NULL, 0, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 21, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_Py3ClassCreate(__pyx_t_5, __pyx_n_s_linearElasticMaterial, __pyx_t_4, __pyx_t_9, NULL, 0, 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 22, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_10);
-  if (__Pyx_CyFunction_InitClassCell(__pyx_t_7, __pyx_t_10) < 0) __PYX_ERR(0, 21, __pyx_L1_error)
+  if (__Pyx_CyFunction_InitClassCell(__pyx_t_7, __pyx_t_10) < 0) __PYX_ERR(0, 22, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_linearElasticMaterial, __pyx_t_10) < 0) __PYX_ERR(0, 21, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_linearElasticMaterial, __pyx_t_10) < 0) __PYX_ERR(0, 22, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
   __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
   __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -23194,7 +23194,7 @@ if (!__Pyx_RefNanny) {
   /* "materialsc.pyx":1
  * #!/usr/bin/env python3             # <<<<<<<<<<<<<<
  * # -*- coding: utf-8 -*-
- * """
+ * # distutils: language=c++
  */
   __pyx_t_4 = __Pyx_PyDict_NewPresized(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 1, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);

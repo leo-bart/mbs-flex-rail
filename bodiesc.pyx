@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# distutils: language=c++
+# distutils: define_macros=NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION
 """
 Created on Wed Mar 16 14:55:42 2022
 
@@ -8,12 +10,17 @@ Classes to use with Multibody System as bodies
 @author: leonardo
 """
 
+import cython
 import numpy as np
+cimport numpy as np
 import matplotlib.pyplot as plt
 import MBS.MultibodySystem as mbs
 import MBS.marker
 import helper_funcs as hf
 from profiles import profile
+
+@cython.boundscheck(False)  # Deactivate bounds checking for performance
+@cython.wraparound(False)   # Deactivate negative indexing for performance
 
 cdef class body(object):
     
@@ -308,14 +315,16 @@ cdef class rigidBody(body):
             self.massMatrix = mMatrix
         else:
             print('Error in inertia attribution. Need a 3x3 tensor.')
-    
-    def hVector(self, angDer):
+        
+    def hVector(self, double [:] angPos, double [:] angDer):
         '''
-        Gets the nonlinear angular acceleration forces
+        Gets the nonlinear angular acceleration forces.
 
         Parameters
         ----------
-        angVelo : array of three doubles
+        angPos : array
+            cardan angles of the current configuration
+        angDer : array of three doubles
             caculated derivatie of the Cardan angles
 
         Returns
@@ -324,20 +333,46 @@ cdef class rigidBody(body):
             inertial forces vector
 
         '''
-        cdef double cosa = np.cos(angDer[0])
-        cdef double sina = np.sin(angDer[0])
-        cdef double cosb = np.cos(angDer[1])
-        cdef double sinb = np.sin(angDer[1])
         
-        omega = np.zeros(3)
-        omega[0] = angDer[0] + sinb*angDer[2]
-        omega[1] = cosa*angDer[1] - sina*cosb*angDer[2]
-        omega[2] = sina*angDer[1] + cosa*cosb*angDer[2]
+        cdef double [:] omega = self.omega(angPos, angDer)
+        cdef double [:,:] omtil = hf.skew(omega)
+        cdef double [:,:] I = np.array(self.inertiaTensor)
         
-        omtil = hf.skew(omega)
-        I = np.array(self.inertiaTensor)
+        return np.array(omtil).dot(np.array(I).dot(np.array(omega))) 
+    
+    def omega(self, double [:] angPos, double [:] angDer):
+        '''
+        Calcule angular velocity from Cardan angles.
+
+        Parameters
+        ----------
+        angPos : array
+            cardan angles of the current configuration
+        angDer : array of three doubles
+            caculated derivatie of the Cardan angles
+
+        Returns
+        -------
+        omega : array of three doubles
+            angular velocity vector
+
+        '''
+        cdef double [:] omega = np.zeros(3, dtype=np.float64)
+        cdef double alfadot = angDer[0]
+        cdef double betadot = angDer[1]
+        cdef double gammadot = angDer[2]
+        cdef double cosa = np.cos(angPos[0])
+        cdef double sina = np.sin(angPos[0])
+        cdef double cosb = np.cos(angPos[1])
+        cdef double sinb = np.sin(angPos[1])
         
-        return omtil.dot(I.dot(omega))
+        omega[0] = alfadot + sinb*gammadot
+        omega[1] = cosa*betadot - sina*cosb*gammadot
+        omega[2] = sina*betadot + cosa*cosb*gammadot
+        
+        return np.array(omega)
+        
+        
             
             
     def info(self):
@@ -490,6 +525,7 @@ cdef class flexibleBody(body):
     cdef double[:] nodalElasticForces
     cdef double[:,:] stiffnessMatrix, dampingMatrix
     cdef bint nonLinear
+    cdef int numberOfNodes
     
     def __init__(self,name,material):
         '''
@@ -512,7 +548,8 @@ cdef class flexibleBody(body):
         self.type = 'Flexible body'
         self.material = material
         self.elementList = []
-        self.totalDof = 0   # total number of degrees of freedom      
+        self.totalDof = 0   # total number of degrees of freedom   
+        self.numberOfNodes = 0
         self.nonLinear = True
         
     @property 
@@ -583,6 +620,24 @@ cdef class flexibleBody(body):
         nl = {'NL':True,'L':False}
         self.nonLinear = nl[flag]
         
+    @property
+    def numberOfNodes(self):
+        return self.numberOfNodes
+        
+    def getq0(self):
+        cdef double [:] q0, q0el
+        cdef Py_ssize_t [:] eleDof_view     #memory view of element's global dof
+        cdef Py_ssize_t i
+        q0 = np.zeros(self.totalDof, dtype=np.float64)
+        
+        for ele in self.elementList:
+            q0el = ele.q0
+            eleDof_view = ele.globalDof
+            for i in range(q0el.shape[0]):
+                q0[eleDof_view[i]] = q0el[i]
+        
+        return np.array(q0)
+        
                 
     def assembleMassMatrix(self):
         print('Assemblying mass matrix')
@@ -609,18 +664,21 @@ cdef class flexibleBody(body):
         cdef double[:] Qe_view = Qe
         cdef double[:] Qelem
         cdef Py_ssize_t i, dof
+        cdef Py_ssize_t[:] elemDofs
         
         
         if self.nonLinear:
             
             
             for elem in self.elementList:
+                elemDofs = np.array(elem.globalDof)
                 if elem.changedStates:
                     Qelem = elem.getNodalElasticForces(veloc)
                 else:
                     #Qelem = elem.nodalElasticForces
                     Qelem = elem.getNodalElasticForces(veloc)
-                for i,dof in enumerate(elem.globalDof):
+                for i in range(elemDofs.shape[0]):
+                    dof = elemDofs[i]
                     Qe_view[dof] += Qelem[i]
                     
         else:
@@ -655,10 +713,11 @@ cdef class flexibleBody(body):
     def assembleTangentStiffnessMatrix(self):
                          
         print('Assemblying tangent stiffness matrix')
-        cdef unsigned int i, j, dofi, dofj
+        cdef Py_ssize_t i, j, dofi, dofj
         
         cdef double [:,:] ke
-        self.stiffnessMatrix = np.zeros((self.totalDof, self.totalDof))
+        self.stiffnessMatrix = np.zeros((self.totalDof, self.totalDof), 
+                                        dtype=np.float64)
         
         for elem in self.elementList:
             ke = elem.getTangentStiffnessMatrix()
@@ -703,6 +762,7 @@ cdef class flexibleBody(body):
         self.elementList.extend(element)
         self.totalDof = el.globalDof[-1] + 1
         self.nodalElasticForces = np.zeros(self.totalDof)
+        self.numberOfNodes += nNumber + 1
         
         # cleans up repeated nodes
         self.markers = list( dict.fromkeys(self.markers))
@@ -854,6 +914,20 @@ cdef class flexibleBody3D(flexibleBody):
         self.dimensionality = np.int8(3)
         
         print('Created 3D body \'{}\' with material \'{}\''.format(name,material.name))
+        
+cdef class flexibleRail3D(flexibleBody):
+    '''
+    Tri-dimensional flexible body
+    '''
+    
+    cdef public Py_ssize_t[:,:] activeSleepersDof
+    
+    def __init__(self, name, material):
+        super().__init__(name, material)
+        
+        self.dimensionality = np.int8(3)
+        
+        print('Created 3D rail \'{}\' with material \'{}\''.format(name,material.name))
 
 cdef class flexibleBody2D(flexibleBody):
     '''
@@ -867,5 +941,3 @@ cdef class flexibleBody2D(flexibleBody):
         self.dimensionality = np.int8(2)
         
         print('Created 2D body \'{}\' with material \'{}\''.format(name,material.name))
-    
-    

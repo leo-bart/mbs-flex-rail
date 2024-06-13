@@ -6,16 +6,30 @@ Created on Tue Mar 15 14:18:40 2022
 @author: leonardo
 """
 import numpy as np
-from assimulo.solvers import IDA, ODASSL
+from assimulo.solvers import IDA
 from bodiesc import rigidBody, ground
 from assimulo.special_systems import Mechanical_System
-from time import time
 import matplotlib.pyplot as plt
 import helper_funcs as hf
 
 
 class MultibodySystem(Mechanical_System):
+    """Generic class for MBS."""
+
     def __init__(self, name_):
+        """
+        Initialize the system.
+
+        Parameters
+        ----------
+        name_ : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        """
         self.name = name_
         self.bodies = []
         self.forceList = []
@@ -64,6 +78,14 @@ class MultibodySystem(Mechanical_System):
             self.totalDof -= bodyList.totalDof
 
     def printSystem(self):
+        """
+        Print system information to prompt.
+
+        Returns
+        -------
+        None.
+
+        """
         print('Printing body list in system {}.'.format(self.name))
         print('------------------------------------')
         for b in self.bodies:
@@ -92,7 +114,8 @@ class MultibodySystem(Mechanical_System):
                 # weight
                 f[bdy.globalDof[:3]] += bdy.mass * self.gravity
                 # inertia force (minus sign because belongs to lhs)
-                f[bdy.globalDof[3:]] -= bdy.hVector(v[bdy.globalDof[3:]])
+                f[bdy.globalDof[3:]] -= bdy.hVector(p[bdy.globalDof[3:]],
+                                                    v[bdy.globalDof[3:]])
 
             # flexible body nodal forces
             if bdy.type == 'Flexible body':
@@ -100,7 +123,7 @@ class MultibodySystem(Mechanical_System):
                 bdy.updateDisplacements(p[bdy.globalDof])
 
                 f[bdy.globalDof] += bdy.assembleWeightVector(g=self.gravity).squeeze() \
-                    - 0.002 * bdy.assembleElasticForceVector(True).squeeze() \
+                    - 0.02 * bdy.assembleElasticForceVector(True).squeeze() \
                     - bdy.assembleElasticForceVector().squeeze()
 
         for fc in self.forceList:
@@ -192,6 +215,43 @@ class MultibodySystem(Mechanical_System):
         constForces = np.array(constForces)
         for cst in self.constraintList:
             cst.simLam = constForces[:, cst.body1.globalDof]
+
+# =============================================================================
+# === RAILWAY SYSTEM                                                          =
+# =============================================================================
+
+
+class RailwaySystem(MultibodySystem):
+    """Special class for railway systems."""
+
+    def __init__(self, name_):
+        super().__init__(name_)
+        self.trackList = []
+
+    def addTrack(self, trk):
+        """
+        Add and activate a track
+
+        Parameters
+        ----------
+        trk : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        """
+        self.trackList.append(trk)
+        self.addBody([trk.leftRail, trk.rightRail])
+        self.addForce(trk.sleepers)
+
+    def setupSystem(self, t0=0.0, printSys=True):
+        super().setupSystem(t0, printSys)
+
+        # sleepr activation has to come after system setup because of the
+        # DOF numbering of flexible nodes
+        self.trackList[0].activeSleepersDofs()
 
 
 if __name__ == '__main__':

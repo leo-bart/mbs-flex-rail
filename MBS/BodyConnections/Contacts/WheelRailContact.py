@@ -13,10 +13,12 @@ import numpy as np
 import helper_funcs as hf
 import matplotlib.pyplot as plt
 import gjk
+import gjkc
+import polachContactForces as pcf
 from profiles import planarProfile
 
 
-class wrContact2 (MBS.BodyConnections.Contacts.Contact.contact):
+class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
     """
     New version of WR contact.
 
@@ -74,81 +76,143 @@ class wrContact2 (MBS.BodyConnections.Contacts.Contact.contact):
 
         """
         # wheelset reference marker position
-        wstPosition = p[self.wheelset.globalDof[:3]]
+        wstPosition = p[self.wheelset.globalDof]
+        wstPosition[4] = 0
+        wstVelocity = v[self.wheelset.globalDof]
         # gets wheel Cardan angles and removes rotation around shaft axis
-        cardans = p[self.wheelset.globalDof[3:]]
-        cardans[1] = 0
+        wstCardans = wstPosition[3:]
         # gets wheelset rotation matrix
-        Rwst = hf.cardanRotationMatrix(cardans)
+        Rwst = hf.cardanRotationMatrix(wstCardans)
 
-        cNormalLeft, cPointsLeft, gapLeft, elemLeft = self.evaluateGapFunction(
-            t, p, v, 'left')
-        cNormalRight, cPointsRight, gapRight, elemRight = self.evaluateGapFunction(
-            t, p, v, 'right')
+        cNormalLeft, cPointsLeft, gapLeft, elemLeft = \
+            self.evaluateGapFunction(t, p, v, 'left')
+        cNormalRight, cPointsRight, gapRight, elemRight = \
+            self.evaluateGapFunction(t, p, v, 'right')
 
         f = np.zeros_like(p)
-        # left rail
+
         if gapLeft < 0.0:
-            # normal vector in global coordinates
-            normalGlobalCoords = Rwst.transpose().dot(np.insert(
-                cNormalLeft, 0, 0))
-            # 2d contact force on the wheel midplane
-            contactForce = 525e6 * gapLeft * normalGlobalCoords
-            # lever arm vector of the contact force on wheelset
-            rhoM2star = Rwst.transpose().dot(
-                np.insert(cPointsLeft['wheel'], 0, 0))
-            # add force to wheelset
-            f[self.wheelset.globalDof[:3]] += contactForce
-            if f[self.wheelset.globalDof[2]] > 0:
-                print(
-                    '\nWarning: left negative contact force {} N'.format(
-                        f[self.wheelset.globalDof[2]]))
-            f[self.wheelset.globalDof[3:]
-              ] += hf.skew(rhoM2star).dot(contactForce)
-            # convert rail contact point to global coords
-            localXi = elemLeft.mapToLocalCoords(
-                wstPosition + Rwst.transpose().dot(
-                    np.insert(cPointsLeft["rail"], 0, 0.0))
-            )
-
-            # normal contact force
-            railDofs = np.array(self.leftRail.globalDof)
-            f[railDofs[elemLeft.globalDof]] += np.dot(
-                -contactForce,
-                elemLeft.shapeFunctionMatrix(*localXi)
-            )
-        # right rail
+            self.calculateContactForce(Rwst, cNormalLeft, gapLeft,
+                                       cPointsLeft['wheel'],
+                                       cPointsLeft['rail'], wstPosition,
+                                       wstVelocity,
+                                       elemLeft, f)
         if gapRight < 0.0:
-            # normal vector in global coordinates
-            normalGlobalCoords = Rwst.transpose().dot(
-                np.insert(cNormalRight, 0, 0))
-            # 2d contact force on the wheel midplane
-            contactForce = 525e6 * gapRight * normalGlobalCoords
-            # lever arm vector of the contact force on wheelset
-            rhoM2star = Rwst.transpose().dot(
-                np.insert(cPointsRight['wheel'], 0, 0))
-            # add force to wheelset
-            f[self.wheelset.globalDof[:3]] += contactForce
-            if f[self.wheelset.globalDof[2]] > 0:
-                print(
-                    '\nWarning: right negative contact force {} N'.format(
-                        f[self.wheelset.globalDof[2]]))
-            f[self.wheelset.globalDof[3:]
-              ] += hf.skew(rhoM2star).dot(contactForce)
-            # convert rail contact point to global coords
-            localXi = elemRight.mapToLocalCoords(
-                wstPosition + Rwst.transpose().dot(
-                    np.insert(cPointsRight["rail"], 0, 0.0))
-            )
-
-            # normal contact force
-            railDofs = np.array(self.rightRail.globalDof)
-            f[railDofs[elemRight.globalDof]] += np.dot(
-                -contactForce,
-                elemRight.shapeFunctionMatrix(*localXi)
-            )
+            self.calculateContactForce(Rwst, cNormalRight, gapRight,
+                                       cPointsRight['wheel'],
+                                       cPointsRight['rail'], wstPosition,
+                                       wstVelocity,
+                                       elemRight, f)
 
         return f
+
+    def calculateContactForce(self, Rwst, cNormal, cGap, cPointCoordsWheel,
+                              cPointCoordsRail, wstPosition, wstVelocity,
+                              cElement, cForce, cNormalStiffness=525e6):
+        """
+        Calculate normal and creep forces.
+
+        Parameters
+        ----------
+        Rwst : TYPE
+            Wheelset rotation matrix.
+        cNormal : TYPE
+            Contact normal vector (YZ).
+        cGap : TYPE
+            Size of contact gap.
+        cPointCoordsWheel : TYPE
+            Contact point position on local contact plane coordinates.
+        cPointCoordsRail : TYPE
+            Contact point position on local contact plane coordinates.
+        wstPosition : array
+            Wheelset c.m. position in global coordinates (translation and
+                                                          rotation)
+        wstVelocity : array
+            Wheelset c.m. velocity (translation and rotation)
+        cElement : TYPE
+            Contacting element.
+        cForce : array
+            Contact force vector (output)
+        cNormalStiffness : double
+            Normal contact stiffness. Defaults to 525 MN/m.
+
+        Returns
+        -------
+        None.
+
+        """
+        # normal vector in global coordinates
+        normalGlobalCoords, _ = hf.unitaryVector(Rwst.transpose().dot(
+            np.insert(cNormal, 0, 0)))
+        # 2d contact force on the wheel midplane
+        contactForceMag = cNormalStiffness * cGap
+        contactForce = contactForceMag * normalGlobalCoords
+        # lever arm vector of the contact force on wheelset
+        rhoM2star = Rwst.transpose().dot(
+            np.insert(cPointCoordsWheel, 0, 0))
+        # add force to wheelset
+        cForce[self.wheelset.globalDof[:3]] += contactForce
+        if contactForce[2] > 0:
+            print(
+                '\nWarning: right negative contact force {} N'.format(
+                    contactForce[2]))
+        # add moments to wheelset
+        cForce[self.wheelset.globalDof[3:]] += hf.skew(rhoM2star).dot(
+            contactForce)
+        # convert rail contact point to global coords
+        localXi = cElement.mapToLocalCoords(
+            wstPosition[:3] + Rwst.transpose().dot(
+                np.insert(cPointCoordsRail, 0, 0.0))
+        )
+
+        # normal contact force on elements
+        rail = cElement.parentBody
+        railDofs = np.array(rail.globalDof)
+        cForce[railDofs[cElement.globalDof]] += np.dot(
+            -contactForce,
+            cElement.shapeFunctionMatrix(*localXi)
+        )
+
+        # creep forces
+        # creepages
+        wstOmega = self.wheelset.omega(wstPosition[3:], wstVelocity[3:])
+        cPointsVelocityWheel = wstVelocity[:3] + \
+            hf.skew(wstOmega).dot(rhoM2star)
+        cPointsVelocityRail = cElement.interpolateVelocity(*localXi)
+
+        relativeVelocity = cPointsVelocityWheel - cPointsVelocityRail
+        # project into normal
+        relativeVelNormal = relativeVelocity.dot(normalGlobalCoords)
+        relativeVelocityTang = relativeVelocity - relativeVelNormal
+        relativeVelocityTang = Rwst.transpose().dot(relativeVelocityTang)
+
+        creepages = np.array([0., 0.])
+
+        creepages[0] = 0.0 if wstVelocity[0] == 0.0 else (
+            relativeVelocityTang[0]) / wstVelocity[0]
+        creepages[1] = wstPosition[5]
+
+        fricForce = np.zeros(3)
+        # fricForce[0], fricForce[1] = pcf.polach(contactForceMag,
+        #                                         0.4, 6e-3, 6e-3, creepages[0],
+        #                                         creepages[1], 0.0,
+        #                                         4.12, 3.67, 1.47)
+        fricForce[0] = self.coulombFric(creepages[0], 0.4) * contactForceMag
+
+        # print('{}:{} N'.format(cElement.parentBody.name, fricForce[0]))
+        # apply creep forces to wheel
+        if np.any(fricForce) != 0:
+            cForce[self.wheelset.globalDof[:3]] += fricForce
+            cForce[self.wheelset.globalDof[3:]] += hf.skew(rhoM2star).dot(
+                fricForce)
+
+            # creep force on elements
+            cForce[railDofs[cElement.globalDof]] += np.dot(
+                -fricForce,
+                cElement.shapeFunctionMatrix(*localXi))
+
+    def coulombFric(self, v, mu):
+        return mu * np.tanh(100*v)
 
     def evaluateGapFunction(self, t, p, v, leftOrRight='left', plotFlag=False):
         """
@@ -225,7 +289,7 @@ class wrContact2 (MBS.BodyConnections.Contacts.Contact.contact):
         # it is necessary to find the longitudinal position of the contact plane
         # we perform a very naive bissection search to find it
 
-        # Nelder-Mead algorithm to find the closes point in spine
+        # Nelder-Mead algorithm to find the closest point in spine
         xi_init = -1 + 2 * gamma_I / l12
         xi = xi_init
         f = np.linalg.norm(
@@ -308,6 +372,10 @@ class wrContact2 (MBS.BodyConnections.Contacts.Contact.contact):
                 # if rSubset[-1, 0] > wSubset[1, 0]:
                 pRail, pWheel, n, d = gjk.gjk(
                     rSubset, wSubset, np.array([0., 1.]))
+                # plt.plot(*rSubset.T)
+                # plt.plot(*wSubset.T)
+                # plt.plot(*pRail, 'x')
+                # plt.plot(*pWheel, 'o')
                 if d < minDist:
                     minDist = d
                     cSubsets["rail"] = rSubset
@@ -336,465 +404,3 @@ class wrContact2 (MBS.BodyConnections.Contacts.Contact.contact):
             cNormal = -cNormal
 
         return cNormal, cPoints, minDist, e
-
-
-# %%
-
-
-class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
-    """
-    Wheel-rail contact force.
-
-    Defines a wheel-rail contact object.
-
-    """
-
-    def __init__(self, name_='Contact force'):
-        super().__init__(name_)
-
-    def connect(self, _masterProfile, _slaveProfile):
-        self.masterProfile = _masterProfile
-        self.slaveProfile = _slaveProfile
-
-        super().connect(_masterProfile.parent, _slaveProfile.parent)
-
-    def evaluateForceFunction(self, t, p, v, *args):
-        """
-        Caculate wheel-rail contact force.
-
-        The wheel profile coordinates is referenced on the wheelset center, i.e.,
-        on the coordinate system placed at the center of the shaft.
-
-        Parameters
-        ----------
-        t : array
-            Time t.
-        p : array
-            position at time t.
-        v : array
-            velocity at time t.
-        m1 : marker
-            rail profile reference marker.
-        m2 : marker
-            wheel profile reference marker.
-
-        Returns
-        -------
-        f : array
-            force.
-
-        """
-        # gets rail and wheelset bodies
-        railBody = self.masterProfile.parent
-        wstBody = self.slaveProfile.parent
-
-        railReferenceMarker = self.masterProfile.referenceMarker
-        wheelReferenceMarker = self.slaveProfile.referenceMarker
-        # wheelset reference marker position
-        wstP = p[wstBody.globalDof[:3]]
-        # dofs of rail body
-        railDof = np.array(railBody.globalDof)
-
-        # gets wheel Cardan angles and removes rotation around shaft axis
-        cardans = p[wstBody.globalDof[3:]]
-        cardans[2] = 0
-        # gets wheelset rotation matrix
-        Rwst = hf.cardanRotationMatrix(cardans)
-        # rhoM2 is the relative position of the wheel profile, represented on
-        # the glogal reference frame
-        rhoM2 = Rwst.dot(wheelReferenceMarker.position)
-        # pWheel is the position of the wheel profile reference point on
-        # the global reference frame
-        pWheel = wstP + rhoM2
-
-        # matrix to convert vectors written on the wheelset reference frame
-        # to the profile reference frame
-        """TODO: eu estou usando aqui o sistema de referência do perfil
-        como se a sua orientação fosse só girar o sistema do rodeiro, mas 
-        não é só isso.
-        
-        Ideia para o momento: verificar resto da rotina para ver 
-        se é necessário mesmo usar esse sistema ou se dá para fazer as
-        conversões diretamente usando o referenceMarker.orientation 
-        do perfil.
-        """
-        wst2prof = np.array([[0, 0, 1], [0, 1, 0]])
-
-        # wheelset reference frame position on profile reference frame coordinates
-        wstPp = wst2prof.dot(wstP)
-
-        # profiles
-        wp = self.slaveProfile
-        rp = self.masterProfile
-
-        # now, I've got to find the contacting element
-        # we will suppose that, for every contacting element, the terminal
-        # nodes must be on opposite sides of the wheelset midplane, i.e.,
-        # extreme bending on contacting elements is not allowed
-        # Then, we check for each element whether the vector joining its
-        # terminal nodes pierces the wheelset midplane.
-        midplaneNormal = Rwst[:, 0]
-        for e in railBody.elementList:
-            n1 = e.nodes[0]
-            n2 = e.nodes[-1]
-
-            # projects the distance between the front node and end
-            # node of each element e to the wheel reference point
-            d1 = (n1.qtotal[:3] - pWheel).dot(midplaneNormal)
-            d2 = (n2.qtotal[:3] - pWheel).dot(midplaneNormal)
-
-            # if the signs of d1 and d2 are different, than the element
-            # pierces the midplane and the element e is the contacting element
-            # the loop can be broken
-            if d1*d2 <= 0:
-                break
-
-        # now e is the contact element
-        # it is necessary to find the longitudinal position of the contact plane
-        # we perform a very naive bissection search to find it
-
-        # start with finding the node that is closer to the plane
-        # direction tells the direction of the first search bissection
-        dmin = d1
-        step = 2
-        startXi = -1
-        newXi = startXi
-        while dmin*dmin > 1e-7:
-            # in the following loop, the `newXi` variable outputs the approximate
-            # xi coordinate of the contact point
-            newd = -(pWheel - e.interpolatePosition(newXi+step, 0, 0)
-                     ).dot(midplaneNormal)
-            while newd*dmin > 0:
-                step *= 1.2
-                newXi = newXi+step
-                newd = -(pWheel - e.interpolatePosition(newXi +
-                         step, 0, 0)).dot(midplaneNormal)
-            dmin = newd
-            newXi += step
-            step = -step/2
-
-        railCpointPosi = e.interpolatePosition(newXi, 1, 0)  # note eta = 1
-
-        '''
-        O que eu preciso fazer aqui?
-        
-        A variável railCpointPosi determina a posição global do ponto de
-        interseção do trilho com o plano médio vertical do rodeiro.
-        
-        Preciso:
-            1. obter a orientação da seção transversal neste ponto. Não desen-
-            volvi uma função específica para interpolar orientação, então vou
-            ter que fazer isso aqui na rotina mesmo. Talvez seja bom, no futuro,
-            passar para dentro do elemento para aproveitar o Cython. Quando
-            fizer isso, é necessário atentar-se para o fato de a orientação
-            do perfil não ser necessariamente a mesma do trilho
-            2. transferir o marker de referência do perfil do trilho para o 
-            railCpointPosi com a orientação obtida.
-        '''
-
-        ##########
-        # we can now search for the contact point between wheel and rail profiles
-        ##########
-        plot = False  # set to TRUE to plot wheel and rail profiles
-        if plot:
-            x = rp.points[:, 0] + railCpointPosi[2]
-            y = rp.points[:, 1] + railCpointPosi[1]
-            plt.plot(x, y)
-
-            x = wp.points[:, 0] + wstP[2]
-            y = wp.points[:, 1] + wstP[1]
-            plt.plot(x, y)
-
-        # we get the convex subsets of the wheel and rail profiles and
-        # offset them to the global position
-
-        if pWheel[2] < 0:
-            wstFactor = -1
-        else:
-            wstFactor = 1
-
-        wp = wstBody.profiles[0]
-        # we make a copy to preserve the original profile
-        wpConvSubsets = (wp.createConvexSubsets()).copy()
-        # rotation matrix of the wheelset on the profile css
-        A = wst2prof.dot(Rwst.dot(wst2prof.transpose()))
-        for i in range(len(wpConvSubsets)):
-            wpConvSubsets[i][:, 0] += wstPp[0]
-            wpConvSubsets[i][:, 0] *= wstFactor
-            wpConvSubsets[i][:, 1] += wstPp[1]
-            wpConvSubsets[i] = wpConvSubsets[i].dot(A)
-            if plot:
-                plt.plot(wpConvSubsets[i][:, 0], wpConvSubsets[i][:, 1])
-
-        rp = railBody.profiles[0]
-        # rpConvSubsets = (rp.createConvexSubsets()).copy()
-        # headOffset = 0.01 # offset to artificially increase head height
-        #                   # this prevent degenerate contact conditions when
-        #                   # wheel penetration is large compared to convex subset
-        #                   # total height
-        # for i in range(len(rpConvSubsets)):
-        #     rpConvSubsets[i][:,0] += railCpointPosi[2]
-        #     rpConvSubsets[i][:,1] += railCpointPosi[1]
-        #     rpConvSubsets[i] = np.append(rpConvSubsets[i],[rpConvSubsets[i][-1,:]],axis=0)
-        #     rpConvSubsets[i] = np.append(rpConvSubsets[i],[rpConvSubsets[i][0,:]],axis=0)
-        #     rpConvSubsets[i][-1,1] -= headOffset
-        #     rpConvSubsets[i][-2,1] -= headOffset
-
-        #     if plot:
-        #         plt.plot(rpConvSubsets[i][:,0],rpConvSubsets[i][:,1])
-
-        # replace all convex subsets by the original rail profile
-        # this is to try and converge
-        rpConvSubsets = []
-        rpConvSubsets.append(rp.points.copy())
-        rpConvSubsets[0][:, 0] += railCpointPosi[2]
-        rpConvSubsets[0][:, 1] += railCpointPosi[1]
-
-        # find the contact point, if any
-        cSubsets = {"rail": None, "wheel": None}
-        cPoints = {"rail": None, "wheel": None}
-        minDist = np.inf
-
-        for rSubset in rpConvSubsets:
-            for wSubset in wpConvSubsets:
-                if rSubset[-1, 0] > wSubset[1, 0]:
-                    pRail, pWheel, n, d = gjk.gjk(
-                        rSubset, wSubset, np.array([0., -1.]))
-                    # print(d)
-                    if d < minDist:
-                        minDist = d
-                        cSubsets["rail"] = rSubset
-                        cSubsets["wheel"] = wSubset
-                        cPoints["rail"] = pRail
-                        cPoints["wheel"] = pWheel
-                        cNormal = n
-
-        # plt.fill(cSubsets["rail"][:,0],cSubsets["rail"][:,1], edgecolor='blue')
-        # plt.fill(cSubsets["wheel"][:,0],cSubsets["wheel"][:,1], edgecolor='orange')
-        # print(minDist)
-
-        f = np.zeros_like(p)
-        if minDist < 0.0:
-            # 2d contact force on the wheel midplane
-            contactForce = 525e6 * minDist * wst2prof.transpose().dot(cNormal)
-            # gets the vector from the wheelset CoG to the contact point
-            # first on profile local coordinates
-            rhoM2star = cPoints["wheel"] - wstPp
-            # then on global coordinates
-            rhoM2star = Rwst.transpose().dot(wst2prof.transpose().dot(rhoM2star))
-
-            f[wstBody.globalDof[:3]] += contactForce
-            if f[-5] < 0:
-                print('Warning: negative contact force {} N'.format(f[-5]))
-            f[wstBody.globalDof[3:]] += hf.skew(rhoM2star).dot(contactForce)
-
-            cPoints["rail"] = Rwst.transpose().dot(
-                wst2prof.transpose().dot(cPoints["rail"]))
-            localXi = e.mapToLocalCoords(cPoints["rail"])
-
-            # normal contact force
-            f[railDof[e.globalDof]] -= np.dot(
-                contactForce,
-                e.shapeFunctionMatrix(localXi[0], localXi[1], localXi[2])
-            )
-
-            # tangential contact force
-            # encontrar velocidade dos pontos de contato
-            # aplicar modelo de Kalker
-
-        return f
-
-    def evaluateGapFunction(self, t, p, v, *args):
-        # gets rail and wheelset bodies
-        railBody = self.masterProfile.parent
-        wstBody = self.slaveProfile.parent
-
-        railReferenceMarker = self.masterProfile.referenceMarker
-        wheelReferenceMarker = self.slaveProfile.referenceMarker
-        # wheelset reference marker position
-        wstP = p[wstBody.globalDof[:3]]
-        # dofs of rail body
-        railDof = np.array(railBody.globalDof)
-
-        # gets wheel Cardan angles and removes rotation around shaft axis
-        cardans = p[wstBody.globalDof[3:]]
-        cardans[2] = 0
-        # gets wheelset rotation matrix
-        Rwst = hf.cardanRotationMatrix(cardans)
-        # rhoM2 is the relative position of the wheel profile, represented on
-        # the glogal reference frame
-        rhoM2 = Rwst.dot(wheelReferenceMarker.position)
-        # pWheel is the position of the wheel profile reference point on
-        # the global reference frame
-        pWheel = wstP + rhoM2
-
-        # matrix to convert vectors written on the wheelset reference frame
-        # to the profile reference frame
-        """TODO: eu estou usando aqui o sistema de referência do perfil
-        como se a sua orientação fosse só girar o sistema do rodeiro, mas 
-        não é só isso.
-        
-        Ideia para o momento: verificar resto da rotina para ver 
-        se é necessário mesmo usar esse sistema ou se dá para fazer as
-        conversões diretamente usando o referenceMarker.orientation 
-        do perfil.
-        """
-        wst2prof = np.array([[0, 0, 1], [0, 1, 0]])
-
-        # wheelset reference frame position on profile reference frame coordinates
-        wstPp = wst2prof.dot(wstP)
-
-        # profiles
-        wp = self.slaveProfile
-        rp = self.masterProfile
-
-        # now, I've got to find the contacting element
-        # we will suppose that, for every contacting element, the terminal
-        # nodes must be on opposite sides of the wheelset midplane, i.e.,
-        # extreme bending on contacting elements is not allowed
-        # Then, we check for each element whether the vector joining its
-        # terminal nodes pierces the wheelset midplane.
-        midplaneNormal = Rwst[:, 0]
-        for e in railBody.elementList:
-            n1 = e.nodes[0]
-            n2 = e.nodes[-1]
-
-            # projects the distance between the front node and end
-            # node of each element e to the wheel reference point
-            d1 = (n1.qtotal[:3] - pWheel).dot(midplaneNormal)
-            d2 = (n2.qtotal[:3] - pWheel).dot(midplaneNormal)
-
-            # if the signs of d1 and d2 are different, than the element
-            # pierces the midplane and the element e is the contacting element
-            # the loop can be broken
-            if d1*d2 <= 0:
-                break
-
-        # now e is the contact element
-        # it is necessary to find the longitudinal position of the contact plane
-        # we perform a very naive bissection search to find it
-
-        # start with finding the node that is closer to the plane
-        # direction tells the direction of the first search bissection
-        dmin = d1
-        step = 2
-        startXi = -1
-        newXi = startXi
-        while dmin*dmin > 1e-7:
-            # in the following loop, the `newXi` variable outputs the approximate
-            # xi coordinate of the contact point
-            newd = -(pWheel - e.interpolatePosition(newXi+step, 0, 0)
-                     ).dot(midplaneNormal)
-            while newd*dmin > 0:
-                step *= 1.2
-                newXi = newXi+step
-                newd = -(pWheel - e.interpolatePosition(newXi +
-                         step, 0, 0)).dot(midplaneNormal)
-            dmin = newd
-            newXi += step
-            step = -step/2
-
-        railCpointPosi = e.interpolatePosition(newXi, 1, 0)  # note eta = 1
-
-        '''
-        O que eu preciso fazer aqui?
-        
-        A variável railCpointPosi determina a posição global do ponto de
-        interseção do trilho com o plano médio vertical do rodeiro.
-        
-        Preciso:
-            1. obter a orientação da seção transversal neste ponto. Não desen-
-            volvi uma função específica para interpolar orientação, então vou
-            ter que fazer isso aqui na rotina mesmo. Talvez seja bom, no futuro,
-            passar para dentro do elemento para aproveitar o Cython. Quando
-            fizer isso, é necessário atentar-se para o fato de a orientação
-            do perfil não ser necessariamente a mesma do trilho
-            2. transferir o marker de referência do perfil do trilho para o 
-            railCpointPosi com a orientação obtida.
-        '''
-
-        ##########
-        # we can now search for the contact point between wheel and rail profiles
-        ##########
-        plot = False  # set to TRUE to plot wheel and rail profiles
-        if plot:
-            x = rp.points[:, 0] + railCpointPosi[2]
-            y = rp.points[:, 1] + railCpointPosi[1]
-            plt.plot(x, y)
-
-            x = wp.points[:, 0] + wstP[2]
-            y = wp.points[:, 1] + wstP[1]
-            plt.plot(x, y)
-
-        # we get the convex subsets of the wheel and rail profiles and
-        # offset them to the global position
-
-        if pWheel[2] < 0:
-            wstFactor = -1
-        else:
-            wstFactor = 1
-
-        wp = wstBody.profiles[0]
-        # we make a copy to preserve the original profile
-        wpConvSubsets = (wp.createConvexSubsets()).copy()
-        # rotation matrix of the wheelset on the profile css
-        A = wst2prof.dot(Rwst.dot(wst2prof.transpose()))
-        for i in range(len(wpConvSubsets)):
-            wpConvSubsets[i][:, 0] += wstPp[0]
-            wpConvSubsets[i][:, 0] *= wstFactor
-            wpConvSubsets[i][:, 1] += wstPp[1]
-            wpConvSubsets[i] = wpConvSubsets[i].dot(A)
-            if plot:
-                plt.plot(wpConvSubsets[i][:, 0], wpConvSubsets[i][:, 1])
-
-        rp = railBody.profiles[0]
-        # rpConvSubsets = (rp.createConvexSubsets()).copy()
-        # headOffset = 0.01 # offset to artificially increase head height
-        #                   # this prevent degenerate contact conditions when
-        #                   # wheel penetration is large compared to convex subset
-        #                   # total height
-        # for i in range(len(rpConvSubsets)):
-        #     rpConvSubsets[i][:,0] += railCpointPosi[2]
-        #     rpConvSubsets[i][:,1] += railCpointPosi[1]
-        #     rpConvSubsets[i] = np.append(rpConvSubsets[i],[rpConvSubsets[i][-1,:]],axis=0)
-        #     rpConvSubsets[i] = np.append(rpConvSubsets[i],[rpConvSubsets[i][0,:]],axis=0)
-        #     rpConvSubsets[i][-1,1] -= headOffset
-        #     rpConvSubsets[i][-2,1] -= headOffset
-
-        #     if plot:
-        #         plt.plot(rpConvSubsets[i][:,0],rpConvSubsets[i][:,1])
-
-        # replace all convex subsets by the original rail profile
-        # this is to try and converge
-        rpConvSubsets = []
-        rpConvSubsets.append(rp.points.copy())
-        rpConvSubsets[0][:, 0] += railCpointPosi[2]
-        rpConvSubsets[0][:, 1] += railCpointPosi[1]
-
-        # find the contact point, if any
-        cSubsets = {"rail": None, "wheel": None}
-        cPoints = {"rail": None, "wheel": None}
-        minDist = np.inf
-
-        for rSubset in rpConvSubsets:
-            for wSubset in wpConvSubsets:
-                if rSubset[-1, 0] > wSubset[1, 0]:
-                    pRail, pWheel, n, d = gjk.gjk(
-                        rSubset, wSubset, np.array([0., -1.]))
-                    # print(d)
-                    if d < minDist:
-                        minDist = d
-                        cSubsets["rail"] = rSubset
-                        cSubsets["wheel"] = wSubset
-                        cPoints["rail"] = pRail
-                        cPoints["wheel"] = pWheel
-                        cNormal = n
-
-        # plt.fill(cSubsets["rail"][:,0],cSubsets["rail"][:,1], edgecolor='blue')
-        # plt.fill(cSubsets["wheel"][:,0],cSubsets["wheel"][:,1], edgecolor='orange')
-        # print(minDist)
-
-        return d, d
-
-    def plotContactPosition(self, t, p, v):
-        pass

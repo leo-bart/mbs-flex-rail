@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# distutils: language=c++
+# distutils: define_macros=NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION
 """
 Created on Fri Mar 18 08:48:51 2022
 
-Auxiliary mathematical funcions
+Auxiliary mathematical and array manipulation funcions
 
 @author: leonardo
 """
 
 import numpy as np
 import cython
+cimport numpy as np
 
 @cython.boundscheck(False)
+@cython.wraparound(False)
 
 
 cpdef unitaryVector(double [:] vec):
@@ -33,19 +37,19 @@ cpdef unitaryVector(double [:] vec):
     cdef double norma = 0
     cdef double[:] unitVec = np.zeros(3)
     
-    for i in range(3):
+    for i in range(vec.shape[0]):
         norma += vec[i] * vec[i]
         
         
     if norma != 0:
         norma = norma**0.5
         
-        for i in range(3):
+        for i in range(vec.shape[0]):
             unitVec[i] = vec[i] / norma
     else:
         norma = 0.0
         
-        for i in range(3):
+        for i in range(vec.shape[0]):
             unitVec[i] = 0.0
         
     return np.array(unitVec), norma
@@ -281,7 +285,16 @@ cpdef skew(double [:] vec):
                      [-vec[1],vec[0],0.0]])
 
         
-    
+cpdef mvRow2List(Py_ssize_t[:,:] arr, Py_ssize_t row):
+    """
+    Convert a memory view row into a list
+    """
+    cdef int ncols = arr.shape[1]
+    cdef Py_ssize_t[:] mv_row = np.zeros(ncols, dtype=np.int64)
+    cdef Py_ssize_t i
+    for i in range(ncols):
+        mv_row[i] = arr[row, i]
+    return mv_row  
     
     
             

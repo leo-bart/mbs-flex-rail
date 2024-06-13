@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# distutils: language=c++
+# distutils: define_macros=NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION
 """
 Extrapolation to 3D based on the planar beam from
 K. Nachbagauer, A. Pechstein, H. Irschik, e J. Gerstmayr, “A new locking-free 
@@ -17,14 +19,16 @@ Created on Mon Nov 22 07:21:00 2021
 @author: Leonardo Bartalini Baruffaldi
 """
 
+import cython
 import numpy as np
-from MultibodySystem import marker
+cimport numpy as np
+from MBS.marker import marker
 from numpy.matlib import matrix, eye
 from numpy import dot
 from numpy.linalg import norm, inv
-cimport cython
 
 @cython.boundscheck(False)
+@cython.wraparound(False)
 
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 #         3D NODE                                                             %
@@ -181,7 +185,7 @@ cdef class beamANCFelement3D(object):
     @property
     def gaussIntegrationPoints(self):
         return {1:[0],
-                2:[-1.0/np.sqrt(3),1.0/np.sqrt(3)],
+                2:[-1.0/(3**0.5),1.0/(3**0.5)],
                 3:[-0.77459667, 0, 0.77459667],
                 4:[-0.86113631,-0.33998104,0.33998104,0.86113631],
                 5:[-0.90617985,-0.53846931,0.0,0.53846931,0.90617985],
@@ -334,7 +338,7 @@ cdef class beamANCFelement3D(object):
 
         '''
         cdef double xmin, ymin, zmin, xmax, ymax, zmax
-        cdef tol = 1e-4 * self.length
+        cdef tol = 1e-3 * self.length
         
         xmin, ymin, zmin, xmax, ymax, zmax = self.getBoundingBox()
         
@@ -370,9 +374,10 @@ cdef class beamANCFelement3D(object):
 
         '''
         
-        if not self.isPointOnMe(point):
-            print('Error: specified point is not inside the bounding box of this element')
-            return 0
+        # if not self.isPointOnMe(point):
+        #     print('Error: specified point is not inside the bounding box of this element.')
+        #     print('Point: {}'.format(np.array(point)))
+        #     return 0
         
         cdef double L,H,W
         cdef Py_ssize_t i
@@ -404,6 +409,9 @@ cdef class beamANCFelement3D(object):
             J_view[2] *= W/2
             
             dxi = np.linalg.solve(J_view,res)
+        
+        if i == maxiter - 1:
+            print('Warning: mapToLocalCoords couldn\' find mapping after {} iterations'.format(maxiter))
         
         
         return xi_view
@@ -590,7 +598,7 @@ cdef class beamANCFelement3D(object):
 
         '''
         
-        ndof = len(self.globalDof)
+        cdef int ndof = len(self.globalDof)
         
         Kte = np.zeros([ndof,ndof])
         
@@ -741,7 +749,7 @@ cdef class beamANCFelement3D(object):
         
         
         cdef long ndof = len(self.q)
-        Qe = np.zeros(ndof,dtype=np.float64)
+        Qe = np.zeros(ndof, dtype=np.float64)
 
         cdef double[:,:] T, Tc
         cdef double[:,:,:] deps_dq
