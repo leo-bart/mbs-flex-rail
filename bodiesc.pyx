@@ -921,13 +921,48 @@ cdef class flexibleRail3D(flexibleBody):
     '''
     
     cdef public Py_ssize_t[:,:] activeSleepersDof
+    cdef public bint noWeight
     
-    def __init__(self, name, material):
+    def __init__(self, name, material, bint noWgt = False):
         super().__init__(name, material)
         
         self.dimensionality = np.int8(3)
+        self.noWeight = noWgt
         
         print('Created 3D rail \'{}\' with material \'{}\''.format(name,material.name))
+        
+        
+    def assembleWeightVector(self, g=np.array([0,1])):
+        """
+        Assemble weight vector.
+        
+        If self.noWeight is True, then assigns a zero vector.
+
+        Parameters
+        ----------
+        g : TYPE, optional
+            Gravity vector. The default is np.array([0,1]).
+
+        Returns
+        -------
+        TYPE double array 
+            Weight forces vector.
+
+        """
+        Qg = np.zeros(self.totalDof)
+        
+        
+        cdef double [:] Qg_view
+        cdef unsigned int dof
+        if not self.noWeight:
+            Qg_view = Qg
+            
+            for elem in self.elementList:
+                Qelem = elem.getWeightNodalForces(g).reshape(1,-1)
+                for i,dof in enumerate(elem.globalDof):
+                    Qg_view[dof] += Qelem[0,i]
+            
+        return Qg.reshape(1,-1)
 
 cdef class flexibleBody2D(flexibleBody):
     '''

@@ -5,6 +5,7 @@ Created on Wed Mar 23 07:01:46 2022
 
 @author: leonardo
 """
+import convert_stl as stl
 import vpython as vp
 from bodiesc import wheelset
 from profiles import planarProfile
@@ -24,7 +25,8 @@ Initialize system
 system = mbs.RailwaySystem('Trilho com rodeiro')
 system.gravity = np.array([0., 0., 9.81], dtype=np.float64)
 
-initialVelocity = 0.1  # m/s
+initialVelocity = 4.0  # m/s
+setVelocity = 4.0  # m/s
 
 '''
 Track
@@ -34,10 +36,9 @@ trackWidth = 1.0
 track = MBS.Bodies.flexibleTrack.flexibleTrack('Via',
                                                system=system,
                                                gauge=trackWidth,
-                                               length=2.0,  # unused yet
                                                sleeperDistance=0.58,
                                                nel=5)
-track.activeSleepers = [0, 1, 2, 3, 4, 5, 7, 8, 9, 10]
+track.activeSleepers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
 rail = track.leftRail
 rail2 = track.rightRail
@@ -52,14 +53,15 @@ wheel = wheelset('Wheel',
                  wLprofile, wRprofile,
                  b2bDist=0.917,
                  gaugeRadius=wheelRadius)
-wsmass = 2700.
-wsInertiaRadial = 1/12*wsmass*(3*0.15**2+trackWidth**2)
-wsInertiaTensor = np.diag([wsInertiaRadial, 1/2*wsmass*0.15*0.15,
+wsmass = 2700.  # 1568.
+wsInertiaRadial = 656.
+wsInertiaAxial = 168.
+wsInertiaTensor = np.diag([wsInertiaRadial, wsInertiaAxial,
                            wsInertiaRadial])
 wheel.setMass(wsmass)
 wheel.setInertiaTensor(wsInertiaTensor)
-wheel.setPositionInitialConditions(0, 0.75)
-wheel.setPositionInitialConditions(2, -0.838261/2)
+wheel.setPositionInitialConditions(0, 0.25)
+wheel.setPositionInitialConditions(2, -0.838262/2)
 wheel.setVelocityInitialConditions(0, initialVelocity)
 wheel.setVelocityInitialConditions(4, -initialVelocity / wheelRadius)
 
@@ -93,11 +95,11 @@ def pullWheelset(t, p, v, m1, m2):
     """
     w = m1.parent
     f = np.zeros_like(p)
-    wpos, wvel = pullWstGap(t, p, v, m1, m2)
+    error, wvel = pullWstGap(t, p, v, m1, m2)
     # wvel = v[w.globalDof]
 
-    if t > 0.1:
-        f[w.globalDof[0]] = 1000
+    if t > 0.01:
+        f[w.globalDof[0]] = - 10000 * error
 
     f[w.globalDof[2]] = - wvel[2] * 1e4
     f[w.globalDof[3]] = - wvel[3] * 1e8
@@ -107,7 +109,7 @@ def pullWheelset(t, p, v, m1, m2):
 
 def pullWstGap(t, p, v, m1, m2):
     """
-    Determine gap for pull wheelset forces
+    Determine gap for pull wheelset forces.
 
     Parameters
     ----------
@@ -133,7 +135,8 @@ def pullWstGap(t, p, v, m1, m2):
     wstBody = m1.parent
     wpos = p[wstBody.globalDof]
     wvel = v[wstBody.globalDof]
-    return wpos, wvel
+    error = wvel[0] - setVelocity
+    return error, wvel
 
 
 forceWheel.setForceFunction(pullWheelset)
@@ -141,11 +144,28 @@ forceWheel.setGapFunction(pullWstGap)
 
 
 '''
-CONTACT
+Constraint on edges
 '''
 
+node0fixLeft = MBS.BodyConnections.BodyConnection.nodeEncastreToRigidBody(
+    'Fix first node on left rail',
+    track.leftRail,
+    system.ground,
+    track.leftRail.elementList[0].nodes[0].marker
+)
+
+node0fixRight = MBS.BodyConnections.BodyConnection.nodeEncastreToRigidBody(
+    'Fix first node on right rail',
+    track.rightRail,
+    system.ground,
+    track.rightRail.elementList[0].nodes[0].marker
+)
+
+'''
+CONTACT
+'''
 wheelRailContact = MBS.BodyConnections.Contacts.WheelRailContact.wrContact(
-    rail, rail2, wheel, 'Contact test')
+    rail, rail2, wheel, 'Wheel-track contact')
 
 '''
 Multibody system setup
@@ -154,6 +174,7 @@ system.addTrack(track)
 system.addBody([wheel])
 system.addForce(wheelRailContact)
 system.addForce(forceWheel)
+# system.addConstraint([node0fixLeft, node0fixRight])
 
 system.setupSystem()
 
@@ -175,9 +196,9 @@ DAE.num_threads = 12
 DAE.suppress_alg = True
 
 outFreq = 5e2  # Hz
-finalTime = 2.5
+finalTime = (track.length - 0.25) / setVelocity
 
-# DAE.make_consistent('IDA_YA_YDP_INIT')
+# p0 = DAE.make_consistent('IDA_YA_YDP_INIT')
 
 t, p, v = DAE.simulate(finalTime, finalTime * outFreq)
 q = p[:, :system.n_p]
@@ -206,8 +227,8 @@ def plotRails(nplots=4):
     for i in np.arange(0, p.shape[0], int(p.shape[0]/nplots)):
         rail.updateDisplacements(rail.simQ[i])
         rail2.updateDisplacements(rail2.simQ[i])
-        a = rail.plotPositions(5)
-        b = rail2.plotPositions(5)
+        a = rail.plotPositions(8)
+        b = rail2.plotPositions(8)
         k += 1
         plt.plot(a[:, 0], a[:, 2], label='{:.2f} s'.format(
             t[i]), color='red', alpha=(k/(nplots+1)))

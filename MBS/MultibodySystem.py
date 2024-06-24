@@ -44,16 +44,47 @@ class MultibodySystem(Mechanical_System):
 
     @property
     def constrained(self):
+        """
+        State wheter system is constrained or not.
+
+        Returns
+        -------
+        TYPE boolean
+            True for constrained systems.
+
+        """
         return len(self.constraintList) > 0
 
     @property
     def n_la(self):
+        """
+        Number of constraint equations.
+
+        Returns
+        -------
+        ncstr : integer
+            Number of constraint equations.
+
+        """
         ncstr = 0
         for cstr in self.constraintList:
             ncstr += cstr.n_la
         return ncstr
 
     def addBody(self, bodyList):
+        """
+        Increment system body list.
+
+        Parameters
+        ----------
+        bodyList : body or list
+            Body or list of bodies.
+
+        Returns
+        -------
+        None.
+
+        """
         if type(bodyList) is list:
             self.bodies.extend(bodyList)
             for body in bodyList:
@@ -63,12 +94,51 @@ class MultibodySystem(Mechanical_System):
             self.totalDof += bodyList.totalDof
 
     def addForce(self, f):
+        """
+        Increment system force list.
+
+        Parameters
+        ----------
+        f : force or list
+            Force or list of forces.
+
+        Returns
+        -------
+        None.
+
+        """
         self.forceList.append(f)
 
     def addConstraint(self, gC):
-        self.constraintList.append(gC)
+        """
+        Increment system constraint list.
+
+        Parameters
+        ----------
+        gC : constraint or list
+            Constraint or list of constraint.
+
+        Returns
+        -------
+        None.
+
+        """
+        self.constraintList.extend(gC)
 
     def excludeBody(self, bodyList):
+        """
+        Remove bodies from body list.
+
+        Parameters
+        ----------
+        bodyList : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        """
         if bodyList is list:
             self.bodies.remove(bodyList)
             for body in bodyList:
@@ -106,6 +176,24 @@ class MultibodySystem(Mechanical_System):
         print('Totals: {} constraint equations.\n'.format(self.n_la))
 
     def forces(self, t, p, v):
+        """
+        Assemble the force vector for the RHS of the equations of motion.
+
+        Parameters
+        ----------
+        t : double
+            Time.
+        p : double array
+            Positions.
+        v : double array
+            Velocities.
+
+        Returns
+        -------
+        f : double array
+            Force vector.
+
+        """
         f = np.zeros(self.totalDof)
 
         for bdy in self.bodies[1:]:  # first body is ground

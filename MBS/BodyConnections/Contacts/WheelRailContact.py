@@ -108,7 +108,7 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
 
     def calculateContactForce(self, Rwst, cNormal, cGap, cPointCoordsWheel,
                               cPointCoordsRail, wstPosition, wstVelocity,
-                              cElement, cForce, cNormalStiffness=525e6):
+                              cElement, cForce, cNormalStiffness=725e6):
         """
         Calculate normal and creep forces.
 
@@ -141,40 +141,20 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
         None.
 
         """
+        # KINEMATICS
         # normal vector in global coordinates
         normalGlobalCoords, _ = hf.unitaryVector(Rwst.transpose().dot(
             np.insert(cNormal, 0, 0)))
-        # 2d contact force on the wheel midplane
-        contactForceMag = cNormalStiffness * cGap
-        contactForce = contactForceMag * normalGlobalCoords
         # lever arm vector of the contact force on wheelset
         rhoM2star = Rwst.transpose().dot(
             np.insert(cPointCoordsWheel, 0, 0))
-        # add force to wheelset
-        cForce[self.wheelset.globalDof[:3]] += contactForce
-        if contactForce[2] > 0:
-            print(
-                '\nWarning: right negative contact force {} N'.format(
-                    contactForce[2]))
-        # add moments to wheelset
-        cForce[self.wheelset.globalDof[3:]] += hf.skew(rhoM2star).dot(
-            contactForce)
         # convert rail contact point to global coords
         localXi = cElement.mapToLocalCoords(
             wstPosition[:3] + Rwst.transpose().dot(
                 np.insert(cPointCoordsRail, 0, 0.0))
         )
 
-        # normal contact force on elements
-        rail = cElement.parentBody
-        railDofs = np.array(rail.globalDof)
-        cForce[railDofs[cElement.globalDof]] += np.dot(
-            -contactForce,
-            cElement.shapeFunctionMatrix(*localXi)
-        )
-
-        # creep forces
-        # creepages
+        # CREEPAGES
         wstOmega = self.wheelset.omega(wstPosition[3:], wstVelocity[3:])
         cPointsVelocityWheel = wstVelocity[:3] + \
             hf.skew(wstOmega).dot(rhoM2star)
@@ -191,6 +171,31 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
         creepages[0] = 0.0 if wstVelocity[0] == 0.0 else (
             relativeVelocityTang[0]) / wstVelocity[0]
         creepages[1] = wstPosition[5]
+
+        # NORMAL FORCE
+        # 2d contact force on the wheel midplane
+        contactForceMag = cNormalStiffness * cGap
+        contactForce = contactForceMag * normalGlobalCoords
+
+        # add force to wheelset
+        cForce[self.wheelset.globalDof[:3]] += contactForce
+        if contactForce[2] > 0:
+            print(
+                '\nWarning: right negative contact force {} N'.format(
+                    contactForce[2]))
+        # add moments to wheelset
+        cForce[self.wheelset.globalDof[3:]] += hf.skew(rhoM2star).dot(
+            contactForce)
+
+        # normal contact force on elements
+        rail = cElement.parentBody
+        railDofs = np.array(rail.globalDof)
+        cForce[railDofs[cElement.globalDof]] += np.dot(
+            -contactForce,
+            cElement.shapeFunctionMatrix(*localXi)
+        )
+
+        # creep forces
 
         fricForce = np.zeros(3)
         # fricForce[0], fricForce[1] = pcf.polach(contactForceMag,

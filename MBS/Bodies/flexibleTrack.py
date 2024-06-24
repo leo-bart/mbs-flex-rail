@@ -18,7 +18,7 @@ import helper_funcs as hf
 class flexibleTrack(object):
     """Flexible track creator."""
 
-    def __init__(self, name, gauge, length, sleeperDistance,
+    def __init__(self, name, gauge, sleeperDistance,
                  nel, system, linearBehavior=True):
         """
         Initialize flexible track.
@@ -47,7 +47,6 @@ class flexibleTrack(object):
         """
         self.name = name
         self.gauge = gauge
-        self.length = length
         self.slpDist = sleeperDistance
         self.nel = nel
         self.system = system
@@ -65,6 +64,7 @@ class flexibleTrack(object):
         nq = []
         nq2 = []
         totalLength = 2 * nel * sleeperDistance
+        self.length = totalLength
         for i in range(nel+1):
             nq.append(node([totalLength * i/nel,
                             -0.5*gauge-0.039, 0.1857/2,
@@ -116,7 +116,7 @@ class flexibleTrack(object):
         '''
         Rails
         '''
-        self.leftRail = flexibleRail3D('Rail L', steel)
+        self.leftRail = flexibleRail3D('Rail L', steel, noWgt=True)
         self.leftRail.addElement(eq)
         if linearBehavior:
             self.leftRail.nonLinear = 'L'
@@ -124,7 +124,7 @@ class flexibleTrack(object):
             self.leftRail.nonLinear = 'NL'
         self.leftRail.assembleTangentStiffnessMatrix()
 
-        self.rightRail = flexibleRail3D('Rail R', steel)
+        self.rightRail = flexibleRail3D('Rail R', steel, noWgt=True)
         self.rightRail.addElement(eq2)
         if linearBehavior:
             self.rightRail.nonLinear = 'L'
@@ -257,11 +257,32 @@ class flexibleTrack(object):
         leftRail = m1.parent
         rightRail = m2.parent
 
-        # Vertical stiffness
+        f = np.zeros_like(p)
+
+        # LONGITUDINAL STIFFNESS
+        leftRailLongitudinalDofs = list(hf.mvRow2List(
+            leftRail.activeSleepersDof, 0))
+        rightRailLongitudinalDofs = list(hf.mvRow2List(
+            rightRail.activeSleepersDof, 0))
+
+        leftDist = p[leftRailLongitudinalDofs]
+        leftVelo = v[leftRailLongitudinalDofs]
+        rightDist = p[rightRailLongitudinalDofs]
+        rightVelo = v[rightRailLongitudinalDofs]
+
+        # f[leftRailLongitudinalDofs] = 7.5e5 * leftDist
+        # f[rightRailLongitudinalDofs] = 7.5e5 * rightDist
+        # increased stiffness on rail ends
+        f[leftRail.globalDof[0]] += 32 * (3e6 * leftDist[0])
+        f[leftRail.globalDof[-9]] += 32 * (3e6 * leftDist[-1])
+        f[rightRail.globalDof[0]] += 32 * (3e6 * rightDist[0])
+        f[rightRail.globalDof[-9]] += 32 * (3e6 * rightDist[-1])
+
+        # VERTICAL STIFFNESS
         # states
         leftRailVerticalDofs = list(hf.mvRow2List(leftRail.activeSleepersDof,
                                                   2))
-        rightRailVerticalDofs = list(hf.mvRow2List(leftRail.activeSleepersDof,
+        rightRailVerticalDofs = list(hf.mvRow2List(rightRail.activeSleepersDof,
                                                    2))
 
         leftDist = p[leftRailVerticalDofs]
@@ -269,25 +290,22 @@ class flexibleTrack(object):
         rightDist = p[rightRailVerticalDofs]
         rightVelo = v[rightRailVerticalDofs]
 
-        f = np.zeros_like(p)
-        f[leftRailVerticalDofs] = 3e6 * leftDist + 3e4 * leftVelo
-        f[rightRailVerticalDofs] = 3e6 * rightDist + 3e4 * rightVelo
+        f[leftRailVerticalDofs] = 50e6 * leftDist + 50e4 * leftVelo
+        f[rightRailVerticalDofs] = 50e6 * rightDist + 50e4 * rightVelo
         # increased stiffness on rail ends
-        f[leftRail.globalDof[2]] += 32 * (3e6 * leftDist[0])
-        f[leftRail.globalDof[-7]] += 32 * (3e6 * leftDist[-1])
-        f[rightRail.globalDof[2]] += 32 * (3e6 * rightDist[0])
-        f[rightRail.globalDof[-7]] += 32 * (3e6 * rightDist[-1])
+        f[leftRail.globalDof[2]] += 32 * (50e6 * leftDist[0])
+        f[leftRail.globalDof[-7]] += 32 * (50e6 * leftDist[-1])
+        f[rightRail.globalDof[2]] += 32 * (50e6 * rightDist[0])
+        f[rightRail.globalDof[-7]] += 32 * (50e6 * rightDist[-1])
 
-        # Lateral stiffness
-        stiffness = 35e9 * 0.17 * 0.24 / self.gauge
+        # LATERAL STIFFNESS
+        stiffness = 0.5 * 64e9 * (0.239 + 0.200) * 0.234 / self.gauge
 
         # states
         leftRailLateralDofs = list(hf.mvRow2List(leftRail.activeSleepersDof,
                                                  1))
-        rightRailLateralDofs = list(hf.mvRow2List(leftRail.activeSleepersDof,
+        rightRailLateralDofs = list(hf.mvRow2List(rightRail.activeSleepersDof,
                                                   1))
-        leftRailLateralDofs = leftRail.globalDof[1::9]
-        rightRailLateralDofs = rightRail.globalDof[1::9]
 
         leftDist = p[leftRailLateralDofs]
         leftVelo = v[leftRailLateralDofs]
@@ -302,7 +320,7 @@ class flexibleTrack(object):
         f[rightRailLateralDofs] += stiffness * \
             (- ds - 0.02*dv) + 1e6 * rightDist
 
-        # Clip and pad forces
+        # CLIP AND PAD FORCES
 
         # Rotation stiffness
         leftZ = p[leftRail.globalDof[5::9]]
@@ -310,10 +328,10 @@ class flexibleTrack(object):
         leftZdot = v[leftRail.globalDof[5::9]]
         rightZdot = v[rightRail.globalDof[5::9]]
 
-        clipStiffness = 4.e4
+        clipStiffness = 8.e4
 
-        leftClipForce = (leftZ + 0.02 * leftZdot) * clipStiffness
-        rightClipForce = (rightZ + 0.02 * rightZdot) * clipStiffness
+        leftClipForce = (leftZ + 0.03 * leftZdot) * clipStiffness
+        rightClipForce = (rightZ + 0.03 * rightZdot) * clipStiffness
 
         f[leftRail.globalDof[5::9]] += leftClipForce
         f[rightRail.globalDof[5::9]] += rightClipForce

@@ -358,7 +358,7 @@ cdef class beamANCFelement3D(object):
             # TODO: check cross product before issuing True
             return True
     
-    def mapToLocalCoords(self, double[:] point, double tol = 1e-5):
+    def mapToLocalCoords(self, double[:] point, double tol = 1e-5, verb=False):
         '''
         Maps a global point P into local coordinates
 
@@ -374,10 +374,10 @@ cdef class beamANCFelement3D(object):
 
         '''
         
-        # if not self.isPointOnMe(point):
-        #     print('Error: specified point is not inside the bounding box of this element.')
-        #     print('Point: {}'.format(np.array(point)))
-        #     return 0
+        if not self.isPointOnMe(point) and verb:
+            print('Error: specified point is not inside the bounding box of this element.')
+            print('Point: {}'.format(np.array(point)))
+            return 0
         
         cdef double L,H,W
         cdef Py_ssize_t i
@@ -410,7 +410,7 @@ cdef class beamANCFelement3D(object):
             
             dxi = np.linalg.solve(J_view,res)
         
-        if i == maxiter - 1:
+        if i == maxiter - 1 and verb:
             print('Warning: mapToLocalCoords couldn\' find mapping after {} iterations'.format(maxiter))
         
         
@@ -1194,12 +1194,7 @@ cdef class railANCF3Dquadratic(beamANCF3Dquadratic):
         
     def getNodalElasticForces(self,bint veloc = False):
         '''
-        Overrides base class method
-
-        Parameters
-        ----------
-        double [ : ] q, optional
-            DESCRIPTION. The default is None.
+        Overrides base class method.
 
         Returns
         -------
