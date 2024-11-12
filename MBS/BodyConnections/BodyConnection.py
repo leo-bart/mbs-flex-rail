@@ -106,6 +106,9 @@ class bodyConnection(object):
             else:
                 self.marker2 = pt2
 
+    def initializeOutputs(self):
+        pass
+
 
 class constraint(bodyConnection):
     def __init__(self, name_='Connection'):

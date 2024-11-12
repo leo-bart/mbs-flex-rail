@@ -138,8 +138,8 @@ def viga_biengastada():
         fel += np.squeeze(np.asarray(C.dot(v)))
 
         # effect of moving force
-        if t <= 1.:
-            pos = 5.5  # 2.*t
+        if t <= 2.:
+            pos = 0.01  # 2.*t
 
             point = np.array([pos, 0., 0.])
 
@@ -185,7 +185,7 @@ def viga_biengastada():
         return Phi.T
 
     return ms(n_p=n_p,
-              forces=forcesStiffMat,
+              forces=forcesFullCalc,
               n_la=n_la, pos0=q0, vel0=u0,
               lam0=np.zeros(n_la),
               posd0=u0, veld0=0*u0, GT=constJacobian, t0=0.0,
@@ -218,7 +218,7 @@ lam = p[:, 2*system.n_p:]
 plt.figure()
 for i in np.arange(0, u.shape[0], 2000):
     body.updateDisplacements(q[i])
-    a = body.plotPositions()
+    a = body.plotPositions(400)
     plt.plot(a[:, 0], a[:, 1], label='{:.2f} s'.format(t[i]))
 plt.legend()
 plt.title("Trilho TR 68")

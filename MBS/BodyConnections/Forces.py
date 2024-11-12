@@ -33,6 +33,12 @@ class force(MBS.BodyConnections.BodyConnection.bodyConnection):
     def evaluateGapFunction(self, *args):
         return self.gapFunction(*args)
 
+    def postProcess(self, *args):
+        pass
+
+    def initializeOutputs(self, *args):
+        pass
+
 
 class linearSpring_PtP(force):
     """
@@ -124,3 +130,43 @@ class linearSpring_PtP(force):
             f[dof2[:3]] = -valueForce
 
         return f
+
+    def postProcess(self, i, ti, pi, vi):
+        """
+        Post process simulation data.
+
+        Parameters
+        ----------
+        i : TYPE
+            DESCRIPTION.
+        ti : TYPE
+            DESCRIPTION.
+        pi : TYPE
+            DESCRIPTION.
+        vi : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        """
+        print('owo')
+        self.simLam[i, :] = self.evaluateForceFunction(
+            ti, pi, vi, self.marker1, self.marker2)
+
+    def initializeOutputs(self, t):
+        """
+        Initialize the output arrays.
+
+        Parameters
+        ----------
+        t : array
+            Time vector (to determine the length of the output).
+
+        Returns
+        -------
+        None.
+
+        """
+        self.simLam = np.zeros((len(t), 3))

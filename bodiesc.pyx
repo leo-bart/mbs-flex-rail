@@ -659,6 +659,21 @@ cdef class flexibleBody(body):
     
     
     def assembleElasticForceVector(self, bint veloc = False):
+        """
+        Aeemble the elastic force vector for the finite elements.
+
+        Parameters
+        ----------
+        bint veloc : boolean, optional
+            Calculates the forces considering velocity instead of displace-
+            ments. The default is False.
+
+        Returns
+        -------
+        TYPE
+            DESCRIPTION.
+
+        """
         
         Qe = np.zeros(self.totalDof)
         cdef double[:] Qe_view = Qe

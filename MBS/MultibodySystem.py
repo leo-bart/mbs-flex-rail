@@ -285,8 +285,7 @@ class MultibodySystem(Mechanical_System):
         constForces = []
         for f in self.forceList:
             '''Initialize simLam vector for each constraint'''
-            f.simLam = np.zeros([len(tvec), self.n_p])
-            f.simGap = np.zeros([len(tvec), self.n_p])
+            f.initializeOutputs(tvec)
         for i in range(len(tvec)):
             GT = self.GT(posi[i])
             constForces.append(GT.dot(lamb[i]))
@@ -295,10 +294,8 @@ class MultibodySystem(Mechanical_System):
                 if b.type == 'Flexible body':
                     b.updateDisplacements(b.simQ[i])
                     b.updateVelocities(b.simU[i])
-            for f in self.forceList:
-                f.simLam[i, :] = f.evaluateForceFunction(
-                    tvec[i], posi[i], velo[i], f.marker1, f.marker2)
-                # f.simGap[i,0:3],f.simGap[i,3:6] = f.evaluateGapFunction(tvec[i],posi[i],velo[i],f.marker1,f.marker2)
+        for f in self.forceList:
+            f.postProcess(tvec, pvec, vvec)
 
         constForces = np.array(constForces)
         for cst in self.constraintList:

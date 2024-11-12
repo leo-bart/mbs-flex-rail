@@ -150,9 +150,9 @@ class flexibleTrack(object):
 
         # add profiles to rails
         rProfL = planarProfile('Left rail', convPar=-1)
-        rProfL.setProfilePointsFromFile('./tr68.pro')
+        rProfL.setProfilePointsFromFile('./tr68_simp.pro')
         rProfR = planarProfile('Right rail', convPar=1)
-        rProfR.setProfilePointsFromFile('./tr68.pro')
+        rProfR.setProfilePointsFromFile('./tr68_simp.pro')
 
         self.leftRail.addProfile(rProfL, leftRailMarker)
         self.rightRail.addProfile(rProfR, rightRailMarker)
@@ -270,8 +270,8 @@ class flexibleTrack(object):
         rightDist = p[rightRailLongitudinalDofs]
         rightVelo = v[rightRailLongitudinalDofs]
 
-        # f[leftRailLongitudinalDofs] = 7.5e5 * leftDist
-        # f[rightRailLongitudinalDofs] = 7.5e5 * rightDist
+        f[leftRailLongitudinalDofs] = 7.5e5 * leftDist
+        f[rightRailLongitudinalDofs] = 7.5e5 * rightDist
         # increased stiffness on rail ends
         f[leftRail.globalDof[0]] += 32 * (3e6 * leftDist[0])
         f[leftRail.globalDof[-9]] += 32 * (3e6 * leftDist[-1])
@@ -290,8 +290,8 @@ class flexibleTrack(object):
         rightDist = p[rightRailVerticalDofs]
         rightVelo = v[rightRailVerticalDofs]
 
-        f[leftRailVerticalDofs] = 50e6 * leftDist + 50e4 * leftVelo
-        f[rightRailVerticalDofs] = 50e6 * rightDist + 50e4 * rightVelo
+        f[leftRailVerticalDofs] = 50e6 * leftDist + 1e4 * leftVelo
+        f[rightRailVerticalDofs] = 50e6 * rightDist + 1e4 * rightVelo
         # increased stiffness on rail ends
         f[leftRail.globalDof[2]] += 32 * (50e6 * leftDist[0])
         f[leftRail.globalDof[-7]] += 32 * (50e6 * leftDist[-1])
@@ -316,9 +316,9 @@ class flexibleTrack(object):
         dv = leftVelo - rightVelo
 
         f[leftRailLateralDofs] += stiffness * \
-            (ds + 0.02*dv) + 1e6 * leftDist
+            (ds + 0.01*dv) + 1e6 * leftDist
         f[rightRailLateralDofs] += stiffness * \
-            (- ds - 0.02*dv) + 1e6 * rightDist
+            (- ds - 0.01*dv) + 1e6 * rightDist
 
         # CLIP AND PAD FORCES
 
@@ -330,8 +330,8 @@ class flexibleTrack(object):
 
         clipStiffness = 8.e4
 
-        leftClipForce = (leftZ + 0.03 * leftZdot) * clipStiffness
-        rightClipForce = (rightZ + 0.03 * rightZdot) * clipStiffness
+        leftClipForce = (leftZ + 0.01 * leftZdot) * clipStiffness
+        rightClipForce = (rightZ + 0.01 * rightZdot) * clipStiffness
 
         f[leftRail.globalDof[5::9]] += leftClipForce
         f[rightRail.globalDof[5::9]] += rightClipForce

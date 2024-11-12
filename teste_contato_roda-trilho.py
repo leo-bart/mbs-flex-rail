@@ -27,7 +27,6 @@ trackWidth = 1.0
 track = MBS.Bodies.flexibleTrack.flexibleTrack('Via',
                                                system=system,
                                                gauge=trackWidth,
-                                               length=2.0,  # unused yet
                                                sleeperDistance=0.58,
                                                nel=4)
 
@@ -45,10 +44,10 @@ wsInertiaTensor = np.diag([wsInertiaRadial, 1/2*wsmass*0.15*0.15,
 wheel.setMass(wsmass)
 wheel.setInertiaTensor(wsInertiaTensor)
 wheel.setPositionInitialConditions(0, 0.75)
-wheel.setPositionInitialConditions(2, -0.83825/2)
+wheel.setPositionInitialConditions(2, -0.838260/2)
 
 # Contact
-wrc = MBS.BodyConnections.Contacts.WheelRailContact.wrContact2(
+wrc = MBS.BodyConnections.Contacts.WheelRailContact.wrContact(
     track.leftRail, track.rightRail, wheel, 'Contact test')
 
 
@@ -58,4 +57,8 @@ system.addForce(wrc)
 system.setupSystem()
 
 # Gets data
+plt.subplot(1, 2, 1)
 a = wrc.evaluateGapFunction(0.0, system.pos0, system.vel0, plotFlag=True)
+plt.subplot(1, 2, 2)
+b = wrc.evaluateGapFunction(
+    0.0, system.pos0, system.vel0, 'right', plotFlag=True)

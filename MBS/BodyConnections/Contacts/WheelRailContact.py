@@ -9,12 +9,11 @@ Created on Sun Oct  1 11:19:18 2023
 """
 
 import MBS.BodyConnections.Contacts.Contact
+import polachContactForces as pcf
 import numpy as np
 import helper_funcs as hf
 import matplotlib.pyplot as plt
 import gjk
-import gjkc
-import polachContactForces as pcf
 from profiles import planarProfile
 
 
@@ -55,8 +54,18 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
         self.leftRail = _leftRail_
         self.rightRail = _rightRail_
         self.wheelset = _wheelset_
+        self.contactReferenceForce = _wheelset_.mass * 9.85 / 2
+        self.frictionCoeff = 0.2
 
-    def evaluateForceFunction(self, t, p, v, *args):
+        # relative velocity ratio following
+        # POMBO, J.; AMBRÓSIO, J.; SILVA, M. A new wheel–rail contact model
+        # for railway dynamics. Vehicle System Dynamics, v. 45, n. 2,
+        # p. 165–189, fev. 2007.
+        # this ratio should be uptaded during simulation
+        self.relativeVelocityRatio = {'left': 1.0, 'right': 1.0}
+        self.maxPenetrationSpeed = {'left': -1.0, 'right': -1.0}
+
+    def evaluateForceFunction(self, t, p, v, postProcess=False, *args):
         """
         Calculate contact force.
 
@@ -84,31 +93,69 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
         # gets wheelset rotation matrix
         Rwst = hf.cardanRotationMatrix(wstCardans)
 
-        cNormalLeft, cPointsLeft, gapLeft, elemLeft = \
+        cNormalLeft, cPointsLeft, gapLeft, elemLeft, cTangLeft = \
             self.evaluateGapFunction(t, p, v, 'left')
-        cNormalRight, cPointsRight, gapRight, elemRight = \
+        cNormalRight, cPointsRight, gapRight, elemRight, cTangRight = \
             self.evaluateGapFunction(t, p, v, 'right')
 
         f = np.zeros_like(p)
 
+        if postProcess:
+            i = args[0]
+
+        # in the following:
+        # cnfl - contact normal force left
+        # ctfl - contact tangential force left
+
+        # GAMBIARRA ALERT
+        # TODO: fix this shit!
+        # gapLeft = gapRight
+        # cNormalLeft[0] = -cNormalRight[0]
+        # cNormalLeft[1] = cNormalRight[1]
+
         if gapLeft < 0.0:
-            self.calculateContactForce(Rwst, cNormalLeft, gapLeft,
-                                       cPointsLeft['wheel'],
-                                       cPointsLeft['rail'], wstPosition,
-                                       wstVelocity,
-                                       elemLeft, f)
+            cnfl, ctfl = self.calculateContactForce(Rwst, cNormalLeft,
+                                                    cTangLeft,
+                                                    gapLeft,
+                                                    cPointsLeft['wheel'],
+                                                    cPointsLeft['rail'],
+                                                    wstPosition,
+                                                    wstVelocity,
+                                                    elemLeft, f,
+                                                    self.contactReferenceForce,
+                                                    'left')
+            if postProcess:
+                self.simNormalForce['left'][i, :] = cnfl
+                self.simFricForce['left'][i, :] = ctfl
+                self.simGap['left'][i] = gapLeft
+        else:
+            self.relativeVelocityRatioLeft = 1.0
         if gapRight < 0.0:
-            self.calculateContactForce(Rwst, cNormalRight, gapRight,
-                                       cPointsRight['wheel'],
-                                       cPointsRight['rail'], wstPosition,
-                                       wstVelocity,
-                                       elemRight, f)
+            cnfr, ctfr = self.calculateContactForce(Rwst, cNormalRight,
+                                                    cTangRight,
+                                                    gapRight,
+                                                    cPointsRight['wheel'],
+                                                    cPointsRight['rail'],
+                                                    wstPosition,
+                                                    wstVelocity,
+                                                    elemRight, f,
+                                                    self.contactReferenceForce,
+                                                    'right')
+            if postProcess:
+                self.simNormalForce['right'][i, :] = cnfr
+                self.simFricForce['right'][i, :] = ctfr
+                self.simGap['right'][i] = gapRight
+        else:
+            self.relativeVelocityRatioRight = 1.0
 
         return f
 
-    def calculateContactForce(self, Rwst, cNormal, cGap, cPointCoordsWheel,
+    def calculateContactForce(self, Rwst, cNormal, cTang,
+                              cGap, cPointCoordsWheel,
                               cPointCoordsRail, wstPosition, wstVelocity,
-                              cElement, cForce, cNormalStiffness=725e6):
+                              cElement, cForce, cNormalReferenceForce,
+                              sideKey,
+                              cNormalStiffness=464e6):
         """
         Calculate normal and creep forces.
 
@@ -118,6 +165,8 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
             Wheelset rotation matrix.
         cNormal : TYPE
             Contact normal vector (YZ).
+        cTang : TYPE
+            Contact tangent vector on longitudinal wheel velocity.
         cGap : TYPE
             Size of contact gap.
         cPointCoordsWheel : TYPE
@@ -133,6 +182,10 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
             Contacting element.
         cForce : array
             Contact force vector (output)
+        cNormalReferenceForce : double
+            Reference force value
+        sideKey : string
+            Left or right.
         cNormalStiffness : double
             Normal contact stiffness. Defaults to 525 MN/m.
 
@@ -163,18 +216,30 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
         relativeVelocity = cPointsVelocityWheel - cPointsVelocityRail
         # project into normal
         relativeVelNormal = relativeVelocity.dot(normalGlobalCoords)
-        relativeVelocityTang = relativeVelocity - relativeVelNormal
+        relativeVelocityTang = relativeVelocity - relativeVelNormal*normalGlobalCoords
         relativeVelocityTang = Rwst.transpose().dot(relativeVelocityTang)
 
         creepages = np.array([0., 0.])
 
         creepages[0] = 0.0 if wstVelocity[0] == 0.0 else (
             relativeVelocityTang[0]) / wstVelocity[0]
-        creepages[1] = wstPosition[5]
+        creepages[1] = relativeVelocityTang[1]
 
         # NORMAL FORCE
         # 2d contact force on the wheel midplane
-        contactForceMag = cNormalStiffness * cGap
+        # contactForceMag = cNormalStiffness * cGap
+        if np.abs(relativeVelNormal) < self.maxPenetrationSpeed[sideKey]:
+            self.relativeVelocityRatio[sideKey] = relativeVelNormal / \
+                self.maxPenetrationSpeed[sideKey]
+        else:
+            self.maxPenetrationSpeed[sideKey] = np.abs(relativeVelNormal)
+        # %TODO eu reduzi a rigidez. Verificar se devo voltar para 91e9
+        contactForceMag = - 90e7 * \
+            (1 + 0.75 * (1-0.95*0.95) *
+             -relativeVelNormal/60) * ((-cGap) ** (1.5))
+        # reduzi o fator de escala para 100
+        # print(self.relativeVelocityRatio[sideKey])
+
         contactForce = contactForceMag * normalGlobalCoords
 
         # add force to wheelset
@@ -199,12 +264,21 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
 
         fricForce = np.zeros(3)
         # fricForce[0], fricForce[1] = pcf.polach(contactForceMag,
-        #                                         0.4, 6e-3, 6e-3, creepages[0],
+        #                                         self.frictionCoeff,
+        #                                         6e-3, 6e-3, creepages[0],
         #                                         creepages[1], 0.0,
         #                                         4.12, 3.67, 1.47)
-        fricForce[0] = self.coulombFric(creepages[0], 0.4) * contactForceMag
+        # # fricForce[1] = -fricForce[1]
+        fricForce[0] = self.coulombFric(
+            creepages[0], self.frictionCoeff) * contactForceMag
+        fricForce[1] = self.coulombFric(
+            creepages[1], self.frictionCoeff) * contactForceMag
 
-        # print('{}:{} N'.format(cElement.parentBody.name, fricForce[0]))
+        # contact frame
+        # TODO arrumar mudança de coordenadas
+        cTang2 = np.cross(normalGlobalCoords, cTang)
+        fricForce = fricForce[0] * cTang + fricForce[1] * cTang2
+
         # apply creep forces to wheel
         if np.any(fricForce) != 0:
             cForce[self.wheelset.globalDof[:3]] += fricForce
@@ -215,6 +289,8 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
             cForce[railDofs[cElement.globalDof]] += np.dot(
                 -fricForce,
                 cElement.shapeFunctionMatrix(*localXi))
+
+        return contactForce, fricForce
 
     def coulombFric(self, v, mu):
         return mu * np.tanh(100*v)
@@ -236,7 +312,7 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
 
         Returns
         -------
-        cNormalLeft: np.array.
+        cNormal: np.array.
             normal contact vector
         cPoints: dictionary
             the contact points written on the wheelset reference frame
@@ -389,6 +465,8 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
                     cPoints["wheel"] = pWheel
                     cNormal = n
 
+        # print('{}:{}'.format(railBody.name, minDist))
+
         if plotFlag:
             y = railOnWheelsetPlane[:, 1]
             z = railOnWheelsetPlane[:, 2]
@@ -408,4 +486,47 @@ class wrContact (MBS.BodyConnections.Contacts.Contact.contact):
         if cNormal[1] < 0:
             cNormal = -cNormal
 
-        return cNormal, cPoints, minDist, e
+        # TODO: apply rotation speeds to calculate tangent
+        cTang = midplaneNormal
+
+        return cNormal, cPoints, minDist, e, cTang
+
+    def initializeOutputs(self, t):
+        size = len(t)
+        self.simNormalForce = {'left': np.zeros(
+            (size, 3)), 'right': np.zeros((size, 3))}
+        self.simFricForce = {'left': np.zeros(
+            (size, 3)), 'right': np.zeros((size, 3))}
+        self.simGap = {'left': np.zeros(
+            (size)), 'right': np.zeros((size))}
+
+    def postProcess(self, t, p, v):
+        for i in range(len(t)):
+            for rail in [self.leftRail, self.rightRail]:
+                rail.updateDisplacements(p[i, rail.globalDof])
+                rail.updateDisplacements(v[i, rail.globalDof])
+
+            oF = self.evaluateForceFunction(t[i], p[i], v[i], True, i)
+
+    def plotContact(self, t, p, v):
+        """
+        Plot cross-section of wheel and rail with contact points
+
+        Parameters
+        ----------
+        t : TYPE
+            DESCRIPTION.
+        p : TYPE
+            DESCRIPTION.
+        v : TYPE
+            DESCRIPTION.
+
+        Returns
+        -------
+        None.
+
+        """
+        plt.figure()
+        _, _, _, _ = self.evaluateGapFunction(t, p, v, 'left', plotFlag=True)
+        _, _, _, _ = self.evaluateGapFunction(t, p, v, 'right', plotFlag=True)
+        plt.gca.invert_yaxis()
