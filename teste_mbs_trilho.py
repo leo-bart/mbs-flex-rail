@@ -47,7 +47,7 @@ track = MBS.Bodies.flexibleTrack.flexibleTrack('Via',
                                                sleeperDistance=0.58,
                                                nel=nel)
 track.activeSleepers = list(range(0, 2 * nel + 1))
-# track.activeSleepers.pop(20)
+track.activeSleepers.pop(20)
 
 rail = track.leftRail
 rail2 = track.rightRail
@@ -115,7 +115,7 @@ def pullWheelset(t, p, v, m1, m2):
 
     tstable = 0.1
 
-    f[w.globalDof[2]] += 98000 * 1/(1+np.exp(-10*(t-0.3)))
+    f[w.globalDof[2]] += 98000 * 1/(1+np.exp(-10*(t-0.3))) * 0
 
     if t > tstable:
         f[w.globalDof[0]] += - kl * 2 * error
@@ -222,7 +222,7 @@ DAE.atol = 1e-7
 DAE.num_threads = 12
 DAE.suppress_alg = True
 
-outFreq = 5e2  # Hz
+outFreq = 10e2  # Hz
 finalTime = (track.length - 0.75) / setVelocity
 
 # p0 = DAE.make_consistent('IDA_YA_YDP_INIT')
@@ -238,7 +238,7 @@ np.savez('results/railOut', t=t, p=p, v=v, lam=lam)
 Post-processing
 '''
 # %% POST PROCESSING
-oFiles = np.load('./results/railOut.npz')
+oFiles = np.load('./results/railOut_10mps_comDormentes_20m+98kN.npz')
 t = oFiles['t']
 p = oFiles['p']
 v = oFiles['v']
@@ -354,6 +354,37 @@ def plotWheelset():
     plt.subplot(2, 3, 6)
     plt.plot(wheel.simQ[:, 0], wheel.simQ[:, 5])
     plt.gca().set_ylabel('theta / rad')
+
+
+def make_fft(t, y):
+    # Calcula a taxa de amostragem
+    dt = t[1] - t[0]      # Intervalo de tempo entre amostras
+    fs = 1 / dt           # Taxa de amostragem em Hz
+
+    # tira a média (para eliminar o ganho)
+    y = y - np.mean(y)
+
+    # Calcula a FFT
+    N = len(y)                               # Número de pontos
+    Y_fft = np.fft.fft(y)                    # Calcula a FFT
+    # Calcula as frequências correspondentes
+    frequencies = np.fft.fftfreq(N, dt)
+
+    # Apenas a metade positiva da FFT e das frequências (espectro unilateral)
+    half_N = N // 2
+    Y_magnitude = np.abs(Y_fft[:half_N])     # Amplitude da FFT
+    frequencies = frequencies[:half_N]       # Frequências correspondentes
+
+    # Exibe o gráfico do espectro de frequência
+    plt.figure(figsize=(10, 5))
+    plt.plot(frequencies, Y_magnitude)
+    plt.title("Espectro de Frequência do Sinal")
+    plt.xlabel("Frequência (Hz)")
+    plt.ylabel("Amplitude")
+    plt.grid()
+    plt.show()
+
+    return frequencies, Y_magnitude
 
 # run_animation()
 
